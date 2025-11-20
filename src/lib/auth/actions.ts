@@ -67,7 +67,7 @@ export const signIn = async (
   }
 
   revalidatePath('/', 'layout');
-  redirect('/app/dashboard');
+  return { success: true };
 };
 
 /**

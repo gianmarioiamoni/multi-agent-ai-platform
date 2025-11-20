@@ -10,7 +10,7 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { signInSchema, type SignInFormData } from '@/lib/validations/auth';
 import { signIn, signInWithGoogle } from '@/lib/auth/actions';
 import { useToast } from '@/contexts/toast-context';
@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/card';
 
 export const SignInForm = () => {
+  const router = useRouter();
   const { error: showError, info } = useToast();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
@@ -56,7 +57,10 @@ export const SignInForm = () => {
     try {
       const result = await signIn(data.email, data.password);
 
-      if (!result.success) {
+      if (result.success) {
+        // Successful login - redirect to dashboard
+        router.push('/app/dashboard');
+      } else {
         // Check if error is about email confirmation
         if (result.error?.toLowerCase().includes('email') && 
             result.error?.toLowerCase().includes('confirm')) {
@@ -69,7 +73,6 @@ export const SignInForm = () => {
         }
         setIsLoading(false);
       }
-      // If successful, the signIn action will redirect to /app/dashboard
     } catch (err) {
       showError(
         'An error occurred',
