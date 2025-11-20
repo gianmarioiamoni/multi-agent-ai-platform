@@ -46,6 +46,7 @@ export const SignInForm = () => {
 
       if (!result.success) {
         showError('Sign in failed', result.error);
+        setIsLoading(false); // Reset loading state on error
       }
       // If successful, the signIn action will redirect to /app/dashboard
     } catch (err) {

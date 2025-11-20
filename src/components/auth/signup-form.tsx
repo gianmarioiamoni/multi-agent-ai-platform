@@ -48,12 +48,12 @@ export const SignUpForm = () => {
       if (result.success) {
         success(
           'Account created!',
-          'Please check your email to verify your account.'
+          'You can now sign in with your credentials.'
         );
         // Wait a bit before redirecting
         setTimeout(() => {
           router.push('/auth/login');
-        }, 2000);
+        }, 1500);
       } else {
         showError('Sign up failed', result.error);
       }
