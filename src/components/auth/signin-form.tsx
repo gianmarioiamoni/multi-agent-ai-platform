@@ -6,10 +6,11 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { signInSchema, type SignInFormData } from '@/lib/validations/auth';
 import { signIn, signInWithGoogle } from '@/lib/auth/actions';
 import { useToast } from '@/contexts/toast-context';
@@ -26,9 +27,20 @@ import {
 } from '@/components/ui/card';
 
 export const SignInForm = () => {
-  const { error: showError } = useToast();
+  const { error: showError, info } = useToast();
+  const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
+  // Show info toast if user just signed up
+  useEffect(() => {
+    if (searchParams.get('verified') === 'false') {
+      info(
+        'Check your email',
+        'We sent you a verification link. Please verify your email before signing in.'
+      );
+    }
+  }, [searchParams, info]);
 
   const {
     register,
@@ -45,8 +57,17 @@ export const SignInForm = () => {
       const result = await signIn(data.email, data.password);
 
       if (!result.success) {
-        showError('Sign in failed', result.error);
-        setIsLoading(false); // Reset loading state on error
+        // Check if error is about email confirmation
+        if (result.error?.toLowerCase().includes('email') && 
+            result.error?.toLowerCase().includes('confirm')) {
+          showError(
+            'Email not verified',
+            'Please check your email and click the verification link before signing in.'
+          );
+        } else {
+          showError('Sign in failed', result.error);
+        }
+        setIsLoading(false);
       }
       // If successful, the signIn action will redirect to /app/dashboard
     } catch (err) {

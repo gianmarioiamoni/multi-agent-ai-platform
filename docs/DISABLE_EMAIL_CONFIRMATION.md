@@ -1,14 +1,27 @@
-# Disable Email Confirmation for Testing
+# Email Confirmation Configuration
 
-## Problem
+## Production Setup (Recommended - Currently Active)
 
-When testing authentication, Supabase requires email confirmation by default. This prevents immediate login after signup.
+By default, email confirmation is **ENABLED** for security. This is the recommended configuration for production.
 
-**Error message**: "Email not confirmed"
+### User Flow with Email Confirmation:
 
-## Solution for Development
+1. User signs up → Account created
+2. User receives verification email
+3. User clicks link in email → Email confirmed
+4. User can now sign in
 
-Temporarily disable email confirmation in your Supabase project:
+### Benefits:
+- ✅ Prevents spam accounts
+- ✅ Verifies real email addresses
+- ✅ More secure
+- ✅ Better for production
+
+---
+
+## Development/Testing Options
+
+If you need to test quickly without checking emails:
 
 ### Step 1: Go to Supabase Dashboard
 
@@ -40,19 +53,57 @@ If you want to keep email confirmation enabled but confirm existing test users:
 4. Click **Confirm User** button
 5. Now you can sign in with that user
 
-## For Production
+---
 
-⚠️ **Important**: In production, you should:
-- Keep email confirmation **ENABLED**
-- Configure email templates in Supabase
-- Set up proper SMTP (or use Supabase default)
-- Test the full email flow
+## How to Enable/Re-enable Email Confirmation
 
-## Current Status
+### Step 1: Go to Supabase Dashboard
 
-After disabling email confirmation:
-- ✅ Users can sign up and login immediately
-- ✅ No email verification required
-- ✅ Perfect for development and testing
-- ⚠️ Remember to re-enable for production
+1. Open [https://supabase.com/dashboard](https://supabase.com/dashboard)
+2. Select your project: `multi-agent-ai-platform`
+
+### Step 2: Enable Email Confirmation
+
+1. In the left sidebar, go to: **Authentication** → **Providers**
+2. Click on **Email** provider
+3. Find the section: **Confirm email**
+4. **Toggle ON** the "Confirm email" switch
+5. Click **Save**
+
+### Step 3: Configure Email Templates (Optional but Recommended)
+
+1. Go to **Authentication** → **Email Templates**
+2. Customize the "Confirm signup" template:
+   - Update subject line
+   - Customize email content
+   - Add your branding
+3. Click **Save**
+
+---
+
+## Production Checklist
+
+⚠️ **Before going to production**:
+
+- [ ] Email confirmation is **ENABLED**
+- [ ] Email templates are customized
+- [ ] SMTP is configured (or using Supabase default)
+- [ ] Test the full signup → email → confirmation → login flow
+- [ ] Check email deliverability (not going to spam)
+- [ ] Set up email rate limiting
+- [ ] Configure redirect URLs correctly
+
+---
+
+## Current Configuration
+
+**Recommended for Production**: Email confirmation **ENABLED** ✅
+
+With this setup:
+- ✅ Users must verify their email before signing in
+- ✅ Better security
+- ✅ Valid email addresses only
+- ✅ Prevents spam accounts
+- ℹ️ Users see clear instructions about email verification
+- ℹ️ Helpful error messages if trying to login without verification
 
