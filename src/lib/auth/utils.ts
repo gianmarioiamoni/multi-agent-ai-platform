@@ -51,14 +51,25 @@ export const getCurrentUserProfile = async (): Promise<UserProfile | null> => {
     return null;
   }
 
+  // Type assertion for database row
+  const profileData = profile as {
+    id: string;
+    user_id: string;
+    name: string | null;
+    role: string;
+    settings: Record<string, unknown> | null;
+    created_at: string;
+    updated_at: string;
+  };
+
   return {
-    id: profile.id,
-    userId: profile.user_id,
-    name: profile.name,
-    role: profile.role as UserRole,
-    settings: profile.settings as Record<string, unknown> | null,
-    createdAt: profile.created_at,
-    updatedAt: profile.updated_at,
+    id: profileData.id,
+    userId: profileData.user_id,
+    name: profileData.name,
+    role: profileData.role as UserRole,
+    settings: profileData.settings,
+    createdAt: profileData.created_at,
+    updatedAt: profileData.updated_at,
   };
 };
 

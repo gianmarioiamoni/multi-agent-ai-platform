@@ -1,42 +1,174 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/**
+ * Multi-Agent AI Platform - Global Styles
+ * Tailwind 4 CSS-centered configuration with vibrant, modern theme
+ */
+
+@import "tailwindcss";
+
+/**
+ * Design Tokens - Vibrant & Modern Color Palette
+ * Primary: Electric Indigo - Dynamic and tech-forward
+ * Accent: Vibrant Cyan - Energy and innovation
+ * Success: Lime Green - Growth and achievement
+ * Warning: Warm Orange - Attention-grabbing
+ * Destructive: Hot Pink - Modern error state
+ */
+
+@theme {
+  /* Color Palette - Light Mode */
+  --color-background: oklch(100% 0 0);
+  --color-foreground: oklch(15% 0.02 280);
+  
+  --color-primary: oklch(58% 0.24 270); /* Electric Indigo */
+  --color-primary-foreground: oklch(100% 0 0);
+  
+  --color-secondary: oklch(92% 0.02 270);
+  --color-secondary-foreground: oklch(15% 0.02 280);
+  
+  --color-accent: oklch(68% 0.20 195); /* Vibrant Cyan */
+  --color-accent-foreground: oklch(100% 0 0);
+  
+  --color-success: oklch(72% 0.20 140); /* Lime Green */
+  --color-success-foreground: oklch(15% 0.02 140);
+  
+  --color-warning: oklch(75% 0.18 50); /* Warm Orange */
+  --color-warning-foreground: oklch(15% 0.02 50);
+  
+  --color-destructive: oklch(65% 0.25 350); /* Hot Pink */
+  --color-destructive-foreground: oklch(100% 0 0);
+  
+  --color-muted: oklch(95% 0.01 270);
+  --color-muted-foreground: oklch(50% 0.02 270);
+  
+  --color-card: oklch(100% 0 0);
+  --color-card-foreground: oklch(15% 0.02 280);
+  
+  --color-popover: oklch(100% 0 0);
+  --color-popover-foreground: oklch(15% 0.02 280);
+  
+  --color-border: oklch(90% 0.01 270);
+  --color-input: oklch(90% 0.01 270);
+  --color-ring: oklch(58% 0.24 270);
+  
+  --radius: 0.5rem;
 }
 
+/* Dark Mode - Enhanced with vivid accents */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  @theme {
+    --color-background: oklch(12% 0.02 280);
+    --color-foreground: oklch(98% 0 0);
+    
+    --color-primary: oklch(68% 0.26 270); /* Brighter Indigo */
+    --color-primary-foreground: oklch(10% 0.02 280);
+    
+    --color-secondary: oklch(20% 0.02 270);
+    --color-secondary-foreground: oklch(98% 0 0);
+    
+    --color-accent: oklch(75% 0.22 195); /* Brighter Cyan */
+    --color-accent-foreground: oklch(10% 0.02 195);
+    
+    --color-success: oklch(78% 0.22 140); /* Brighter Lime */
+    --color-success-foreground: oklch(10% 0.02 140);
+    
+    --color-warning: oklch(80% 0.20 50); /* Brighter Orange */
+    --color-warning-foreground: oklch(10% 0.02 50);
+    
+    --color-destructive: oklch(70% 0.27 350); /* Brighter Pink */
+    --color-destructive-foreground: oklch(98% 0 0);
+    
+    --color-muted: oklch(18% 0.02 270);
+    --color-muted-foreground: oklch(65% 0.02 270);
+    
+    --color-card: oklch(14% 0.02 280);
+    --color-card-foreground: oklch(98% 0 0);
+    
+    --color-popover: oklch(14% 0.02 280);
+    --color-popover-foreground: oklch(98% 0 0);
+    
+    --color-border: oklch(22% 0.02 270);
+    --color-input: oklch(22% 0.02 270);
+    --color-ring: oklch(68% 0.26 270);
   }
 }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
+/* Base Styles */
 * {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+  border-color: var(--color-border);
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-feature-settings: "rlig" 1, "calt" 1;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
+/* Typography System - Centralized */
+.text-h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 1024px) {
+  .text-h1 {
+    font-size: 3rem;
   }
+}
+
+.text-h2 {
+  font-size: 1.875rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+@media (min-width: 1024px) {
+  .text-h2 {
+    font-size: 2.25rem;
+  }
+}
+
+.text-h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+
+@media (min-width: 1024px) {
+  .text-h3 {
+    font-size: 1.875rem;
+  }
+}
+
+.text-h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+
+@media (min-width: 1024px) {
+  .text-h4 {
+    font-size: 1.5rem;
+  }
+}
+
+.text-body {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.text-small {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--color-muted-foreground);
+}
+
+.text-tiny {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--color-muted-foreground);
 }
