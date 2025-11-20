@@ -37,39 +37,45 @@ export const getCurrentUser = async (): Promise<User | null> => {
 export const getCurrentUserProfile = async (): Promise<UserProfile | null> => {
   const user = await getCurrentUser();
   if (!user) {
+    console.log('getCurrentUserProfile: No user found');
     return null;
   }
 
+  console.log('getCurrentUserProfile: User found:', user.id, user.email);
+
   const supabase = await createClient();
-  let { data: profile, error } = await supabase
+  
+  // Try to get all profiles first to see if RLS is working
+  const { data: allProfiles, error: allError } = await supabase
+    .from('profiles')
+    .select('*');
+  
+  console.log('All profiles query result:', { count: allProfiles?.length, error: allError });
+  
+  const { data: profile, error } = await supabase
     .from('profiles')
     .select('*')
     .eq('user_id', user.id)
     .single();
 
-  // If profile doesn't exist, create it (fallback for missing trigger execution)
-  if (error && error.code === 'PGRST116') {
-    console.log('Profile not found, creating one for user:', user.email);
-    
-    const { data: newProfile, error: createError } = await supabase
-      .from('profiles')
-      .insert({
-        user_id: user.id,
-        name: user.user_metadata?.name || user.email?.split('@')[0] || 'User',
-        role: 'user',
-      })
-      .select()
-      .single();
+  console.log('Profile query result:', { 
+    hasData: !!profile, 
+    errorCode: error?.code, 
+    errorMessage: error?.message,
+    errorDetails: error?.details
+  });
 
-    if (createError) {
-      console.error('Failed to create profile:', createError);
-      return null;
-    }
-
-    profile = newProfile;
-  } else if (error || !profile) {
+  if (error) {
+    console.error('getCurrentUserProfile: Error fetching profile:', error);
     return null;
   }
+
+  if (!profile) {
+    console.log('getCurrentUserProfile: No profile data returned');
+    return null;
+  }
+
+  console.log('getCurrentUserProfile: Profile found:', profile);
 
   // Type assertion for database row
   const profileData = profile as {
