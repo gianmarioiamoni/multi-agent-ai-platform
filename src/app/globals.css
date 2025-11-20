@@ -34,7 +34,7 @@
   --color-warning: oklch(78% 0.20 50); /* Warm Orange - Brighter */
   --color-warning-foreground: oklch(15% 0.02 50);
   
-  --color-destructive: oklch(70% 0.28 350); /* Hot Pink - Brighter */
+  --color-destructive: oklch(65% 0.24 25); /* Bright Red-Orange */
   --color-destructive-foreground: oklch(100% 0 0);
   
   --color-muted: oklch(95% 0.01 270);
@@ -74,7 +74,7 @@
     --color-warning: oklch(85% 0.23 50); /* Very Bright Orange */
     --color-warning-foreground: oklch(10% 0.02 50);
     
-    --color-destructive: oklch(75% 0.30 350); /* Very Bright Pink */
+    --color-destructive: oklch(68% 0.28 15); /* Vibrant Bright Red - Pops on dark background */
     --color-destructive-foreground: oklch(98% 0 0);
     
     --color-muted: oklch(18% 0.02 270);

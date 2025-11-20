@@ -22,6 +22,13 @@ export const LogoutButton = () => {
       await signOut();
       // signOut will redirect to login page
     } catch (err) {
+      // Check if it's a Next.js redirect (not an actual error)
+      if (err instanceof Error && err.message.includes('NEXT_REDIRECT')) {
+        // This is expected, let it propagate
+        throw err;
+      }
+      
+      // Only show error for actual errors
       showError(
         'Logout failed',
         err instanceof Error ? err.message : 'Please try again.'
