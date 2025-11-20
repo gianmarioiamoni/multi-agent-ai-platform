@@ -41,13 +41,33 @@ export const getCurrentUserProfile = async (): Promise<UserProfile | null> => {
   }
 
   const supabase = await createClient();
-  const { data: profile, error } = await supabase
+  let { data: profile, error } = await supabase
     .from('profiles')
     .select('*')
     .eq('user_id', user.id)
     .single();
 
-  if (error || !profile) {
+  // If profile doesn't exist, create it (fallback for missing trigger execution)
+  if (error && error.code === 'PGRST116') {
+    console.log('Profile not found, creating one for user:', user.email);
+    
+    const { data: newProfile, error: createError } = await supabase
+      .from('profiles')
+      .insert({
+        user_id: user.id,
+        name: user.user_metadata?.name || user.email?.split('@')[0] || 'User',
+        role: 'user',
+      })
+      .select()
+      .single();
+
+    if (createError) {
+      console.error('Failed to create profile:', createError);
+      return null;
+    }
+
+    profile = newProfile;
+  } else if (error || !profile) {
     return null;
   }
 
