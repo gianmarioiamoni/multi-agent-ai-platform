@@ -1,0 +1,67 @@
+/**
+ * Database Types
+ * These types will be generated from Supabase schema
+ * For now, we provide a placeholder structure
+ * 
+ * To generate these types from your Supabase project:
+ * npx supabase gen types typescript --project-id your-project-id > src/types/database.types.ts
+ */
+
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[];
+
+export interface Database {
+  public: {
+    Tables: {
+      profiles: {
+        Row: {
+          id: string;
+          user_id: string;
+          name: string | null;
+          role: 'user' | 'admin';
+          settings: Json | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          name?: string | null;
+          role?: 'user' | 'admin';
+          settings?: Json | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          name?: string | null;
+          role?: 'user' | 'admin';
+          settings?: Json | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      // Additional tables will be added in Sprint 2
+      agents: {
+        Row: Record<string, never>;
+        Insert: Record<string, never>;
+        Update: Record<string, never>;
+      };
+      workflows: {
+        Row: Record<string, never>;
+        Insert: Record<string, never>;
+        Update: Record<string, never>;
+      };
+    };
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+    Enums: Record<string, never>;
+  };
+}
+
