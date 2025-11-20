@@ -58,8 +58,12 @@ export const SignInForm = () => {
       const result = await signIn(data.email, data.password);
 
       if (result.success) {
-        // Successful login - redirect to dashboard
-        router.push('/app/dashboard');
+        // Successful login - wait a moment for cookies to be set, then redirect
+        // This ensures the session is fully established before navigation
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Force a hard navigation to ensure cookies are sent with the request
+        window.location.href = '/app/dashboard';
       } else {
         // Check if error is about email confirmation
         if (result.error?.toLowerCase().includes('email') && 

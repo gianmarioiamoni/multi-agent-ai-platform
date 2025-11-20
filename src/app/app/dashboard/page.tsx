@@ -5,7 +5,7 @@
  */
 
 import type { Metadata } from 'next';
-import { getCurrentUserProfile } from '@/lib/auth/utils';
+import { getCurrentUser, getCurrentUserProfile } from '@/lib/auth/utils';
 import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
@@ -14,9 +14,15 @@ export const metadata: Metadata = {
 };
 
 export default async function DashboardPage() {
+  // Debug: Check auth state
+  const user = await getCurrentUser();
+  console.log('Dashboard - User from getCurrentUser:', user?.email);
+  
   const profile = await getCurrentUserProfile();
+  console.log('Dashboard - Profile from getCurrentUserProfile:', profile?.name, profile?.role);
 
   if (!profile) {
+    console.log('Dashboard - No profile found, redirecting to login');
     redirect('/auth/login');
   }
 
