@@ -28,13 +28,13 @@
   --color-accent: oklch(68% 0.20 195); /* Vibrant Cyan */
   --color-accent-foreground: oklch(100% 0 0);
   
-  --color-success: oklch(72% 0.20 140); /* Lime Green */
+  --color-success: oklch(75% 0.22 140); /* Lime Green - Brighter */
   --color-success-foreground: oklch(15% 0.02 140);
   
-  --color-warning: oklch(75% 0.18 50); /* Warm Orange */
+  --color-warning: oklch(78% 0.20 50); /* Warm Orange - Brighter */
   --color-warning-foreground: oklch(15% 0.02 50);
   
-  --color-destructive: oklch(65% 0.25 350); /* Hot Pink */
+  --color-destructive: oklch(70% 0.28 350); /* Hot Pink - Brighter */
   --color-destructive-foreground: oklch(100% 0 0);
   
   --color-muted: oklch(95% 0.01 270);
@@ -68,13 +68,13 @@
     --color-accent: oklch(75% 0.22 195); /* Brighter Cyan */
     --color-accent-foreground: oklch(10% 0.02 195);
     
-    --color-success: oklch(78% 0.22 140); /* Brighter Lime */
+    --color-success: oklch(82% 0.25 140); /* Very Bright Lime */
     --color-success-foreground: oklch(10% 0.02 140);
     
-    --color-warning: oklch(80% 0.20 50); /* Brighter Orange */
+    --color-warning: oklch(85% 0.23 50); /* Very Bright Orange */
     --color-warning-foreground: oklch(10% 0.02 50);
     
-    --color-destructive: oklch(70% 0.27 350); /* Brighter Pink */
+    --color-destructive: oklch(75% 0.30 350); /* Very Bright Pink */
     --color-destructive-foreground: oklch(98% 0 0);
     
     --color-muted: oklch(18% 0.02 270);

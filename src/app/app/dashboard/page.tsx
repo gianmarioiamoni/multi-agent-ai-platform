@@ -13,27 +13,27 @@ export const metadata: Metadata = {
   description: 'Manage your AI agents and workflows',
 };
 
+import { LogoutButton } from '@/components/auth/logout-button';
+
 export default async function DashboardPage() {
-  // Debug: Check auth state
-  const user = await getCurrentUser();
-  console.log('Dashboard - User from getCurrentUser:', user?.email);
-  
   const profile = await getCurrentUserProfile();
-  console.log('Dashboard - Profile from getCurrentUserProfile:', profile?.name, profile?.role);
 
   if (!profile) {
-    console.log('Dashboard - No profile found, redirecting to login');
     redirect('/auth/login');
   }
 
   return (
     <div className="container mx-auto py-10">
       <div className="space-y-6">
-        <div>
-          <h1 className="text-h1">Dashboard</h1>
-          <p className="text-muted-foreground mt-2">
-            Welcome back, {profile.name || 'there'}!
-          </p>
+        {/* Header with user info and logout */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-h1">Dashboard</h1>
+            <p className="text-[var(--color-muted-foreground)] mt-2">
+              Welcome back, <span className="font-semibold text-[var(--color-foreground)]">{profile.name || 'there'}</span>!
+            </p>
+          </div>
+          <LogoutButton />
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

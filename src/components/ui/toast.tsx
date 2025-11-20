@@ -16,10 +16,10 @@ interface ToastProps {
 }
 
 const toastStyles = {
-  success: 'bg-[var(--color-success)]/10 border-[var(--color-success)] text-[var(--color-success-foreground)]',
-  error: 'bg-[var(--color-destructive)]/10 border-[var(--color-destructive)] text-[var(--color-destructive-foreground)]',
-  warning: 'bg-[var(--color-warning)]/10 border-[var(--color-warning)] text-[var(--color-warning-foreground)]',
-  info: 'bg-[var(--color-accent)]/10 border-[var(--color-accent)] text-[var(--color-foreground)]',
+  success: 'bg-[var(--color-success)]/20 border-2 border-[var(--color-success)] text-[var(--color-success)] backdrop-blur-sm',
+  error: 'bg-[var(--color-destructive)]/20 border-2 border-[var(--color-destructive)] text-[var(--color-destructive)] backdrop-blur-sm',
+  warning: 'bg-[var(--color-warning)]/20 border-2 border-[var(--color-warning)] text-[var(--color-warning)] backdrop-blur-sm',
+  info: 'bg-[var(--color-accent)]/20 border-2 border-[var(--color-accent)] text-[var(--color-accent)] backdrop-blur-sm',
 };
 
 const toastIcons = {
