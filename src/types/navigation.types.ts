@@ -3,12 +3,12 @@
  * Types for navigation menu items, routes, and user menu
  */
 
-import type { ReactNode } from 'react';
+import type { IconName } from '@/components/icons';
 
 export interface NavItem {
   label: string;
   href: string;
-  icon?: ReactNode;
+  icon?: IconName;
   badge?: string | number;
   adminOnly?: boolean;
 }
@@ -22,7 +22,7 @@ export interface UserMenuAction {
   label: string;
   href?: string;
   onClick?: () => void;
-  icon?: ReactNode;
+  icon?: IconName;
   variant?: 'default' | 'destructive';
   separator?: boolean;
 }

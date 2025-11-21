@@ -6,6 +6,7 @@
 
 import Link from 'next/link';
 import { cn } from '@/utils/cn';
+import { iconMap } from '@/components/icons';
 import type { NavItem } from '@/types/navigation.types';
 
 interface NavigationItemProps {
@@ -15,6 +16,8 @@ interface NavigationItemProps {
 }
 
 export const NavigationItem = ({ item, isActive, onClick }: NavigationItemProps) => {
+  const Icon = item.icon ? iconMap[item.icon] : null;
+
   return (
     <li>
       <Link
@@ -27,7 +30,7 @@ export const NavigationItem = ({ item, isActive, onClick }: NavigationItemProps)
             : 'text-[var(--color-foreground)] hover:bg-[var(--color-accent)]/10 hover:text-[var(--color-accent)]'
         )}
       >
-        {item.icon}
+        {Icon && <Icon />}
         <span className="flex-1">{item.label}</span>
         {item.badge && (
           <span className={cn(
