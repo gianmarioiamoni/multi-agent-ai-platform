@@ -5,79 +5,119 @@
  */
 
 import type { Metadata } from 'next';
-import { getCurrentUser, getCurrentUserProfile } from '@/lib/auth/utils';
-import { redirect } from 'next/navigation';
+import { getCurrentUserProfile } from '@/lib/auth/utils';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
   description: 'Manage your AI agents and workflows',
 };
 
-import { LogoutButton } from '@/components/auth/logout-button';
-
 export default async function DashboardPage() {
   const profile = await getCurrentUserProfile();
 
-  if (!profile) {
-    redirect('/auth/login');
-  }
-
   return (
-    <div className="container mx-auto py-10">
-      <div className="space-y-6">
-        {/* Header with user info and logout */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-h1">Dashboard</h1>
-            <p className="text-[var(--color-muted-foreground)] mt-2">
-              Welcome back, <span className="font-semibold text-[var(--color-foreground)]">{profile.name || 'there'}</span>!
-            </p>
+    <div className="space-y-8">
+      {/* Header */}
+      <div>
+        <h1 className="text-4xl font-bold text-[var(--color-foreground)]">
+          Dashboard
+        </h1>
+        <p className="text-[var(--color-muted-foreground)] mt-2">
+          Welcome back, <span className="font-semibold text-[var(--color-foreground)]">{profile?.name || 'there'}</span>! 
+          Here's what's happening with your AI agents today.
+        </p>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          { label: 'Active Agents', value: '0', icon: '🤖' },
+          { label: 'Workflows', value: '0', icon: '⚡' },
+          { label: 'Runs Today', value: '0', icon: '📊' },
+          { label: 'Success Rate', value: '0%', icon: '✅' },
+        ].map((stat) => (
+          <div
+            key={stat.label}
+            className="p-6 rounded-lg bg-[var(--color-card)] border border-[var(--color-border)] hover:shadow-lg transition-shadow"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-3xl">{stat.icon}</span>
+              <span className="text-xs font-semibold text-[var(--color-muted-foreground)] uppercase">
+                {stat.label}
+              </span>
+            </div>
+            <div className="text-3xl font-bold text-[var(--color-foreground)]">
+              {stat.value}
+            </div>
           </div>
-          <LogoutButton />
+        ))}
+      </div>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="p-6 rounded-lg bg-[var(--color-card)] border border-[var(--color-border)]">
+          <h2 className="text-xl font-semibold text-[var(--color-foreground)] mb-4">
+            🚀 Quick Actions
+          </h2>
+          <div className="space-y-3">
+            {[
+              { label: 'Create New Agent', href: '#', soon: true },
+              { label: 'Build Workflow', href: '#', soon: true },
+              { label: 'View Integrations', href: '#', soon: true },
+            ].map((action) => (
+              <button
+                key={action.label}
+                className="w-full px-4 py-3 text-left rounded-lg border border-[var(--color-border)] hover:bg-[var(--color-accent)]/10 hover:border-[var(--color-accent)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={action.soon}
+              >
+                <span className="text-[var(--color-foreground)]">{action.label}</span>
+                {action.soon && (
+                  <span className="ml-2 text-xs text-[var(--color-muted-foreground)]">
+                    (Coming Soon)
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <div className="rounded-lg border bg-card p-6">
-            <h3 className="text-h4 mb-2">Agents</h3>
-            <p className="text-small">Manage your AI agents</p>
-            <p className="text-2xl font-bold mt-4">0</p>
-          </div>
-
-          <div className="rounded-lg border bg-card p-6">
-            <h3 className="text-h4 mb-2">Workflows</h3>
-            <p className="text-small">Active workflow automations</p>
-            <p className="text-2xl font-bold mt-4">0</p>
-          </div>
-
-          <div className="rounded-lg border bg-card p-6">
-            <h3 className="text-h4 mb-2">Runs</h3>
-            <p className="text-small">Total workflow executions</p>
-            <p className="text-2xl font-bold mt-4">0</p>
-          </div>
-        </div>
-
-        <div className="rounded-lg border bg-card p-6">
-          <h3 className="text-h4 mb-4">Getting Started</h3>
-          <p className="text-body mb-4">
-            Welcome to the Multi-Agent AI Platform! Here's how to get started:
-          </p>
-          <ol className="list-decimal list-inside space-y-2 text-body">
-            <li>Create your first AI agent (Coming in Sprint 2)</li>
-            <li>Configure tools for your agent</li>
-            <li>Build a workflow with multiple agents</li>
-            <li>Run and monitor your automation</li>
+        <div className="p-6 rounded-lg bg-[var(--color-card)] border border-[var(--color-border)]">
+          <h2 className="text-xl font-semibold text-[var(--color-foreground)] mb-4">
+            📋 Getting Started
+          </h2>
+          <ol className="space-y-3 text-[var(--color-foreground)]">
+            <li className="flex items-start gap-3">
+              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[var(--color-primary)] text-white flex items-center justify-center text-sm font-semibold">
+                1
+              </span>
+              <span>Create your first AI agent (Sprint 2)</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[var(--color-primary)]/50 text-white flex items-center justify-center text-sm font-semibold">
+                2
+              </span>
+              <span>Configure tools for your agent</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[var(--color-primary)]/30 text-white flex items-center justify-center text-sm font-semibold">
+                3
+              </span>
+              <span>Build a workflow with multiple agents</span>
+            </li>
           </ol>
         </div>
+      </div>
 
-        <div className="rounded-lg border border-blue-200 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-800 p-6">
-          <h3 className="text-h4 mb-2">🎯 Sprint 1 Progress</h3>
-          <p className="text-body">
-            ✅ Authentication and user management completed!
-            <br />
-            ⏭️ Next: Base layout with navigation (Week 1)
-            <br />
-            ⏭️ After: Admin tools and middleware (Week 2)
-          </p>
+      {/* Sprint Progress */}
+      <div className="p-6 rounded-lg bg-gradient-to-br from-[var(--color-primary)]/10 to-[var(--color-accent)]/10 border border-[var(--color-primary)]/20">
+        <h3 className="text-xl font-semibold text-[var(--color-foreground)] mb-2">
+          🎯 Sprint 1 Progress
+        </h3>
+        <div className="space-y-2 text-[var(--color-foreground)]">
+          <p>✅ Authentication and user management</p>
+          <p>✅ Google OAuth integration</p>
+          <p>✅ Base layout with navigation</p>
+          <p className="text-[var(--color-accent)] font-semibold">⏭️ Next: Admin tools and middleware (Week 2)</p>
         </div>
       </div>
     </div>
