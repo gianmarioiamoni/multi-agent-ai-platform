@@ -33,7 +33,7 @@ export const SignUpForm = () => {
   });
 
   const onSubmit = async (data: SignUpFormData) => {
-    await handleSignUp(data.email, data.password, data.name);
+    await handleSignUp(data.email, data.password, data.name || '');
   };
 
   return (
