@@ -7,8 +7,8 @@
 'use client';
 
 import { useUserRoleManagement } from '@/hooks/use-user-role-management';
-import { UsersTableHeader } from './users-table-header';
-import { UserTableRow } from './user-table-row';
+import { UsersTableHeader } from './users-table/users-table-header';
+import { UserTableRow } from './users-table/user-table-row';
 import type { Database } from '@/types/database.types';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];

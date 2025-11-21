@@ -169,17 +169,20 @@ export const UsersTable = ({ users, currentUserId }) => {
 ```
 src/
 ├── utils/
-│   └── format.ts                    # NEW - Utilità centralizzate
+│   └── format.ts                         # NEW - Utilità centralizzate
 ├── hooks/
-│   └── use-user-role-management.ts  # NEW - Logica ruoli
+│   └── use-user-role-management.ts       # NEW - Logica ruoli
 └── components/admin/
-    ├── user-avatar.tsx              # NEW - Avatar atomico
-    ├── user-role-badge.tsx          # NEW - Badge atomico
-    ├── role-selector.tsx            # NEW - Select atomico
-    ├── user-table-row.tsx           # NEW - Riga atomica
-    ├── users-table-header.tsx       # NEW - Header atomico
-    └── users-table.tsx              # REFACTORED - Solo composizione
+    ├── users-table.tsx                   # REFACTORED - Componente principale
+    └── users-table/                      # NEW - Sottocartella sottocomponenti
+        ├── user-avatar.tsx               # NEW - Avatar atomico
+        ├── user-role-badge.tsx           # NEW - Badge atomico
+        ├── role-selector.tsx             # NEW - Select atomico
+        ├── user-table-row.tsx            # NEW - Riga atomica
+        └── users-table-header.tsx        # NEW - Header atomico
 ```
+
+**Best Practice**: I sottocomponenti sono organizzati in una sottocartella dedicata (`users-table/`) per mantenere una struttura pulita e scalabile.
 
 ## ✨ Benefici del Refactoring
 
@@ -252,15 +255,55 @@ const { updateRole, deleteUser, suspendUser } = useUserManagement();
 Quando refactori un componente per applicare SRP, segui questa checklist:
 
 - [x] **Identificare responsabilità multiple** nel componente originale
-- [x] **Estrarre logica di business** in custom hooks
+- [x] **Estrarre logica di business** in custom hooks (`hooks/`)
 - [x] **Centralizzare utilità** in file dedicati (`utils/`)
 - [x] **Creare componenti atomici** per ogni elemento UI
+- [x] **Creare sottocartella** con lo stesso nome del componente principale
+- [x] **Spostare sottocomponenti** nella sottocartella
+- [x] **Aggiornare import** nel componente principale
 - [x] **Ridurre componente principale** a solo composizione
 - [x] **Verificare zero errori ESLint**
 - [x] **Documentare il refactoring**
 - [x] **Testare che tutto funzioni** (manualmente o con test)
 
 ## 🚀 Best Practices
+
+### Organizzazione File e Cartelle
+
+**✅ REGOLA: Sottocartella per Sottocomponenti**
+
+Quando applichi SRP a un componente:
+1. **Mantieni il componente principale** nella sua posizione originale
+2. **Crea una sottocartella** con lo stesso nome del componente
+3. **Sposta tutti i sottocomponenti** nella sottocartella
+
+```
+✅ CORRETTO:
+components/admin/
+├── users-table.tsx           ← Componente principale
+└── users-table/              ← Sottocartella
+    ├── user-avatar.tsx
+    ├── user-role-badge.tsx
+    ├── role-selector.tsx
+    ├── user-table-row.tsx
+    └── users-table-header.tsx
+
+❌ SBAGLIATO:
+components/admin/
+├── users-table.tsx
+├── user-avatar.tsx           ← Sparsi nella stessa cartella
+├── user-role-badge.tsx       ← Difficile da mantenere
+├── role-selector.tsx         ← Confusione con altri componenti
+├── user-table-row.tsx
+└── users-table-header.tsx
+```
+
+**Vantaggi**:
+- ✅ **Organizzazione chiara**: Immediato capire quali sono i sottocomponenti
+- ✅ **Scalabilità**: Facile aggiungere nuovi sottocomponenti
+- ✅ **Manutenibilità**: Refactoring isolato senza impattare altri componenti
+- ✅ **Import chiari**: `./users-table/user-avatar` vs `./user-avatar`
+- ✅ **Navigazione IDE**: Cartelle collassabili
 
 ### Quando Applicare SRP
 
