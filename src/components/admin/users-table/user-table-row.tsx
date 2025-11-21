@@ -5,7 +5,7 @@
  */
 
 import { formatDate } from '@/utils/format';
-import { UserAvatar } from './user-avatar';
+import { UserAvatar } from '@/components/ui/user-avatar';
 import { UserRoleBadge } from './user-role-badge';
 import { RoleSelector } from './role-selector';
 import type { Database } from '@/types/database.types';
