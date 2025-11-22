@@ -32,27 +32,20 @@ export const ModelConfigSection = () => {
         <Label htmlFor="model" required>
           AI Model
         </Label>
+        <input type="hidden" {...register('model')} />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
           {AVAILABLE_MODELS.map((model) => {
             const isSelected = selectedModel === model.id;
             return (
               <div
                 key={model.id}
-                onClick={() => setValue('model', model.id)}
+                onClick={() => setValue('model', model.id, { shouldValidate: true })}
                 className={`relative flex cursor-pointer rounded-lg border p-4 transition-colors ${
                   isSelected
                     ? 'border-primary bg-primary/5'
                     : 'border-border hover:border-primary/50'
                 }`}
               >
-                <input
-                  type="radio"
-                  {...register('model')}
-                  value={model.id}
-                  checked={isSelected}
-                  onChange={() => setValue('model', model.id)}
-                  className="sr-only"
-                />
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
                     <span className="font-medium">{model.name}</span>
@@ -92,12 +85,15 @@ export const ModelConfigSection = () => {
       <div>
         <div className="flex items-center justify-between mb-2">
           <Label htmlFor="temperature">Temperature</Label>
-          <span className="text-sm text-muted-foreground">{temperature}</span>
+          <span className="text-sm text-muted-foreground">
+            {temperature?.toFixed(1) ?? '0.7'}
+          </span>
         </div>
         <input
           type="range"
           id="temperature"
-          {...register('temperature', { valueAsNumber: true })}
+          value={temperature ?? 0.7}
+          onChange={(e) => setValue('temperature', parseFloat(e.target.value), { shouldValidate: true })}
           min="0"
           max="2"
           step="0.1"
@@ -119,12 +115,15 @@ export const ModelConfigSection = () => {
       <div>
         <div className="flex items-center justify-between mb-2">
           <Label htmlFor="max_tokens">Max Tokens</Label>
-          <span className="text-sm text-muted-foreground">{maxTokens}</span>
+          <span className="text-sm text-muted-foreground">
+            {maxTokens ?? 2000}
+          </span>
         </div>
         <input
           type="range"
           id="max_tokens"
-          {...register('max_tokens', { valueAsNumber: true })}
+          value={maxTokens ?? 2000}
+          onChange={(e) => setValue('max_tokens', parseInt(e.target.value), { shouldValidate: true })}
           min="100"
           max={selectedModelInfo?.maxTokens || 4096}
           step="100"
