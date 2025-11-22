@@ -20,9 +20,9 @@ export const AgentsHeader = () => {
       </div>
       
       <Link href="/app/agents/create">
-        <Button variant="primary" size="md">
+        <Button variant="primary" size="md" className="md:px-4">
           <svg
-            className="w-5 h-5 mr-2"
+            className="w-5 h-5 md:mr-2"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -34,7 +34,7 @@ export const AgentsHeader = () => {
               d="M12 4v16m8-8H4"
             />
           </svg>
-          Create Agent
+          <span className="hidden md:inline">Create Agent</span>
         </Button>
       </Link>
     </div>
