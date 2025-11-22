@@ -6,7 +6,6 @@
 
 'use client';
 
-import Link from 'next/link';
 import type { AgentListItem } from '@/types/agent.types';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { AVAILABLE_MODELS, AVAILABLE_TOOLS } from '@/types/agent.types';
@@ -29,12 +28,13 @@ export const AgentCard = ({ agent }: AgentCardProps) => {
   }[agent.status];
 
   return (
-    <Link href={`/app/agents/${agent.id}`}>
-      <Card className="h-full hover:border-primary/50 transition-colors cursor-pointer">
+    <Card className="h-full hover:border-primary hover:shadow-lg transition-all cursor-pointer group">
         <CardHeader>
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <CardTitle className="text-xl">{agent.name}</CardTitle>
+              <CardTitle className="text-xl group-hover:text-primary transition-colors">
+                {agent.name}
+              </CardTitle>
               {agent.description && (
                 <CardDescription className="mt-2 line-clamp-2">
                   {agent.description}
@@ -110,7 +110,6 @@ export const AgentCard = ({ agent }: AgentCardProps) => {
           </div>
         </CardContent>
       </Card>
-    </Link>
   );
 };
 
