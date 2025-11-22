@@ -1,9 +1,12 @@
 /**
- * Next.js Middleware
+ * Next.js Proxy (formerly Middleware)
  * Handles authentication and route protection
  * - /app/* routes: Require authentication
  * - /admin/* routes: Require admin role
  * - /auth/* routes: Redirect if already authenticated
+ * 
+ * Note: This file was renamed from middleware.ts to proxy.ts
+ * to comply with Next.js 15+ conventions
  */
 
 import { createServerClient } from '@supabase/ssr';
@@ -21,7 +24,7 @@ export async function middleware(request: NextRequest) {
     },
   });
 
-  // Create Supabase client for middleware
+  // Create Supabase client for proxy
   const supabase = createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
