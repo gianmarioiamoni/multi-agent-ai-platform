@@ -7,15 +7,16 @@
 import type { Tool, ToolResult } from '@/types/tool.types';
 import type { ToolId } from '@/types/agent.types';
 import { webSearchTool } from './web-search';
+import { emailTool } from './email';
 
 // Tool registry map
 const tools = new Map<ToolId, Tool>();
 
 // Register available tools
 tools.set('web_search', webSearchTool);
+tools.set('email', emailTool);
 
 // Tools coming soon (placeholders)
-// tools.set('email', emailTool);
 // tools.set('calendar', calendarTool);
 // tools.set('db_ops', dbOpsTool);
 
@@ -120,8 +121,13 @@ export function isToolAvailable(toolId: ToolId): boolean {
     case 'web_search':
       return !!process.env.TAVILY_API_KEY;
     case 'email':
-      // Check email service credentials when implemented
-      return false;
+      // Check SMTP configuration
+      return !!(
+        process.env.SMTP_HOST &&
+        process.env.SMTP_PORT &&
+        process.env.SMTP_USER &&
+        process.env.SMTP_PASSWORD
+      );
     case 'calendar':
       // Check calendar service credentials when implemented
       return false;
