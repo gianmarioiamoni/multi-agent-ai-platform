@@ -28,7 +28,7 @@ export const AgentCard = ({ agent }: AgentCardProps) => {
   }[agent.status];
 
   return (
-    <Card className="h-full border-2 hover:border-primary hover:shadow-lg transition-all cursor-pointer group">
+    <Card className="h-full border-2 border-[var(--color-border)] hover:!border-[var(--color-primary)] hover:shadow-lg transition-all cursor-pointer group">
         <CardHeader>
           <div className="flex items-start justify-between">
             <div className="flex-1">
