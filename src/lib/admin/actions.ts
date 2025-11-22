@@ -7,7 +7,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { createClient } from '@/lib/supabase/admin';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { getCurrentUserProfile } from '@/lib/auth/utils';
 import type { Database } from '@/types/database.types';
 
@@ -36,7 +36,7 @@ async function ensureAdmin(): Promise<void> {
 export async function getAllUsers(): Promise<Profile[]> {
   await ensureAdmin();
 
-  const supabase = createClient();
+  const supabase = createAdminClient();
   
   const { data, error } = await supabase
     .from('profiles')
@@ -60,7 +60,7 @@ export async function updateUserRole(
   try {
     await ensureAdmin();
 
-    const supabase = createClient();
+    const supabase = createAdminClient();
 
     // Prevent changing own role
     const currentProfile = await getCurrentUserProfile();
@@ -100,7 +100,7 @@ export async function updateUserRole(
 export async function getPlatformStats() {
   await ensureAdmin();
 
-  const supabase = createClient();
+  const supabase = createAdminClient();
 
   // Get total users
   const { count: totalUsers } = await supabase
