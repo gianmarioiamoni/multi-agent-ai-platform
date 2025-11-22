@@ -15,6 +15,7 @@ export const ModelConfigSection = () => {
   const {
     register,
     watch,
+    setValue,
     formState: { errors },
   } = useFormContext<CreateAgentFormData>();
 
@@ -35,8 +36,9 @@ export const ModelConfigSection = () => {
           {AVAILABLE_MODELS.map((model) => {
             const isSelected = selectedModel === model.id;
             return (
-              <label
+              <div
                 key={model.id}
+                onClick={() => setValue('model', model.id)}
                 className={`relative flex cursor-pointer rounded-lg border p-4 transition-colors ${
                   isSelected
                     ? 'border-primary bg-primary/5'
@@ -47,6 +49,8 @@ export const ModelConfigSection = () => {
                   type="radio"
                   {...register('model')}
                   value={model.id}
+                  checked={isSelected}
+                  onChange={() => setValue('model', model.id)}
                   className="sr-only"
                 />
                 <div className="flex-1">
@@ -75,7 +79,7 @@ export const ModelConfigSection = () => {
                     <span>Max {model.maxTokens} tokens</span>
                   </div>
                 </div>
-              </label>
+              </div>
             );
           })}
         </div>
