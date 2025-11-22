@@ -6,8 +6,10 @@
 
 'use client';
 
+import Link from 'next/link';
 import type { AgentListItem } from '@/types/agent.types';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { AVAILABLE_MODELS, AVAILABLE_TOOLS } from '@/types/agent.types';
 import { formatDate } from '@/utils/format';
 
@@ -103,12 +105,21 @@ export const AgentCard = ({ agent }: AgentCardProps) => {
               </div>
             )}
 
-            {/* Created date */}
-            <div className="text-xs text-muted-foreground pt-2 border-t border-border">
-              Created {formatDate(agent.created_at)}
-            </div>
           </div>
         </CardContent>
+
+        <CardFooter className="flex items-center justify-between pt-4 border-t border-border">
+          <div className="text-xs text-muted-foreground">
+            Created {formatDate(agent.created_at)}
+          </div>
+          {agent.status === 'active' && (
+            <Link href={`/app/agents/${agent.id}/test`}>
+              <Button variant="outline" size="sm">
+                Test Agent
+              </Button>
+            </Link>
+          )}
+        </CardFooter>
       </Card>
   );
 };

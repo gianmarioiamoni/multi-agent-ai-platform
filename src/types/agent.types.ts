@@ -134,7 +134,6 @@ export const AVAILABLE_TOOLS: ToolInfo[] = [
     name: 'Email',
     description: 'Send and read emails',
     icon: 'email',
-    comingSoon: true,
   },
   {
     id: 'calendar',
