@@ -6,7 +6,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { createServerClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { getCurrentUser } from '@/lib/auth/utils';
 import type {
   Agent,
@@ -28,7 +28,7 @@ export async function getAgents(): Promise<{
       return { data: null, error: 'Unauthorized' };
     }
 
-    const supabase = await createServerClient();
+    const supabase = await createClient();
 
     const { data, error } = await supabase
       .from('agents')
@@ -60,7 +60,7 @@ export async function getAgent(
       return { data: null, error: 'Unauthorized' };
     }
 
-    const supabase = await createServerClient();
+    const supabase = await createClient();
 
     const { data, error } = await supabase
       .from('agents')
@@ -93,7 +93,7 @@ export async function createAgent(
       return { data: null, error: 'Unauthorized' };
     }
 
-    const supabase = await createServerClient();
+    const supabase = await createClient();
 
     // Prepare agent data
     const agentData = {
@@ -143,7 +143,7 @@ export async function updateAgent(
       return { data: null, error: 'Unauthorized' };
     }
 
-    const supabase = await createServerClient();
+    const supabase = await createClient();
 
     // Verify ownership
     const { data: existing } = await supabase
@@ -192,7 +192,7 @@ export async function deleteAgent(
       return { success: false, error: 'Unauthorized' };
     }
 
-    const supabase = await createServerClient();
+    const supabase = await createClient();
 
     // Verify ownership
     const { data: existing } = await supabase
