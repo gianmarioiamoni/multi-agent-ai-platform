@@ -1,35 +1,38 @@
 /**
  * Agents Page
- * List and manage AI agents
+ * Main page for viewing and managing AI agents
  */
 
-import type { Metadata } from 'next';
+import { getAgents } from '@/lib/agents/actions';
+import { AgentsHeader } from '@/components/agents/agents-header';
+import { AgentsList } from '@/components/agents/agents-list';
+import { EmptyAgentsState } from '@/components/agents/empty-agents-state';
 
-export const metadata: Metadata = {
-  title: 'Agents',
-  description: 'Manage your AI agents',
-};
+export default async function AgentsPage() {
+  const { data: agents, error } = await getAgents();
 
-export default function AgentsPage() {
+  if (error) {
+    return (
+      <div className="container mx-auto">
+        <div className="bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded-lg">
+          <p className="font-medium">Error loading agents</p>
+          <p className="text-sm mt-1">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  const hasAgents = agents && agents.length > 0;
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-4xl font-bold text-[var(--color-foreground)]">Agents</h1>
-        <p className="text-[var(--color-muted-foreground)] mt-2">
-          Create and manage your AI agents
-        </p>
-      </div>
-
-      <div className="p-12 rounded-lg bg-[var(--color-card)] border border-[var(--color-border)] text-center">
-        <div className="text-6xl mb-4">🤖</div>
-        <h2 className="text-2xl font-semibold text-[var(--color-foreground)] mb-2">
-          Agents Coming in Sprint 2
-        </h2>
-        <p className="text-[var(--color-muted-foreground)]">
-          Week 3: Agent creation and management features
-        </p>
-      </div>
+    <div className="container mx-auto">
+      <AgentsHeader />
+      
+      {hasAgents ? (
+        <AgentsList agents={agents} />
+      ) : (
+        <EmptyAgentsState />
+      )}
     </div>
   );
 }
-
