@@ -8,6 +8,7 @@ import { orchestrateAgent } from '@/lib/ai/orchestrator';
 import { getAgent } from '@/lib/agents/actions';
 import { createWorkflowRun, updateWorkflowRun, createAgentRun, updateAgentRun, createToolInvocation } from './execution-log';
 import type { Workflow, WorkflowStep } from '@/types/workflow.types';
+import type { Agent } from '@/types/agent.types';
 import type { AgentExecutionResult } from '@/types/orchestrator.types';
 import type { WorkflowExecutionResult } from '@/types/workflow-execution.types';
 
@@ -18,7 +19,8 @@ import type { WorkflowExecutionResult } from '@/types/workflow-execution.types';
 export async function executeWorkflow(
   workflow: Workflow,
   input: string,
-  userId: string
+  userId: string,
+  getAgentFn?: (agentId: string) => Promise<{ data: Agent | null; error: string | null }>
 ): Promise<WorkflowExecutionResult> {
   const startTime = Date.now();
 
@@ -72,8 +74,9 @@ export async function executeWorkflow(
         stepName: step.name,
       });
 
-      // Get agent
-      const agentResult = await getAgent(step.agentId);
+      // Get agent (use custom function if provided, otherwise use default)
+      const getAgentFunction = getAgentFn || getAgent;
+      const agentResult = await getAgentFunction(step.agentId);
       if (agentResult.error || !agentResult.data) {
         throw new Error(`Agent not found: ${step.agentId} - ${agentResult.error || 'Unknown error'}`);
       }
