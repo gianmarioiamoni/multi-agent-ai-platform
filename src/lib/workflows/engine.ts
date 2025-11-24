@@ -7,6 +7,7 @@
 import { orchestrateAgent } from '@/lib/ai/orchestrator';
 import { getAgent } from '@/lib/agents/actions';
 import { createWorkflowRun, updateWorkflowRun, createAgentRun, updateAgentRun, createToolInvocation } from './execution-log';
+import type { WorkflowExecutionLoggers } from './engine-utils';
 import type { Workflow, WorkflowStep } from '@/types/workflow.types';
 import type { Agent } from '@/types/agent.types';
 import type { AgentExecutionResult } from '@/types/orchestrator.types';
@@ -20,7 +21,8 @@ export async function executeWorkflow(
   workflow: Workflow,
   input: string,
   userId: string,
-  getAgentFn?: (agentId: string) => Promise<{ data: Agent | null; error: string | null }>
+  getAgentFn?: (agentId: string) => Promise<{ data: Agent | null; error: string | null }>,
+  loggers?: WorkflowExecutionLoggers
 ): Promise<WorkflowExecutionResult> {
   const startTime = Date.now();
 
@@ -44,15 +46,24 @@ export async function executeWorkflow(
     userId,
   });
 
+  // Use provided loggers or default ones
+  const workflowLoggers = loggers || {
+    createWorkflowRun,
+    updateWorkflowRun,
+    createAgentRun,
+    updateAgentRun,
+    createToolInvocation,
+  };
+
   // Create workflow run
-  const workflowRunId = await createWorkflowRun({
+  const workflowRunId = await workflowLoggers.createWorkflowRun({
     workflowId: workflow.id,
     input,
     userId,
   });
 
   // Update workflow run to running
-  await updateWorkflowRun(workflowRunId, {
+  await workflowLoggers.updateWorkflowRun(workflowRunId, {
     status: 'running',
     started_at: new Date().toISOString(),
   });
@@ -83,7 +94,7 @@ export async function executeWorkflow(
       const agent = agentResult.data;
 
       // Create agent run
-      const agentRunId = await createAgentRun({
+      const agentRunId = await workflowLoggers.createAgentRun({
         workflowRunId,
         agentId: step.agentId,
         stepOrder,
@@ -91,7 +102,7 @@ export async function executeWorkflow(
       });
 
       // Update agent run to running
-      await updateAgentRun(agentRunId, {
+      await workflowLoggers.updateAgentRun(agentRunId, {
         status: 'running',
         started_at: new Date().toISOString(),
       });
@@ -102,7 +113,7 @@ export async function executeWorkflow(
 
         // Process tool invocations (log them)
         for (const toolExecution of agentResult.toolCalls) {
-          await createToolInvocation({
+          await workflowLoggers.createToolInvocation({
             agentRunId,
             tool: toolExecution.call.toolId,
             params: toolExecution.call.params,
@@ -116,7 +127,7 @@ export async function executeWorkflow(
         }
 
         // Update agent run with result
-        await updateAgentRun(agentRunId, {
+        await workflowLoggers.updateAgentRun(agentRunId, {
           status: agentResult.success ? 'completed' : 'failed',
           output: agentResult.success ? agentResult.message : null,
           error: agentResult.success ? null : agentResult.error || 'Agent execution failed',
@@ -151,7 +162,7 @@ export async function executeWorkflow(
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         
         // Update agent run with error
-        await updateAgentRun(agentRunId, {
+        await workflowLoggers.updateAgentRun(agentRunId, {
           status: 'failed',
           error: errorMessage,
           finished_at: new Date().toISOString(),
@@ -172,7 +183,7 @@ export async function executeWorkflow(
 
     // Update workflow run with final status
     const workflowStatus = workflowError ? 'failed' : 'completed';
-    await updateWorkflowRun(workflowRunId, {
+    await workflowLoggers.updateWorkflowRun(workflowRunId, {
       status: workflowStatus,
       output: workflowOutput || null,
       error: workflowError || null,
@@ -201,7 +212,7 @@ export async function executeWorkflow(
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     
     // Update workflow run with error
-    await updateWorkflowRun(workflowRunId, {
+    await workflowLoggers.updateWorkflowRun(workflowRunId, {
       status: 'failed',
       error: errorMessage,
       finished_at: new Date().toISOString(),

@@ -6,6 +6,7 @@
 import { config } from 'dotenv';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { executeWorkflow } from '@/lib/workflows/engine';
+import { createLoggersFromClient } from '@/lib/workflows/engine-utils';
 import type { Workflow, WorkflowStep } from '@/types/workflow.types';
 import type { Agent } from '@/types/agent.types';
 
@@ -228,8 +229,11 @@ async function testWorkflowExecution(workflowId: string, userId: string) {
   console.log('\n⏳ Executing workflow...\n');
 
   try {
-    // Execute workflow with custom getAgent function (uses admin client)
-    const result = await executeWorkflow(workflow, testInput, userId, getAgentForTest);
+    // Create loggers using admin client (bypasses RLS for testing)
+    const loggers = createLoggersFromClient(supabase);
+
+    // Execute workflow with custom getAgent function and loggers (uses admin client)
+    const result = await executeWorkflow(workflow, testInput, userId, getAgentForTest, loggers);
 
     console.log('📊 Execution Result:');
     console.log('   Success:', result.success);
