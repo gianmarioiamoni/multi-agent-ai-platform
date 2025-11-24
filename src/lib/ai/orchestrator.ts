@@ -111,32 +111,13 @@ export async function orchestrateAgent(
       };
     }
 
-    // Validate agent tools
-    if (!agent.tools_enabled || agent.tools_enabled.length === 0) {
-      return {
-        success: false,
-        message: '',
-        toolCalls: [],
-        totalExecutionTime: Date.now() - startTime,
-        error: 'Agent has no tools enabled. Please enable at least one tool.',
-      };
-    }
-
     // Get OpenAI client
     const client = getOpenAIClient();
 
-    // Get tool schemas for enabled tools
-    const toolSchemas = getToolSchemas(agent.tools_enabled);
-
-    if (toolSchemas.length === 0) {
-      return {
-        success: false,
-        message: '',
-        toolCalls: [],
-        totalExecutionTime: Date.now() - startTime,
-        error: 'No valid tools available. Please check tool configuration.',
-      };
-    }
+    // Get tool schemas for enabled tools (can be empty for text-only agents)
+    const toolSchemas = agent.tools_enabled && agent.tools_enabled.length > 0
+      ? getToolSchemas(agent.tools_enabled)
+      : [];
 
     console.log('[Orchestrator] Starting agent execution:', {
       agentId: agent.id,

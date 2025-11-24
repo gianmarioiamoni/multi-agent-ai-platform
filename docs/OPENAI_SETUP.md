@@ -69,7 +69,7 @@ Questa guida ti aiuta a ottenere e configurare la chiave API di OpenAI per il pr
 Esegui il test per verificare che funzioni:
 
 ```bash
-pnpm test:workflow
+p
 ```
 
 Oppure verifica manualmente:

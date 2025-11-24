@@ -10,11 +10,12 @@ import { createLoggersFromClient } from '@/lib/workflows/engine-utils';
 import type { Workflow, WorkflowStep } from '@/types/workflow.types';
 import type { Agent } from '@/types/agent.types';
 
-// Create admin client once
-const supabase = createAdminClient();
-
-// Load environment variables
+// Load environment variables first
 config({ path: '.env.local' });
+
+// Admin client will be created in main() after env vars are loaded
+let supabase: ReturnType<typeof createAdminClient>;
+
 
 interface TestContext {
   userId: string;
@@ -350,12 +351,14 @@ async function main() {
   try {
     // Check OpenAI configuration
     const openaiKey = process.env.OPENAI_API_KEY;
-    if (!openaiKey) {
-      console.error('❌ OPENAI_API_KEY not configured!');
-      console.error('   Please set OPENAI_API_KEY in .env.local\n');
-      process.exit(1);
+    if (!openaiKey || openaiKey.trim().length === 0) {
+      console.warn('⚠️  OPENAI_API_KEY not configured!');
+      console.warn('   Workflow execution will fail without it.');
+      console.warn('   Continuing with setup verification only...\n');
+    } else {
+      console.log('✅ OpenAI API key configured');
+      console.log(`   Key preview: ${openaiKey.substring(0, 10)}...${openaiKey.substring(openaiKey.length - 4)}\n`);
     }
-    console.log('✅ OpenAI API key configured\n');
 
     // Check Supabase configuration
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -366,6 +369,9 @@ async function main() {
       process.exit(1);
     }
     console.log('✅ Supabase configuration OK\n');
+
+    // Create admin client after env vars are verified
+    supabase = createAdminClient();
 
     // Get or create test user (using admin client)
     // For testing, we'll use the first user or create a test user
@@ -396,7 +402,17 @@ async function main() {
       process.exit(1);
     }
 
-    // Test workflow execution
+    // Test workflow execution (only if OpenAI is configured)
+    if (!openaiKey) {
+      console.log('\n⚠️  Skipping workflow execution (OPENAI_API_KEY not configured)');
+      console.log('✅ Setup verification completed successfully!\n');
+      console.log('=' .repeat(60));
+      console.log('\n📝 Next steps:');
+      console.log('   1. Add OPENAI_API_KEY to .env.local');
+      console.log('   2. Run pnpm test:workflow again to test execution\n');
+      process.exit(0);
+    }
+
     const success = await testWorkflowExecution(workflowId, userId);
 
     console.log('=' .repeat(60));
