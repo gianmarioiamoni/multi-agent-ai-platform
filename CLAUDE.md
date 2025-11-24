@@ -217,6 +217,7 @@ Settimana 8
 - Usare sempre programmazione funzionale, mai class
 - Non usare MAI tipi any
 - per OGNI componente React creato, applicare principio SRP sia per la parte di logica sia per la parte UI
+- quando applichi SRP ad un componente, lascia il componente principale nella cartella in cui è e crea una sottocartella per i suoi sottocomponenti
 - impostare ESLint in modo che dia errore per any, variabili o funzioni dichiarate e non usate
 - applicare principi SOLID
 - sviluppare test unitari con Jest e test di integrazione. Ove possibile usare TDD
