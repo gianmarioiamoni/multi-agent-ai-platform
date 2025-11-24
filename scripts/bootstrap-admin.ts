@@ -65,12 +65,14 @@ function createAdminClient() {
     );
   }
 
-  return createClient<Database>(supabaseUrl, serviceRoleKey, {
+  const client = createClient<Database>(supabaseUrl, serviceRoleKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
     },
   });
+
+  return client;
 }
 
 /**
@@ -115,7 +117,7 @@ async function bootstrapAdmin() {
         .eq('user_id', userId)
         .single();
 
-      if (profile?.role === 'admin') {
+      if ((profile as { role?: string } | null)?.role === 'admin') {
         console.log('   ✅ User is already an admin\n');
         console.log('✅ Admin bootstrap completed successfully!');
         return;
@@ -148,19 +150,16 @@ async function bootstrapAdmin() {
 
     // Update or create profile with admin role
     console.log('4️⃣ Setting up admin profile...');
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .upsert(
-        {
-          user_id: userId,
-          name: config.name,
-          role: 'admin',
-          updated_at: new Date().toISOString(),
-        },
-        {
-          onConflict: 'user_id',
-        }
-      );
+    const profileData = {
+      user_id: userId,
+      name: config.name,
+      role: 'admin' as const,
+      updated_at: new Date().toISOString(),
+    };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: profileError } = await (supabase.from('profiles') as any).upsert(profileData, {
+      onConflict: 'user_id',
+    });
 
     if (profileError) {
       throw new Error(`Failed to create/update profile: ${profileError.message}`);
@@ -180,7 +179,7 @@ async function bootstrapAdmin() {
       throw new Error('Failed to verify admin profile');
     }
 
-    if (verifyProfile.role !== 'admin') {
+    if ((verifyProfile as { role?: string } | null)?.role !== 'admin') {
       throw new Error('Profile created but role is not admin');
     }
 

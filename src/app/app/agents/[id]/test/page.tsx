@@ -24,9 +24,9 @@ export default async function AgentTestPage({ params }: AgentTestPageProps) {
   const { id } = await params;
 
   // Get agent
-  const agent = await getAgent(id);
+  const { data: agent, error: agentError } = await getAgent(id);
 
-  if (!agent) {
+  if (agentError || !agent) {
     redirect('/app/agents');
   }
 

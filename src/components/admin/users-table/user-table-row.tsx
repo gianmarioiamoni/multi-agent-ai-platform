@@ -8,10 +8,7 @@ import { formatDate } from '@/utils/format';
 import { UserAvatar } from '@/components/ui/user-avatar';
 import { UserRoleBadge } from './user-role-badge';
 import { RoleSelector } from './role-selector';
-import type { Database } from '@/types/database.types';
-
-type Profile = Database['public']['Tables']['profiles']['Row'];
-type UserRole = Database['public']['Enums']['user_role'];
+import type { Profile, UserRole } from '@/types/database.types';
 
 interface UserTableRowProps {
   user: Profile;

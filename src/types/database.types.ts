@@ -61,7 +61,13 @@ export interface Database {
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
-    Enums: Record<string, never>;
+    Enums: {
+      user_role: 'user' | 'admin';
+    };
   };
 }
+
+// Helper types for easier access
+export type UserRole = Database['public']['Enums']['user_role'];
+export type Profile = Database['public']['Tables']['profiles']['Row'];
 

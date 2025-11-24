@@ -71,9 +71,10 @@ export async function updateUserRole(
       };
     }
 
-    const { error } = await supabase
-      .from('profiles')
-      .update({ role: newRole })
+    const updateData = { role: newRole };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error } = await (supabase.from('profiles') as any)
+      .update(updateData)
       .eq('user_id', userId);
 
     if (error) {
@@ -113,8 +114,8 @@ export async function getPlatformStats() {
     .select('role');
 
   const roleStats = {
-    admin: roles?.filter(r => r.role === 'admin').length || 0,
-    user: roles?.filter(r => r.role === 'user').length || 0,
+    admin: (roles as Array<{ role: 'user' | 'admin' }> | null)?.filter(r => r.role === 'admin').length || 0,
+    user: (roles as Array<{ role: 'user' | 'admin' }> | null)?.filter(r => r.role === 'user').length || 0,
   };
 
   // Get recent users (last 7 days)

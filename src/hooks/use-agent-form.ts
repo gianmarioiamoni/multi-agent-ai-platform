@@ -20,12 +20,12 @@ export const useAgentForm = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<CreateAgentFormData>({
-    resolver: zodResolver(createAgentSchema),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(createAgentSchema) as any,
     defaultValues: {
       name: '',
-      description: '',
       role: '',
-      model: 'gpt-4o-mini',
+      model: 'gpt-4o-mini' as const,
       temperature: 0.7,
       max_tokens: 2000,
       tools_enabled: [],
@@ -39,26 +39,17 @@ export const useAgentForm = () => {
       const result = await createAgent(data);
 
       if (result.error) {
-        addToast({
-          type: 'error',
-          message: result.error,
-        });
+        addToast('error', 'Error', result.error);
         return;
       }
 
-      addToast({
-        type: 'success',
-        message: 'Agent created successfully!',
-      });
+      addToast('success', 'Success', 'Agent created successfully!');
 
       // Redirect to agents list
       router.push('/app/agents');
     } catch (error) {
       console.error('Error creating agent:', error);
-      addToast({
-        type: 'error',
-        message: 'An unexpected error occurred',
-      });
+      addToast('error', 'Error', 'An unexpected error occurred');
     } finally {
       setIsLoading(false);
     }
@@ -67,7 +58,8 @@ export const useAgentForm = () => {
   return {
     form,
     isLoading,
-    handleSubmit: form.handleSubmit(handleSubmit),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    handleSubmit: form.handleSubmit(handleSubmit) as any,
   };
 };
 

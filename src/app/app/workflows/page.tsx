@@ -4,32 +4,32 @@
  */
 
 import type { Metadata } from 'next';
+import { getWorkflows } from '@/lib/workflows/actions';
+import { WorkflowsHeader } from '@/components/workflows/workflows-header';
+import { WorkflowsList } from '@/components/workflows/workflows-list';
+import { EmptyWorkflowsState } from '@/components/workflows/empty-workflows-state';
 
 export const metadata: Metadata = {
   title: 'Workflows',
   description: 'Manage your workflows',
 };
 
-export default function WorkflowsPage() {
+export default async function WorkflowsPage() {
+  const { data: workflows, error } = await getWorkflows();
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-4xl font-bold text-[var(--color-foreground)]">Workflows</h1>
-        <p className="text-[var(--color-muted-foreground)] mt-2">
-          Build and automate multi-agent workflows
-        </p>
-      </div>
-
-      <div className="p-12 rounded-lg bg-[var(--color-card)] border border-[var(--color-border)] text-center">
-        <div className="text-6xl mb-4">⚡</div>
-        <h2 className="text-2xl font-semibold text-[var(--color-foreground)] mb-2">
-          Workflows Coming in Sprint 3
-        </h2>
-        <p className="text-[var(--color-muted-foreground)]">
-          Week 5: Multi-agent workflow engine and builder
-        </p>
-      </div>
+      <WorkflowsHeader />
+      
+      {error ? (
+        <div className="p-6 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200">
+          Error loading workflows: {error}
+        </div>
+      ) : workflows && workflows.length > 0 ? (
+        <WorkflowsList workflows={workflows} />
+      ) : (
+        <EmptyWorkflowsState />
+      )}
     </div>
   );
 }
-

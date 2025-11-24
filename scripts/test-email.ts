@@ -50,8 +50,13 @@ async function testEmailTool() {
 
   if (result.success) {
     console.log('✅ Email sent successfully!');
-    console.log(`   Message ID: ${result.data?.messageId}`);
-    console.log(`   Timestamp: ${result.data?.timestamp}`);
+    const emailData = result.data as { messageId?: string; timestamp?: string } | undefined;
+    if (emailData?.messageId) {
+      console.log(`   Message ID: ${emailData.messageId}`);
+    }
+    if (emailData?.timestamp) {
+      console.log(`   Timestamp: ${emailData.timestamp}`);
+    }
     console.log(`   Execution Time: ${result.executionTime}ms\n`);
   } else {
     console.log('❌ Email sending failed!');

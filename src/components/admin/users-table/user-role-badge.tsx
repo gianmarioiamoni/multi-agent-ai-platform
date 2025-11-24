@@ -4,9 +4,7 @@
  * Following SRP: Only handles role badge display
  */
 
-import type { Database } from '@/types/database.types';
-
-type UserRole = Database['public']['Enums']['user_role'];
+import type { UserRole } from '@/types/database.types';
 
 interface UserRoleBadgeProps {
   role: UserRole;

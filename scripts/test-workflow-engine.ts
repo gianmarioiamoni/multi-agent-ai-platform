@@ -83,8 +83,11 @@ async function createTestAgentIfNotExists(
     .single();
 
   if (existing) {
-    console.log(`   Agent "${agentData.name}" already exists: ${existing.id}`);
-    return existing.id;
+    const existingAgent = existing as { id: string; name: string } | null;
+    if (existingAgent) {
+      console.log(`   Agent "${agentData.name}" already exists: ${existingAgent.id}`);
+      return existingAgent.id;
+    }
   }
 
   // Create agent
