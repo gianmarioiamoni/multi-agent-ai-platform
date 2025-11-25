@@ -9,6 +9,7 @@ import { getToolSchemas, executeTool } from '@/lib/tools/registry';
 import type { AgentExecutionResult, ToolCall, ToolExecution } from '@/types/orchestrator.types';
 import type { Agent } from '@/types/agent.types';
 import type { ToolId } from '@/types/agent.types';
+import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 
 const MAX_ITERATIONS = 10; // Max tool call iterations to prevent infinite loops
 
@@ -114,9 +115,9 @@ export async function orchestrateAgent(
       ? getToolSchemas(agent.tools_enabled)
       : [];
 
-    // Build messages array
-    const messages: Array<{
-      role: 'system' | 'user' | 'assistant';
+    // Internal messages array (includes tool messages)
+    type InternalMessage = {
+      role: 'system' | 'user' | 'assistant' | 'tool';
       content: string;
       tool_calls?: Array<{
         id: string;
@@ -127,7 +128,9 @@ export async function orchestrateAgent(
         };
       }>;
       tool_call_id?: string;
-    }> = [
+    };
+
+    const messages: InternalMessage[] = [
       {
         role: 'system',
         content: agent.role || 'You are a helpful AI assistant.',
@@ -150,10 +153,39 @@ export async function orchestrateAgent(
     while (iteration < MAX_ITERATIONS) {
       iteration++;
 
+      // Convert internal messages to OpenAI format (exclude tool messages or convert them)
+      const openAIMessages: ChatCompletionMessageParam[] = messages.map((msg) => {
+        if (msg.role === 'tool') {
+          return {
+            role: 'tool',
+            content: msg.content,
+            tool_call_id: msg.tool_call_id || '',
+          };
+        }
+        if (msg.role === 'system') {
+          return {
+            role: 'system',
+            content: msg.content,
+          };
+        }
+        if (msg.role === 'user') {
+          return {
+            role: 'user',
+            content: msg.content,
+          };
+        }
+        // assistant
+        return {
+          role: 'assistant',
+          content: msg.content,
+          ...(msg.tool_calls && { tool_calls: msg.tool_calls }),
+        };
+      });
+
       // Call OpenAI API
       const response = await client.chat.completions.create({
         model: mapModelToOpenAI(agent.model),
-        messages,
+        messages: openAIMessages,
         temperature: agent.temperature || 0.7,
         max_tokens: agent.max_tokens || 2000,
         tools: toolSchemas.length > 0 ? toolSchemas : undefined,
@@ -168,14 +200,36 @@ export async function orchestrateAgent(
       const message = choice.message;
 
       // Add assistant response to messages
-      messages.push(message);
+      // Convert ChatCompletionMessage to our message format
+      messages.push({
+        role: message.role,
+        content: message.content || '',
+        tool_calls: message.tool_calls?.map((tc) => ({
+          id: tc.id,
+          type: 'function' as const,
+          function: {
+            name: 'function' in tc ? tc.function.name : '',
+            arguments: 'function' in tc ? JSON.stringify(tc.function.arguments) : '',
+          },
+        })),
+      });
 
       // Check if tool calls are requested
       if (message.tool_calls && message.tool_calls.length > 0) {
         // Execute all tool calls in parallel
-        const toolExecutionPromises = message.tool_calls.map((toolCall) =>
-          executeToolCall(toolCall)
-        );
+        const toolExecutionPromises = message.tool_calls
+          .filter((tc) => 'function' in tc)
+          .map((toolCall) =>
+            executeToolCall({
+              id: toolCall.id,
+              function: {
+                name: toolCall.function.name,
+                arguments: typeof toolCall.function.arguments === 'string'
+                  ? toolCall.function.arguments
+                  : JSON.stringify(toolCall.function.arguments),
+              },
+            })
+          );
         const executions = await Promise.all(toolExecutionPromises);
 
         // Add tool results to messages and collect executions
@@ -214,13 +268,6 @@ export async function orchestrateAgent(
         error: 'Maximum iterations reached. The agent may be in an infinite loop.',
       };
     }
-
-    console.log('[Orchestrator] Agent execution completed:', {
-      success: true,
-      messageLength: finalMessage.length,
-      toolCallsCount: toolCalls.length,
-      totalExecutionTime,
-    });
 
     return {
       success: true,
