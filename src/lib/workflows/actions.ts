@@ -16,7 +16,12 @@ import type {
   WorkflowListItem,
   WorkflowGraph,
 } from '@/types/workflow.types';
-import type { WorkflowExecutionResult } from '@/types/workflow-execution.types';
+import type {
+  WorkflowExecutionResult,
+  WorkflowRun,
+  AgentRun,
+  ToolInvocation,
+} from '@/types/workflow-execution.types';
 
 /**
  * Get all workflows for the current user
@@ -267,6 +272,170 @@ export async function runWorkflow(
       data: null,
       error: error instanceof Error ? error.message : 'An unexpected error occurred',
     };
+  }
+}
+
+/**
+ * Get all workflow runs for the current user
+ */
+export async function getWorkflowRuns(): Promise<{
+  data: Array<WorkflowRun & { workflow_name: string }> | null;
+  error: string | null;
+}> {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { data: null, error: 'Unauthorized' };
+    }
+
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from('workflow_runs')
+      .select(
+        `
+        *,
+        workflows!inner(name)
+      `
+      )
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    if (error) {
+      console.error('Error fetching workflow runs:', error);
+      return { data: null, error: 'Failed to fetch workflow runs' };
+    }
+
+    const runs = (data || []).map((run) => {
+      const workflow = run.workflows as { name: string } | { name: string }[] | null;
+      const workflowName = Array.isArray(workflow) 
+        ? workflow[0]?.name 
+        : workflow?.name 
+        || 'Unknown';
+      
+      // Remove workflows from the run object
+      const { workflows, ...runData } = run;
+      
+      return {
+        ...runData,
+        workflow_name: workflowName,
+      } as WorkflowRun & { workflow_name: string };
+    });
+
+    return { data: runs, error: null };
+  } catch (error) {
+    console.error('Error in getWorkflowRuns:', error);
+    return { data: null, error: 'An unexpected error occurred' };
+  }
+}
+
+/**
+ * Get a single workflow run with all details
+ */
+export async function getWorkflowRun(runId: string): Promise<{
+  data: (WorkflowRun & {
+    workflow_name: string;
+    agent_runs: Array<AgentRun & { agent_name: string; tool_invocations: ToolInvocation[] }>;
+  }) | null;
+  error: string | null;
+}> {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { data: null, error: 'Unauthorized' };
+    }
+
+    const supabase = await createClient();
+
+    // Get workflow run with workflow name
+    const { data: runData, error: runError } = await supabase
+      .from('workflow_runs')
+      .select(
+        `
+        *,
+        workflows!inner(name)
+      `
+      )
+      .eq('id', runId)
+      .single();
+
+    if (runError || !runData) {
+      console.error('Error fetching workflow run:', runError);
+      return { data: null, error: 'Workflow run not found' };
+    }
+
+    // Extract workflow name and remove workflows from runData
+    const workflow = runData.workflows as { name: string } | { name: string }[] | null;
+    const workflowName = Array.isArray(workflow) 
+      ? workflow[0]?.name 
+      : workflow?.name 
+      || 'Unknown';
+    const { workflows, ...runDataClean } = runData;
+
+    // Get agent runs with agent names
+    const { data: agentRunsData, error: agentRunsError } = await supabase
+      .from('agent_runs')
+      .select(
+        `
+        *,
+        agents!inner(name)
+      `
+      )
+      .eq('workflow_run_id', runId)
+      .order('step_order', { ascending: true });
+
+    if (agentRunsError) {
+      console.error('Error fetching agent runs:', agentRunsError);
+      return { data: null, error: 'Failed to fetch agent runs' };
+    }
+
+    // Get tool invocations for each agent run
+    const agentRunIds = (agentRunsData || []).map((ar) => ar.id);
+    const { data: toolInvocationsData, error: toolInvocationsError } = agentRunIds.length > 0
+      ? await supabase
+          .from('tool_invocations')
+          .select('*')
+          .in('agent_run_id', agentRunIds)
+          .order('created_at', { ascending: true })
+      : { data: [], error: null };
+
+    if (toolInvocationsError) {
+      console.error('Error fetching tool invocations:', toolInvocationsError);
+      return { data: null, error: 'Failed to fetch tool invocations' };
+    }
+
+    // Combine data
+    const agentRuns = (agentRunsData || []).map((ar) => {
+      const agent = ar.agents as { name: string } | { name: string }[] | null;
+      const agentName = Array.isArray(agent) 
+        ? agent[0]?.name 
+        : agent?.name 
+        || 'Unknown';
+      
+      const { agents, ...arClean } = ar;
+      
+      return {
+        ...arClean,
+        agent_name: agentName,
+        tool_invocations: (toolInvocationsData || []).filter(
+          (ti) => ti.agent_run_id === ar.id
+        ) as ToolInvocation[],
+      } as AgentRun & { agent_name: string; tool_invocations: ToolInvocation[] };
+    });
+
+    const workflowRun = {
+      ...runDataClean,
+      workflow_name: workflowName,
+      agent_runs: agentRuns,
+    } as WorkflowRun & {
+      workflow_name: string;
+      agent_runs: Array<AgentRun & { agent_name: string; tool_invocations: ToolInvocation[] }>;
+    };
+
+    return { data: workflowRun, error: null };
+  } catch (error) {
+    console.error('Error in getWorkflowRun:', error);
+    return { data: null, error: 'An unexpected error occurred' };
   }
 }
 

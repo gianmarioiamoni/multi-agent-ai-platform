@@ -1,34 +1,36 @@
 /**
  * Runs Page
  * View workflow execution history
+ * Following SRP: Only handles page structure and data fetching
  */
 
 import type { Metadata } from 'next';
+import { getWorkflowRuns } from '@/lib/workflows/actions';
+import { RunsHeader } from '@/components/runs/runs-header';
+import { RunsList } from '@/components/runs/runs-list';
+import { EmptyRunsState } from '@/components/runs/empty-runs-state';
 
 export const metadata: Metadata = {
   title: 'Runs',
   description: 'View workflow execution history',
 };
 
-export default function RunsPage() {
+export default async function RunsPage() {
+  const { data: runs, error } = await getWorkflowRuns();
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-4xl font-bold text-[var(--color-foreground)]">Runs</h1>
-        <p className="text-[var(--color-muted-foreground)] mt-2">
-          Monitor and analyze workflow executions
-        </p>
-      </div>
-
-      <div className="p-12 rounded-lg bg-[var(--color-card)] border border-[var(--color-border)] text-center">
-        <div className="text-6xl mb-4">📊</div>
-        <h2 className="text-2xl font-semibold text-[var(--color-foreground)] mb-2">
-          Run History Coming in Sprint 3
-        </h2>
-        <p className="text-[var(--color-muted-foreground)]">
-          Week 6: Workflow run viewer with timeline
-        </p>
-      </div>
+      <RunsHeader />
+      
+      {error ? (
+        <div className="p-6 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200">
+          Error loading workflow runs: {error}
+        </div>
+      ) : runs && runs.length > 0 ? (
+        <RunsList runs={runs} />
+      ) : (
+        <EmptyRunsState />
+      )}
     </div>
   );
 }

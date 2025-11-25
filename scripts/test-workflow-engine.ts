@@ -376,8 +376,9 @@ async function main() {
     // Create admin client after env vars are verified
     supabase = createAdminClient();
 
-    // Get or create test user (using admin client)
-    // For testing, we'll use the first user or create a test user
+    // Get test user by email (using admin client)
+    const testUserEmail = 'gia.iamoni@tiscali.it';
+    
     const { data: users } = await supabase.auth.admin.listUsers();
 
     if (!users || users.users.length === 0) {
@@ -386,7 +387,19 @@ async function main() {
       process.exit(1);
     }
 
-    const testUser = users.users[0];
+    // Find user by email
+    const testUser = users.users.find((u) => u.email === testUserEmail);
+
+    if (!testUser) {
+      console.error(`❌ User with email ${testUserEmail} not found!`);
+      console.error('   Available users:');
+      users.users.forEach((u) => {
+        console.error(`     - ${u.email || 'No email'} (${u.id})`);
+      });
+      console.error('\n   Please create this user first via signup\n');
+      process.exit(1);
+    }
+
     const userId = testUser.id;
 
     console.log('👤 Using test user:', testUser.email || userId);
