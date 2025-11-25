@@ -27,8 +27,57 @@ async function listUpcomingEvents(
   const startTime = Date.now();
 
   try {
-    const timeMin = params.startDate || new Date().toISOString();
-    const timeMax = params.endDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(); // 7 days default
+    // Helper to normalize date string to RFC3339 format (required by Google Calendar API)
+    const normalizeDateForAPI = (dateString: string | undefined, defaultValue: Date): string => {
+      if (!dateString) {
+        return defaultValue.toISOString();
+      }
+      
+      // If date already has timezone info, convert to ISO (UTC)
+      if (dateString.endsWith('Z') || /[+-]\d{2}:\d{2}$/.test(dateString)) {
+        return new Date(dateString).toISOString();
+      }
+      
+      // No timezone - interpret as user's local time and add timezone offset
+      // Get user's timezone (default to Europe/Rome)
+      const userTimeZone = process.env.USER_TIMEZONE || 'Europe/Rome';
+      
+      // Parse the date string
+      const match = dateString.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/);
+      if (!match) {
+        // Invalid format, try to parse anyway as UTC
+        return new Date(dateString + 'Z').toISOString();
+      }
+      
+      const [, year, month, day, hour, minute, second] = match;
+      
+      // Create a date representing this time as if it were UTC
+      // Then format it in the user's timezone to get the offset
+      const tempDate = new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}Z`);
+      
+      // Get the timezone offset for this specific date/time
+      // We format the date in the user's timezone to determine the offset
+      const formatter = new Intl.DateTimeFormat('en', {
+        timeZone: userTimeZone,
+        timeZoneName: 'longOffset',
+      });
+      
+      const parts = formatter.formatToParts(tempDate);
+      const offsetStr = parts.find(p => p.type === 'timeZoneName')?.value || 'GMT+00:00';
+      const offsetMatch = offsetStr.match(/GMT([+-])(\d{2}):(\d{2})/);
+      
+      if (offsetMatch) {
+        const [, sign, hours, minutes] = offsetMatch;
+        // Return RFC3339 format with timezone offset (e.g., 2025-11-26T00:00:00+01:00)
+        return `${year}-${month}-${day}T${hour}:${minute}:${second}${sign}${hours}:${minutes}`;
+      }
+      
+      // Fallback: use UTC
+      return `${year}-${month}-${day}T${hour}:${minute}:${second}Z`;
+    };
+
+    const timeMin = normalizeDateForAPI(params.startDate, new Date());
+    const timeMax = normalizeDateForAPI(params.endDate, new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)); // 7 days default
     const maxResults = params.maxResults || 10;
 
     const url = new URL(`${GOOGLE_CALENDAR_API_BASE}/calendars/primary/events`);
@@ -53,9 +102,26 @@ async function listUpcomingEvents(
       clearTimeout(timeoutId);
 
       if (!response.ok) {
+        const errorText = await response.text();
+        let errorMessage = `Google Calendar API error: ${response.statusText}`;
+        
+        try {
+          const errorData = JSON.parse(errorText);
+          if (errorData.error?.message) {
+            errorMessage = `Google Calendar API error: ${errorData.error.message}`;
+          } else if (errorData.error) {
+            errorMessage = `Google Calendar API error: ${JSON.stringify(errorData.error)}`;
+          }
+        } catch {
+          // If error response is not JSON, use the text as is
+          if (errorText) {
+            errorMessage = `Google Calendar API error: ${errorText.substring(0, 200)}`;
+          }
+        }
+        
         return {
           success: false,
-          error: `Google Calendar API error: ${response.statusText}`,
+          error: errorMessage,
           executionTime: Date.now() - startTime,
         };
       }
