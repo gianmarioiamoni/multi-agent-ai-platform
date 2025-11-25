@@ -95,7 +95,6 @@ async function listUpcomingEvents(
       };
     }
 
-    console.error('[Calendar Tool] Error listing events:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to list events',
@@ -114,18 +113,187 @@ async function createCalendarEvent(
   const startTime = Date.now();
 
   try {
-    const eventData = {
+    // Get user's timezone (default to Europe/Rome for Italy, handles DST automatically)
+    // In a real app, you might want to store user timezone in their profile
+    const userTimeZone = process.env.USER_TIMEZONE || 'Europe/Rome';
+    
+    // Parse dates - if they don't have timezone info, interpret them as user's local time
+    // The agent might pass dates like "2024-11-21T15:00:00" which we interpret as 15:00 in user's timezone
+    // For validation, we need to convert them to Date objects, but for Google Calendar API,
+    // we'll use the original string (without timezone) and let Google interpret it with the timeZone field
+    
+    // Check if dates have timezone info
+    // Note: If the date has "Z" (UTC), we'll strip it and treat it as user's local time
+    // This is because the agent might incorrectly add "Z" even when the user meant local time
+    const hasTimezone = (dateString: string): boolean => {
+      return /[+-]\d{2}:\d{2}$/.test(dateString);
+    };
+    
+    // Normalize date string: if it has "Z", remove it (treat as local time)
+    const normalizeDateString = (dateString: string): string => {
+      if (dateString.endsWith('Z')) {
+        return dateString.slice(0, -1);
+      }
+      return dateString;
+    };
+    
+    // Normalize date strings (remove "Z" if present, treat as local time)
+    const normalizedStartString = normalizeDateString(params.start);
+    const normalizedEndString = normalizeDateString(params.end);
+    
+    const startHasTimezone = hasTimezone(normalizedStartString);
+    const endHasTimezone = hasTimezone(normalizedEndString);
+    
+    // Helper to extract date parts from a formatted date string
+    const extractDateParts = (dateString: string): { year: string; month: string; day: string; hour: string; minute: string; second: string } | null => {
+      const match = dateString.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/);
+      if (!match) {
+        return null;
+      }
+      const [, year, month, day, hour, minute, second] = match;
+      return { year, month, day, hour, minute, second };
+    };
+
+    // Helper to get timezone offset in milliseconds
+    const getTimezoneOffsetMs = (date: Date, timezone: string): number => {
+      const formatter = new Intl.DateTimeFormat('en', {
+        timeZone: timezone,
+        timeZoneName: 'longOffset',
+      });
+      const offsetParts = formatter.formatToParts(date);
+      const offsetStr = offsetParts.find(p => p.type === 'timeZoneName')?.value || 'GMT+00:00';
+      const offsetMatch = offsetStr.match(/GMT([+-])(\d{2}):(\d{2})/);
+      
+      if (offsetMatch) {
+        const [, sign, hours, minutes] = offsetMatch;
+        return (parseInt(hours) * 60 + parseInt(minutes)) * 60 * 1000 * (sign === '+' ? 1 : -1);
+      }
+      return 0;
+    };
+
+    // For validation, parse dates (if no timezone, assume user's timezone)
+    const parseForValidation = (dateString: string, timezone: string): Date => {
+      if (hasTimezone(dateString)) {
+        return new Date(dateString);
+      }
+      
+      // No timezone - interpret this as the time in the user's timezone
+      const parts = extractDateParts(dateString);
+      if (!parts) {
+        throw new Error(`Invalid date format: ${dateString}`);
+      }
+      
+      // Create a UTC reference date (treating the input as if it were UTC)
+      const utcReference = new Date(`${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}:${parts.second}Z`);
+      
+      // Calculate the offset for this timezone at this specific date/time
+      // This handles DST automatically
+      const offsetMs = getTimezoneOffsetMs(utcReference, timezone);
+      
+      // Convert: if user says 15:00 in UTC+1, that's 14:00 UTC
+      // So we subtract the offset to get the correct UTC time
+      return new Date(utcReference.getTime() - offsetMs);
+    };
+    
+    let startDate: Date;
+    let endDate: Date;
+    
+    try {
+      startDate = parseForValidation(normalizedStartString, userTimeZone);
+      endDate = parseForValidation(normalizedEndString, userTimeZone);
+    } catch (error) {
+      return {
+        success: false,
+        error: `Invalid date format: ${error instanceof Error ? error.message : 'Unknown error'}. Expected ISO 8601 format (e.g., 2024-11-21T15:00:00)`,
+        executionTime: Date.now() - startTime,
+      };
+    }
+    
+    if (isNaN(startDate.getTime())) {
+      return {
+        success: false,
+        error: `Invalid start date format: ${params.start}. Expected ISO 8601 format (e.g., 2024-11-21T15:00:00)`,
+        executionTime: Date.now() - startTime,
+      };
+    }
+    
+    if (isNaN(endDate.getTime())) {
+      return {
+        success: false,
+        error: `Invalid end date format: ${params.end}. Expected ISO 8601 format (e.g., 2024-11-21T16:00:00)`,
+        executionTime: Date.now() - startTime,
+      };
+    }
+    
+    if (endDate <= startDate) {
+      return {
+        success: false,
+        error: 'End date must be after start date',
+        executionTime: Date.now() - startTime,
+      };
+    }
+
+    // Check if dates are in the past (with 1 minute buffer for clock differences)
+    const now = new Date();
+    const buffer = 60000; // 1 minute in milliseconds
+    
+    if (startDate.getTime() < now.getTime() - buffer) {
+      return {
+        success: false,
+        error: `Start date is in the past: ${params.start}. The event start time must be in the future. Current time: ${now.toISOString()}`,
+        executionTime: Date.now() - startTime,
+      };
+    }
+
+    // Helper to format date parts as ISO string
+    const formatDateParts = (parts: Intl.DateTimeFormatPart[]): string => {
+      const getPart = (type: string) => parts.find(p => p.type === type)?.value || '';
+      return `${getPart('year')}-${getPart('month')}-${getPart('day')}T${getPart('hour')}:${getPart('minute')}:${getPart('second')}`;
+    };
+
+    // Format dates for Google Calendar API
+    // If the date string doesn't have timezone, use it as-is (Google will interpret it with timeZone field)
+    // If it has timezone, convert it to user's timezone
+    const formatForGoogleCalendar = (dateString: string, hasTz: boolean, timezone: string): string => {
+      if (!hasTz) {
+        // No timezone in original - use as-is, Google will interpret it in the specified timeZone
+        const match = dateString.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})/);
+        return match ? match[1] : dateString;
+      }
+      
+      // Has timezone - convert to user's timezone
+      const date = new Date(dateString);
+      const formatter = new Intl.DateTimeFormat('en-CA', {
+        timeZone: timezone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+      });
+      
+      return formatDateParts(formatter.formatToParts(date));
+    };
+
+    const normalizedStart = formatForGoogleCalendar(normalizedStartString, startHasTimezone, userTimeZone);
+    const normalizedEnd = formatForGoogleCalendar(normalizedEndString, endHasTimezone, userTimeZone);
+
+    const requestPayload = {
       summary: params.title,
       start: {
-        dateTime: params.start,
-        timeZone: 'UTC',
+        dateTime: normalizedStart,
+        timeZone: userTimeZone,
       },
       end: {
-        dateTime: params.end,
-        timeZone: 'UTC',
+        dateTime: normalizedEnd,
+        timeZone: userTimeZone,
       },
-      description: params.description,
-      attendees: params.attendees?.map((email) => ({ email })),
+      ...(params.description && { description: params.description }),
+      ...(params.attendees && params.attendees.length > 0 && {
+        attendees: params.attendees.map((email) => ({ email })),
+      }),
     };
 
     const controller = new AbortController();
@@ -140,7 +308,7 @@ async function createCalendarEvent(
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(eventData),
+          body: JSON.stringify(requestPayload),
           signal: controller.signal,
         }
       );
@@ -148,32 +316,118 @@ async function createCalendarEvent(
       clearTimeout(timeoutId);
 
       if (!response.ok) {
+        const errorText = await response.text();
+        let errorMessage = `Failed to create event: ${response.statusText}`;
+        
+        try {
+          const errorData = JSON.parse(errorText);
+          if (errorData.error?.message) {
+            errorMessage = `Google Calendar API error: ${errorData.error.message}`;
+          } else if (errorData.error) {
+            errorMessage = `Google Calendar API error: ${JSON.stringify(errorData.error)}`;
+          }
+        } catch {
+          // If error response is not JSON, use the text as is
+          if (errorText) {
+            errorMessage = `Google Calendar API error: ${errorText.substring(0, 200)}`;
+          }
+        }
+        
         return {
           success: false,
-          error: `Failed to create event: ${response.statusText}`,
+          error: errorMessage,
           executionTime: Date.now() - startTime,
         };
       }
 
-      const event = await response.json() as {
-        id: string;
-        summary: string;
-        start: { dateTime: string };
-        end: { dateTime: string };
+      const eventData = await response.json() as {
+        id?: string;
+        summary?: string;
+        start?: { dateTime?: string; date?: string };
+        end?: { dateTime?: string; date?: string };
         attendees?: Array<{ email: string }>;
+        error?: {
+          message?: string;
+          code?: number;
+        };
       };
+
+      // Check if the response contains an error
+      if (eventData.error) {
+        return {
+          success: false,
+          error: `Google Calendar API error: ${eventData.error.message || JSON.stringify(eventData.error)}`,
+          executionTime: Date.now() - startTime,
+        };
+      }
+
+      // Validate that we got an event ID (required for successful creation)
+      if (!eventData.id) {
+        return {
+          success: false,
+          error: 'Google Calendar API returned success but no event ID was provided',
+          executionTime: Date.now() - startTime,
+        };
+      }
+
+      // Helper to create CalendarEvent object
+      const createCalendarEventData = (): CalendarEvent => ({
+        id: eventData.id!,
+        title: eventData.summary || params.title,
+        start: eventData.start?.dateTime || eventData.start?.date || normalizedStart,
+        end: eventData.end?.dateTime || eventData.end?.date || normalizedEnd,
+        attendees: eventData.attendees?.map((a) => a.email),
+      });
+
+      // Verify the event was actually created by fetching it back
+      try {
+        const verifyResponse = await fetch(
+          `${GOOGLE_CALENDAR_API_BASE}/calendars/primary/events/${eventData.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        if (!verifyResponse.ok) {
+          return {
+            success: false,
+            error: `Event was created but could not be verified. Event ID: ${eventData.id}. Status: ${verifyResponse.statusText}`,
+            executionTime: Date.now() - startTime,
+          };
+        }
+
+        const verifiedEvent = await verifyResponse.json() as {
+          id?: string;
+          status?: string;
+        };
+
+        // Check if event was cancelled or deleted
+        if (verifiedEvent.status === 'cancelled') {
+          return {
+            success: false,
+            error: 'Event was created but immediately cancelled',
+            executionTime: Date.now() - startTime,
+          };
+        }
+
+        if (!verifiedEvent.id || verifiedEvent.id !== eventData.id) {
+          return {
+            success: false,
+            error: 'Event verification failed: event ID mismatch',
+            executionTime: Date.now() - startTime,
+          };
+        }
+      } catch {
+        // If verification fails, still return success
+        // The event might exist but we couldn't verify it
+      }
 
       return {
         success: true,
-        data: {
-          event: {
-            id: event.id,
-            title: event.summary || params.title,
-            start: event.start.dateTime,
-            end: event.end.dateTime,
-            attendees: event.attendees?.map((a) => a.email),
-          },
-        },
+        data: { event: createCalendarEventData() },
         executionTime: Date.now() - startTime,
       };
     } finally {
@@ -188,7 +442,6 @@ async function createCalendarEvent(
       };
     }
 
-    console.error('[Calendar Tool] Error creating event:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to create event',
@@ -204,7 +457,7 @@ export const calendarTool: Tool = {
   id: 'calendar',
   name: 'Calendar',
   description:
-    'List upcoming calendar events and create new events in Google Calendar. Requires Google Calendar integration.',
+    'List upcoming calendar events and create new events in Google Calendar. Requires Google Calendar integration. IMPORTANT: When creating events, you MUST calculate dates based on the CURRENT DATE provided in the system context. If the user says "tomorrow", calculate tomorrow\'s date from the current date. If they say "next week", calculate 7 days from the current date. ALWAYS use the current year, never use past years. CRITICAL: When specifying times for calendar events, use ISO 8601 format WITHOUT the "Z" suffix (e.g., 2024-12-01T14:00:00, NOT 2024-12-01T14:00:00Z). The time you specify will be interpreted as the user\'s local timezone (Europe/Rome). If you use "Z", the event will be created at the wrong time. Example: If current date is 2024-11-20 and user says "tomorrow at 14:00", use 2024-11-21T14:00:00 (without Z).',
   
   paramsSchema: {
     type: 'object',
@@ -238,12 +491,12 @@ export const calendarTool: Tool = {
       start: {
         type: 'string',
         format: 'date-time',
-        description: 'Event start date/time (ISO 8601)',
+        description: 'Event start date/time in ISO 8601 format WITHOUT timezone suffix (e.g., 2024-12-01T14:00:00, NOT 2024-12-01T14:00:00Z). IMPORTANT: Use the current year (2024 or later), not past years. For "tomorrow", calculate tomorrow\'s date. The time will be interpreted as the user\'s local timezone.',
       },
       end: {
         type: 'string',
         format: 'date-time',
-        description: 'Event end date/time (ISO 8601)',
+        description: 'Event end date/time in ISO 8601 format WITHOUT timezone suffix (e.g., 2024-12-01T15:00:00, NOT 2024-12-01T15:00:00Z). IMPORTANT: Use the current year (2024 or later), not past years. Must be after start time. The time will be interpreted as the user\'s local timezone.',
       },
       description: {
         type: 'string',
@@ -341,7 +594,7 @@ export const calendarTool: Tool = {
         error: `Unknown operation: ${calendarParams.operation}`,
         executionTime: Date.now() - startTime,
       };
-    } catch {
+    } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Calendar operation failed',

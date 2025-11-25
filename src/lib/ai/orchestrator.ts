@@ -130,10 +130,36 @@ export async function orchestrateAgent(
       tool_call_id?: string;
     };
 
+    // Build system prompt with current date context if calendar tool is enabled
+    let systemPrompt = agent.role || 'You are a helpful AI assistant.';
+    
+    if (agent.tools_enabled && agent.tools_enabled.includes('calendar')) {
+      const currentDate = new Date();
+      const currentDateISO = currentDate.toISOString();
+      const currentDateReadable = currentDate.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+      const tomorrow = new Date(currentDate);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const tomorrowISO = tomorrow.toISOString();
+      
+      systemPrompt += `\n\nIMPORTANT DATE CONTEXT:
+- Current date and time: ${currentDateReadable} (${currentDateISO})
+- When the user says "tomorrow", calculate: ${tomorrowISO}
+- When the user says "next week", calculate 7 days from now
+- ALWAYS use the current year (${currentDate.getFullYear()}) when creating calendar events
+- NEVER use past years like 2023 when the current year is ${currentDate.getFullYear()}
+- When creating calendar events, verify the date is in the future before calling the calendar tool
+- CRITICAL: When generating dates for calendar events, NEVER use "Z" (UTC) suffix. Use format like "2025-11-26T08:00:00" (without Z). The time you specify should be interpreted as the user's local timezone (Europe/Rome, UTC+1 in winter, UTC+2 in summer). If you use "Z", the event will be created at the wrong time.`;
+    }
+
     const messages: InternalMessage[] = [
       {
         role: 'system',
-        content: agent.role || 'You are a helpful AI assistant.',
+        content: systemPrompt,
       },
       ...conversationHistory.map((msg) => ({
         role: msg.role,
