@@ -32,19 +32,20 @@ export async function executeAgent(
       };
     }
 
-    // Get agent
-    const agent = await getAgent(agentId);
-    if (!agent) {
+    const agentResult = await getAgent(agentId);
+    
+    if (agentResult.error || !agentResult.data) {
       return {
         success: false,
         message: '',
         toolCalls: [],
         totalExecutionTime: 0,
-        error: 'Agent not found',
+        error: agentResult.error || 'Agent not found',
       };
     }
 
-    // Validate ownership
+    const agent = agentResult.data;
+
     if (agent.owner_id !== user.id) {
       return {
         success: false,
@@ -77,26 +78,9 @@ export async function executeAgent(
       };
     }
 
-    console.log('[Agent Execution] Executing agent:', {
-      agentId: agent.id,
-      agentName: agent.name,
-      userId: user.id,
-      messageLength: userMessage.length,
-    });
-
-    // Execute agent
     const result = await orchestrateAgent(agent, userMessage, conversationHistory);
-
-    console.log('[Agent Execution] Agent execution completed:', {
-      agentId: agent.id,
-      success: result.success,
-      toolCallsCount: result.toolCalls.length,
-      totalExecutionTime: result.totalExecutionTime,
-    });
-
     return result;
   } catch (error) {
-    console.error('[Agent Execution] Error:', error);
     
     return {
       success: false,

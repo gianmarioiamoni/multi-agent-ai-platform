@@ -46,16 +46,17 @@ export const AgentTestForm = ({ onSubmit, isLoading, disabled = false }: AgentTe
           rows={4}
         />
       </div>
-      <Button
-        type="submit"
-        variant="primary"
-        size="md"
-        isLoading={isLoading}
-        disabled={disabled || !message.trim()}
-        fullWidth
-      >
-        {isLoading ? 'Executing...' : 'Send Message'}
-      </Button>
+      <div className="flex justify-end">
+        <Button
+          type="submit"
+          variant="primary"
+          size="md"
+          isLoading={isLoading}
+          disabled={disabled || !message.trim()}
+        >
+          {isLoading ? 'Executing...' : 'Send Message'}
+        </Button>
+      </div>
     </form>
   );
 };

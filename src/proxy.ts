@@ -15,6 +15,8 @@ import type { NextRequest } from 'next/server';
 import type { Database } from '@/types/database.types';
 
 export async function proxy(request: NextRequest) {
+  const url = request.nextUrl.clone();
+  
   const { pathname } = request.nextUrl;
 
   // Create response object
@@ -50,6 +52,12 @@ export async function proxy(request: NextRequest) {
 
   // Handle auth routes (/auth/*)
   if (pathname.startsWith('/auth')) {
+    // Allow OAuth callbacks even if user is authenticated
+    // (for connecting external services like Google Calendar)
+    if (pathname.startsWith('/auth/callback')) {
+      return response;
+    }
+    
     if (user) {
       // Already authenticated, redirect to dashboard
       return NextResponse.redirect(new URL('/app/dashboard', request.url));

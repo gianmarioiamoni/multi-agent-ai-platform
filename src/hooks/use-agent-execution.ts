@@ -32,9 +32,11 @@ export function useAgentExecution(agentId: string): UseAgentExecutionReturn {
 
       setIsLoading(true);
       setError(null);
+      setResult(null);
 
       try {
         const executionResult = await executeAgent(agentId, userMessage);
+        
         setResult(executionResult);
 
         if (!executionResult.success) {

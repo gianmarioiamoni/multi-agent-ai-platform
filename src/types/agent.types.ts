@@ -140,14 +140,12 @@ export const AVAILABLE_TOOLS: ToolInfo[] = [
     name: 'Calendar',
     description: 'Manage calendar events and meetings',
     icon: 'calendar',
-    comingSoon: true,
   },
   {
     id: 'db_ops',
     name: 'Database Operations',
     description: 'Query and manipulate database records',
     icon: 'database',
-    comingSoon: true,
   },
 ];
 

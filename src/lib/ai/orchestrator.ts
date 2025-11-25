@@ -56,11 +56,6 @@ async function executeToolCall(
       params,
     };
 
-    console.log('[Orchestrator] Executing tool call:', {
-      toolId,
-      params,
-    });
-
     // Execute tool
     const result = await executeTool(toolId, params);
     const executionTime = Date.now() - startTime;
@@ -119,14 +114,6 @@ export async function orchestrateAgent(
       ? getToolSchemas(agent.tools_enabled)
       : [];
 
-    console.log('[Orchestrator] Starting agent execution:', {
-      agentId: agent.id,
-      agentName: agent.name,
-      model: agent.model,
-      toolsEnabled: agent.tools_enabled,
-      toolSchemasCount: toolSchemas.length,
-    });
-
     // Build messages array
     const messages: Array<{
       role: 'system' | 'user' | 'assistant';
@@ -163,8 +150,6 @@ export async function orchestrateAgent(
     while (iteration < MAX_ITERATIONS) {
       iteration++;
 
-      console.log(`[Orchestrator] Iteration ${iteration}/${MAX_ITERATIONS}`);
-
       // Call OpenAI API
       const response = await client.chat.completions.create({
         model: mapModelToOpenAI(agent.model),
@@ -187,8 +172,6 @@ export async function orchestrateAgent(
 
       // Check if tool calls are requested
       if (message.tool_calls && message.tool_calls.length > 0) {
-        console.log(`[Orchestrator] Tool calls requested: ${message.tool_calls.length}`);
-
         // Execute all tool calls in parallel
         const toolExecutionPromises = message.tool_calls.map((toolCall) =>
           executeToolCall(toolCall)
@@ -216,7 +199,6 @@ export async function orchestrateAgent(
       // No more tool calls, final response
       if (message.content) {
         finalMessage = message.content;
-        console.log('[Orchestrator] Final response received');
         break;
       }
     }
@@ -224,7 +206,6 @@ export async function orchestrateAgent(
     const totalExecutionTime = Date.now() - startTime;
 
     if (iteration >= MAX_ITERATIONS) {
-      console.warn('[Orchestrator] Max iterations reached');
       return {
         success: false,
         message: finalMessage || 'Agent execution exceeded maximum iterations.',
@@ -249,8 +230,6 @@ export async function orchestrateAgent(
     };
   } catch (error) {
     const totalExecutionTime = Date.now() - startTime;
-    
-    console.error('[Orchestrator] Error during agent execution:', error);
     
     return {
       success: false,

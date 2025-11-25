@@ -8,6 +8,8 @@ import type { Tool, ToolResult } from '@/types/tool.types';
 import type { ToolId } from '@/types/agent.types';
 import { webSearchTool } from './web-search';
 import { emailTool } from './email';
+import { calendarTool } from './calendar';
+import { dbOpsTool } from './db-ops';
 
 // Tool registry map
 const tools = new Map<ToolId, Tool>();
@@ -15,10 +17,8 @@ const tools = new Map<ToolId, Tool>();
 // Register available tools
 tools.set('web_search', webSearchTool);
 tools.set('email', emailTool);
-
-// Tools coming soon (placeholders)
-// tools.set('calendar', calendarTool);
-// tools.set('db_ops', dbOpsTool);
+tools.set('calendar', calendarTool);
+tools.set('db_ops', dbOpsTool);
 
 /**
  * Get a tool by ID
@@ -37,34 +37,20 @@ export async function executeTool<TParams = unknown, TResult = unknown>(
   const tool = getTool(toolId);
 
   if (!tool) {
-    console.error(`[Tool Registry] Tool not found: ${toolId}`);
     return {
       success: false,
       error: `Tool "${toolId}" is not available`,
     };
   }
 
-  console.log(`[Tool Registry] Executing tool: ${toolId}`, { params });
-
   const startTime = Date.now();
 
   try {
     const result = await tool.execute(params);
-    
-    console.log(`[Tool Registry] Tool execution completed: ${toolId}`, {
-      success: result.success,
-      executionTime: result.executionTime || Date.now() - startTime,
-    });
-
     return result as ToolResult<TResult>;
   } catch (error) {
     const executionTime = Date.now() - startTime;
     
-    console.error(`[Tool Registry] Tool execution failed: ${toolId}`, {
-      error,
-      executionTime,
-    });
-
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Tool execution failed',
@@ -129,11 +115,15 @@ export function isToolAvailable(toolId: ToolId): boolean {
         process.env.SMTP_PASSWORD
       );
     case 'calendar':
-      // Check calendar service credentials when implemented
-      return false;
+      // Calendar tool requires user to connect their Google account
+      // Availability is checked per-user in the tool itself
+      return !!(
+        process.env.GOOGLE_CLIENT_ID &&
+        process.env.GOOGLE_CLIENT_SECRET
+      );
     case 'db_ops':
       // DB ops don't need external credentials
-      return false;
+      return true; // Always available
     default:
       return false;
   }
