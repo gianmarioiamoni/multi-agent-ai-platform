@@ -19,7 +19,9 @@ export async function createWorkflowRun(params: {
 }): Promise<string> {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  // Workaround: Type inference issue with workflow_runs table - cast needed
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase as any)
     .from('workflow_runs')
     .insert({
       workflow_id: params.workflowId,
@@ -28,11 +30,16 @@ export async function createWorkflowRun(params: {
       status: 'pending',
     })
     .select('id')
-    .single();
+    .single() as { data: { id: string } | null; error: { message?: string } | null };
 
-  if (error) {
+  if (error || !data) {
     console.error('[Execution Log] Error creating workflow run:', error);
-    throw new Error(`Failed to create workflow run: ${error.message}`);
+    throw new Error(`Failed to create workflow run: ${error?.message || 'Unknown error'}`);
+  }
+
+  // Type assertion: data is guaranteed to be non-null after the check above
+  if (!data.id) {
+    throw new Error('Failed to create workflow run: No ID returned');
   }
 
   return data.id;
@@ -53,10 +60,12 @@ export async function updateWorkflowRun(
 ): Promise<void> {
   const supabase = await createClient();
 
-  const { error } = await supabase
+  // Workaround: Type inference issue with workflow_runs table - cast needed
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabase as any)
     .from('workflow_runs')
     .update(updates)
-    .eq('id', workflowRunId);
+    .eq('id', workflowRunId) as { error: { message?: string } | null };
 
   if (error) {
     console.error('[Execution Log] Error updating workflow run:', error);
@@ -75,7 +84,9 @@ export async function createAgentRun(params: {
 }): Promise<string> {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  // Workaround: Type inference issue with agent_runs table - cast needed
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase as any)
     .from('agent_runs')
     .insert({
       workflow_run_id: params.workflowRunId,
@@ -85,11 +96,16 @@ export async function createAgentRun(params: {
       status: 'pending',
     })
     .select('id')
-    .single();
+    .single() as { data: { id: string } | null; error: { message?: string } | null };
 
-  if (error) {
+  if (error || !data) {
     console.error('[Execution Log] Error creating agent run:', error);
-    throw new Error(`Failed to create agent run: ${error.message}`);
+    throw new Error(`Failed to create agent run: ${error?.message || 'Unknown error'}`);
+  }
+
+  // Type assertion: data is guaranteed to be non-null after the check above
+  if (!data.id) {
+    throw new Error('Failed to create agent run: No ID returned');
   }
 
   return data.id;
@@ -110,10 +126,12 @@ export async function updateAgentRun(
 ): Promise<void> {
   const supabase = await createClient();
 
-  const { error } = await supabase
+  // Workaround: Type inference issue with agent_runs table - cast needed
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabase as any)
     .from('agent_runs')
     .update(updates)
-    .eq('id', agentRunId);
+    .eq('id', agentRunId) as { error: { message?: string } | null };
 
   if (error) {
     console.error('[Execution Log] Error updating agent run:', error);
@@ -137,7 +155,9 @@ export async function createToolInvocation(params: {
 }): Promise<string> {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  // Workaround: Type inference issue with tool_invocations table - cast needed
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase as any)
     .from('tool_invocations')
     .insert({
       agent_run_id: params.agentRunId,
@@ -151,11 +171,16 @@ export async function createToolInvocation(params: {
       execution_time_ms: params.execution_time_ms,
     })
     .select('id')
-    .single();
+    .single() as { data: { id: string } | null; error: { message?: string } | null };
 
-  if (error) {
+  if (error || !data) {
     console.error('[Execution Log] Error creating tool invocation:', error);
-    throw new Error(`Failed to create tool invocation: ${error.message}`);
+    throw new Error(`Failed to create tool invocation: ${error?.message || 'Unknown error'}`);
+  }
+
+  // Type assertion: data is guaranteed to be non-null after the check above
+  if (!data.id) {
+    throw new Error('Failed to create tool invocation: No ID returned');
   }
 
   return data.id;

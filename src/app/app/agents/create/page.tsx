@@ -4,8 +4,11 @@
  */
 
 import { AgentBuilder } from '@/components/agents/agent-builder';
+import { getDefaultModel } from '@/lib/settings/utils';
 
-export default function CreateAgentPage() {
+export default async function CreateAgentPage() {
+  const defaultModel = await getDefaultModel();
+
   return (
     <div className="container mx-auto max-w-4xl">
       <div className="mb-6">
@@ -15,7 +18,7 @@ export default function CreateAgentPage() {
         </p>
       </div>
 
-      <AgentBuilder />
+      <AgentBuilder defaultModel={defaultModel} />
     </div>
   );
 }

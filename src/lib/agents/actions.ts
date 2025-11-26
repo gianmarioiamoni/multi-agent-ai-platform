@@ -8,6 +8,7 @@
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import { getCurrentUser } from '@/lib/auth/utils';
+import type { Database } from '@/types/database.types';
 import type {
   Agent,
   CreateAgentInput,
@@ -95,8 +96,8 @@ export async function createAgent(
 
     const supabase = await createClient();
 
-    // Prepare agent data
-    const agentData = {
+    // Prepare agent data - match database Insert type exactly
+    const agentData: Database['public']['Tables']['agents']['Insert'] = {
       owner_id: user.id,
       name: input.name,
       description: input.description || null,
@@ -104,12 +105,16 @@ export async function createAgent(
       model: input.model,
       temperature: input.temperature ?? 0.7,
       max_tokens: input.max_tokens ?? 2000,
-      tools_enabled: input.tools_enabled ?? [],
-      config: input.config ?? {},
-      status: 'active' as const,
+      tools_enabled: (input.tools_enabled ?? []) as string[],
+      config: (input.config ?? {}) as Database['public']['Tables']['agents']['Insert']['config'],
+      status: 'active',
     };
 
-    const { data, error } = await supabase
+    // Workaround: Supabase client type inference issue - TypeScript sees 'never' for agents table
+    // even though types are correctly defined in Database. Cast to any is necessary here.
+    // The data is correctly typed above (agentData: Database['public']['Tables']['agents']['Insert'])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (supabase as any)
       .from('agents')
       .insert(agentData)
       .select()
@@ -152,14 +157,31 @@ export async function updateAgent(
       .eq('id', agentId)
       .single();
 
-    if (!existing || existing.owner_id !== user.id) {
+    const existingData = existing as { owner_id?: string } | null;
+    if (!existingData || existingData.owner_id !== user.id) {
       return { data: null, error: 'Agent not found or unauthorized' };
     }
 
-    // Update agent
-    const { data, error } = await supabase
+    // Update agent - convert UpdateAgentInput to database Update type
+    const updateData: Database['public']['Tables']['agents']['Update'] = {
+      ...(input.name && { name: input.name }),
+      ...(input.description !== undefined && { description: input.description }),
+      ...(input.role && { role: input.role }),
+      ...(input.model && { model: input.model }),
+      ...(input.temperature !== undefined && { temperature: input.temperature }),
+      ...(input.max_tokens !== undefined && { max_tokens: input.max_tokens }),
+      ...(input.tools_enabled !== undefined && { tools_enabled: input.tools_enabled as string[] }),
+      ...(input.config !== undefined && { config: input.config as Database['public']['Tables']['agents']['Update']['config'] }),
+      ...(input.status && { status: input.status }),
+    };
+
+    // Workaround: Supabase client type inference issue - TypeScript sees 'never' for agents table
+    // even though types are correctly defined in Database. Cast to any is necessary here.
+    // The data is correctly typed above (updateData: Database['public']['Tables']['agents']['Update'])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (supabase as any)
       .from('agents')
-      .update(input)
+      .update(updateData)
       .eq('id', agentId)
       .select()
       .single();
@@ -201,7 +223,8 @@ export async function deleteAgent(
       .eq('id', agentId)
       .single();
 
-    if (!existing || existing.owner_id !== user.id) {
+    const existingData = existing as { owner_id?: string } | null;
+    if (!existingData || existingData.owner_id !== user.id) {
       return { success: false, error: 'Agent not found or unauthorized' };
     }
 

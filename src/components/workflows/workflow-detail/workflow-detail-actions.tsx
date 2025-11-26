@@ -48,8 +48,7 @@ export const WorkflowDetailActions = ({ workflow }: WorkflowDetailActionsProps) 
   };
 
   const handleEdit = () => {
-    // TODO: Implement workflow edit page
-    info('Coming Soon', 'Workflow editing is not yet available');
+    router.push(`/app/workflows/${workflow.id}/edit`);
   };
 
   return (

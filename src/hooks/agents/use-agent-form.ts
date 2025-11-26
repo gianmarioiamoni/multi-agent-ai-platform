@@ -6,18 +6,33 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useToast } from '@/contexts/toast-context';
-import { createAgent } from '@/lib/agents/actions';
+import { createAgent, updateAgent, getAgent } from '@/lib/agents/actions';
 import { createAgentSchema, type CreateAgentFormData } from '@/lib/validations/agent';
+import { AVAILABLE_MODELS } from '@/types/agent.types';
+import { useAutoSave } from '@/hooks/shared/use-auto-save';
+import type { AutoSaveStatus } from '@/hooks/shared/use-auto-save';
 
-export const useAgentForm = () => {
+interface UseAgentFormProps {
+  defaultModel?: string;
+  agentId?: string; // If provided, form is in edit mode
+}
+
+export const useAgentForm = (defaultModel?: string, agentId?: string) => {
   const router = useRouter();
   const { addToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingAgent, setIsLoadingAgent] = useState(!!agentId);
+  const isEditMode = !!agentId;
+
+  // Validate defaultModel against available models, fallback to gpt-4o-mini
+  const validDefaultModel = defaultModel && AVAILABLE_MODELS.some(m => m.id === defaultModel)
+    ? defaultModel
+    : 'gpt-4o-mini';
 
   const form = useForm<CreateAgentFormData>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -25,30 +40,109 @@ export const useAgentForm = () => {
     defaultValues: {
       name: '',
       role: '',
-      model: 'gpt-4o-mini' as const,
+      model: validDefaultModel as CreateAgentFormData['model'],
       temperature: 0.7,
       max_tokens: 2000,
       tools_enabled: [],
     },
   });
 
+  // Load agent data in edit mode
+  useEffect(() => {
+    if (!agentId) return;
+
+    const loadAgent = async () => {
+      setIsLoadingAgent(true);
+      const { data: agent, error } = await getAgent(agentId);
+
+      if (error || !agent) {
+        addToast('error', 'Error', error || 'Failed to load agent');
+        router.push('/app/agents');
+        return;
+      }
+
+      // Populate form with agent data
+      // Ensure all required fields have values
+      const formData: CreateAgentFormData = {
+        name: agent.name || '',
+        role: agent.role || '',
+        model: agent.model as CreateAgentFormData['model'],
+        temperature: agent.temperature ?? 0.7,
+        max_tokens: agent.max_tokens ?? 2000,
+        tools_enabled: (agent.tools_enabled || []) as CreateAgentFormData['tools_enabled'],
+      };
+      
+      // Reset form with loaded data
+      // This updates all form fields and form state
+      form.reset(formData, { 
+        keepDefaultValues: false,
+        keepValues: false,
+        keepDirty: false,
+        keepIsSubmitted: false,
+        keepTouched: false,
+        keepIsValid: false,
+        keepSubmitCount: false,
+      });
+
+      setIsLoadingAgent(false);
+    };
+
+    loadAgent();
+  }, [agentId, form, router, addToast]);
+
+  // Auto-save function for edit mode
+  const handleAutoSave = async (data: CreateAgentFormData) => {
+    if (!agentId) {
+      return { success: false, error: 'Agent ID is required for auto-save' };
+    }
+
+    const result = await updateAgent(agentId, data);
+    
+    if (result.error) {
+      return { success: false, error: result.error };
+    }
+
+    return { success: true };
+  };
+
+  // Auto-save hook (only enabled in edit mode and after data is loaded)
+  const autoSave = useAutoSave({
+    form,
+    onSave: handleAutoSave,
+    enabled: isEditMode,
+    skipInitialSave: true,
+    isReady: !isLoadingAgent, // Disable auto-save while loading
+  });
+
   const handleSubmit = async (data: CreateAgentFormData) => {
     setIsLoading(true);
 
     try {
-      const result = await createAgent(data);
+      if (isEditMode) {
+        // Update existing agent
+        const result = await updateAgent(agentId!, data);
 
-      if (result.error) {
-        addToast('error', 'Error', result.error);
-        return;
+        if (result.error) {
+          addToast('error', 'Error', result.error);
+          return;
+        }
+
+        addToast('success', 'Success', 'Agent updated successfully!');
+        router.push(`/app/agents/${agentId}`);
+      } else {
+        // Create new agent
+        const result = await createAgent(data);
+
+        if (result.error) {
+          addToast('error', 'Error', result.error);
+          return;
+        }
+
+        addToast('success', 'Success', 'Agent created successfully!');
+        router.push('/app/agents');
       }
-
-      addToast('success', 'Success', 'Agent created successfully!');
-
-      // Redirect to agents list
-      router.push('/app/agents');
     } catch (error) {
-      console.error('Error creating agent:', error);
+      console.error(`Error ${isEditMode ? 'updating' : 'creating'} agent:`, error);
       addToast('error', 'Error', 'An unexpected error occurred');
     } finally {
       setIsLoading(false);
@@ -57,9 +151,11 @@ export const useAgentForm = () => {
 
   return {
     form,
-    isLoading,
+    isLoading: isLoading || isLoadingAgent,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     handleSubmit: form.handleSubmit(handleSubmit) as any,
+    autoSave,
+    isEditMode,
   };
 };
 

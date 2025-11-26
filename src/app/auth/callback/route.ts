@@ -33,7 +33,8 @@ export async function GET(request: NextRequest) {
         .eq('user_id', authData.user.id)
         .single();
 
-      if (profile?.is_disabled === true) {
+      const profileData = profile as { is_disabled?: boolean } | null;
+      if (profileData?.is_disabled === true) {
         // User is disabled, sign them out and redirect to login with error
         await supabase.auth.signOut();
         return NextResponse.redirect(

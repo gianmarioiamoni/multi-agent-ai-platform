@@ -3,7 +3,7 @@
  * Type definitions for user notifications
  */
 
-export type NotificationType = 'workflow_completed' | 'workflow_failed' | 'workflow_started' | 'integration_error' | 'system';
+export type NotificationType = 'workflow_completed' | 'workflow_failed' | 'workflow_started' | 'agent_completed' | 'agent_failed' | 'integration_error' | 'system';
 
 export interface Notification {
   id: string;

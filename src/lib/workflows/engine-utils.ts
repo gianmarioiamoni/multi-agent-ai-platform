@@ -64,7 +64,9 @@ export interface WorkflowExecutionLoggers {
 export function createLoggersFromClient(client: SupabaseClient): WorkflowExecutionLoggers {
   return {
     createWorkflowRun: async (params) => {
-      const { data, error } = await client
+      // Workaround: Type inference issue with workflow_runs table - cast needed
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error } = await (client as any)
         .from('workflow_runs')
         .insert({
           workflow_id: params.workflowId,
@@ -73,7 +75,7 @@ export function createLoggersFromClient(client: SupabaseClient): WorkflowExecuti
           status: 'pending',
         })
         .select('id')
-        .single();
+        .single() as { data: { id: string } | null; error: { message?: string } | null };
 
       if (error || !data) {
         throw new Error(`Failed to create workflow run: ${error?.message || 'Unknown error'}`);
@@ -83,10 +85,12 @@ export function createLoggersFromClient(client: SupabaseClient): WorkflowExecuti
     },
 
     updateWorkflowRun: async (workflowRunId, updates) => {
-      const { error } = await client
+      // Workaround: Type inference issue with workflow_runs table - cast needed
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await (client as any)
         .from('workflow_runs')
         .update(updates)
-        .eq('id', workflowRunId);
+        .eq('id', workflowRunId) as { error: { message?: string } | null };
 
       if (error) {
         throw new Error(`Failed to update workflow run: ${error.message}`);
@@ -94,7 +98,9 @@ export function createLoggersFromClient(client: SupabaseClient): WorkflowExecuti
     },
 
     createAgentRun: async (params) => {
-      const { data, error } = await client
+      // Workaround: Type inference issue with agent_runs table - cast needed
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error } = await (client as any)
         .from('agent_runs')
         .insert({
           workflow_run_id: params.workflowRunId,
@@ -104,7 +110,7 @@ export function createLoggersFromClient(client: SupabaseClient): WorkflowExecuti
           status: 'pending',
         })
         .select('id')
-        .single();
+        .single() as { data: { id: string } | null; error: { message?: string } | null };
 
       if (error || !data) {
         throw new Error(`Failed to create agent run: ${error?.message || 'Unknown error'}`);
@@ -114,10 +120,12 @@ export function createLoggersFromClient(client: SupabaseClient): WorkflowExecuti
     },
 
     updateAgentRun: async (agentRunId, updates) => {
-      const { error } = await client
+      // Workaround: Type inference issue with agent_runs table - cast needed
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await (client as any)
         .from('agent_runs')
         .update(updates)
-        .eq('id', agentRunId);
+        .eq('id', agentRunId) as { error: { message?: string } | null };
 
       if (error) {
         throw new Error(`Failed to update agent run: ${error.message}`);
@@ -125,7 +133,9 @@ export function createLoggersFromClient(client: SupabaseClient): WorkflowExecuti
     },
 
     createToolInvocation: async (params) => {
-      const { data, error } = await client
+      // Workaround: Type inference issue with tool_invocations table - cast needed
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error } = await (client as any)
         .from('tool_invocations')
         .insert({
           agent_run_id: params.agentRunId,
@@ -139,7 +149,7 @@ export function createLoggersFromClient(client: SupabaseClient): WorkflowExecuti
           execution_time_ms: params.execution_time_ms,
         })
         .select('id')
-        .single();
+        .single() as { data: { id: string } | null; error: { message?: string } | null };
 
       if (error || !data) {
         throw new Error(`Failed to create tool invocation: ${error?.message || 'Unknown error'}`);

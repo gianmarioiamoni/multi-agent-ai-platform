@@ -14,8 +14,13 @@ import { ModelConfigSection } from './agent-builder/model-config-section';
 import { ToolsSection } from './agent-builder/tools-section';
 import { FormActions } from './agent-builder/form-actions';
 
-export const AgentBuilder = () => {
-  const { form, isLoading, handleSubmit } = useAgentForm();
+interface AgentBuilderProps {
+  defaultModel?: string;
+  agentId?: string; // If provided, form is in edit mode
+}
+
+export const AgentBuilder = ({ defaultModel, agentId }: AgentBuilderProps) => {
+  const { form, isLoading, handleSubmit, autoSave, isEditMode } = useAgentForm(defaultModel, agentId);
 
   return (
     <FormProvider {...form}>
@@ -60,7 +65,12 @@ export const AgentBuilder = () => {
         </Card>
 
         {/* Actions */}
-        <FormActions isLoading={isLoading} />
+        <FormActions 
+          isLoading={isLoading}
+          isEditMode={isEditMode}
+          autoSaveStatus={autoSave?.status}
+          autoSaveLastSaved={autoSave?.lastSavedAt || null}
+        />
       </form>
     </FormProvider>
   );

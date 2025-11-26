@@ -13,6 +13,7 @@ import type {
 } from '@/types/tool.types';
 import { getValidGoogleCalendarToken } from '../credentials/google-calendar';
 import { getCurrentUser } from '../auth/utils';
+import { getUserTimezone } from '../settings/utils';
 
 const GOOGLE_CALENDAR_API_BASE = 'https://www.googleapis.com/calendar/v3';
 const CALENDAR_TIMEOUT = 15000; // 15 seconds
@@ -27,6 +28,9 @@ async function listUpcomingEvents(
   const startTime = Date.now();
 
   try {
+    // Get user's timezone from settings (once for the entire function)
+    const userTimeZone = await getUserTimezone();
+
     // Helper to normalize date string to RFC3339 format (required by Google Calendar API)
     const normalizeDateForAPI = (dateString: string | undefined, defaultValue: Date): string => {
       if (!dateString) {
@@ -39,9 +43,6 @@ async function listUpcomingEvents(
       }
       
       // No timezone - interpret as user's local time and add timezone offset
-      // Get user's timezone (default to Europe/Rome)
-      const userTimeZone = process.env.USER_TIMEZONE || 'Europe/Rome';
-      
       // Parse the date string
       const match = dateString.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/);
       if (!match) {
@@ -179,9 +180,8 @@ async function createCalendarEvent(
   const startTime = Date.now();
 
   try {
-    // Get user's timezone (default to Europe/Rome for Italy, handles DST automatically)
-    // In a real app, you might want to store user timezone in their profile
-    const userTimeZone = process.env.USER_TIMEZONE || 'Europe/Rome';
+    // Get user's timezone from settings
+    const userTimeZone = await getUserTimezone();
     
     // Parse dates - if they don't have timezone info, interpret them as user's local time
     // The agent might pass dates like "2024-11-21T15:00:00" which we interpret as 15:00 in user's timezone
@@ -522,8 +522,8 @@ async function createCalendarEvent(
 export const calendarTool: Tool = {
   id: 'calendar',
   name: 'Calendar',
-  description:
-    'List upcoming calendar events and create new events in Google Calendar. Requires Google Calendar integration. IMPORTANT: When creating events, you MUST calculate dates based on the CURRENT DATE provided in the system context. If the user says "tomorrow", calculate tomorrow\'s date from the current date. If they say "next week", calculate 7 days from the current date. ALWAYS use the current year, never use past years. CRITICAL: When specifying times for calendar events, use ISO 8601 format WITHOUT the "Z" suffix (e.g., 2024-12-01T14:00:00, NOT 2024-12-01T14:00:00Z). The time you specify will be interpreted as the user\'s local timezone (Europe/Rome). If you use "Z", the event will be created at the wrong time. Example: If current date is 2024-11-20 and user says "tomorrow at 14:00", use 2024-11-21T14:00:00 (without Z).',
+    description:
+    'List upcoming calendar events and create new events in Google Calendar. Requires Google Calendar integration. IMPORTANT: When creating events, you MUST calculate dates based on the CURRENT DATE provided in the system context. If the user says "tomorrow", calculate tomorrow\'s date from the current date. If they say "next week", calculate 7 days from the current date. ALWAYS use the current year, never use past years. CRITICAL: When specifying times for calendar events, use ISO 8601 format WITHOUT the "Z" suffix (e.g., 2024-12-01T14:00:00, NOT 2024-12-01T14:00:00Z). The time you specify will be interpreted as the user\'s local timezone (configured in Settings). If you use "Z", the event will be created at the wrong time. Example: If current date is 2024-11-20 and user says "tomorrow at 14:00", use 2024-11-21T14:00:00 (without Z).',
   
   paramsSchema: {
     type: 'object',
@@ -557,12 +557,12 @@ export const calendarTool: Tool = {
       start: {
         type: 'string',
         format: 'date-time',
-        description: 'Event start date/time in ISO 8601 format WITHOUT timezone suffix (e.g., 2024-12-01T14:00:00, NOT 2024-12-01T14:00:00Z). IMPORTANT: Use the current year (2024 or later), not past years. For "tomorrow", calculate tomorrow\'s date. The time will be interpreted as the user\'s local timezone.',
+        description: 'Event start date/time in ISO 8601 format WITHOUT timezone suffix (e.g., 2024-12-01T14:00:00, NOT 2024-12-01T14:00:00Z). IMPORTANT: Use the current year (2024 or later), not past years. For "tomorrow", calculate tomorrow\'s date. The time will be interpreted as the user\'s local timezone (configured in Settings).',
       },
       end: {
         type: 'string',
         format: 'date-time',
-        description: 'Event end date/time in ISO 8601 format WITHOUT timezone suffix (e.g., 2024-12-01T15:00:00, NOT 2024-12-01T15:00:00Z). IMPORTANT: Use the current year (2024 or later), not past years. Must be after start time. The time will be interpreted as the user\'s local timezone.',
+        description: 'Event end date/time in ISO 8601 format WITHOUT timezone suffix (e.g., 2024-12-01T15:00:00, NOT 2024-12-01T15:00:00Z). IMPORTANT: Use the current year (2024 or later), not past years. Must be after start time. The time will be interpreted as the user\'s local timezone (configured in Settings).',
       },
       description: {
         type: 'string',

@@ -141,7 +141,7 @@ export async function executeWorkflow(
             tool: toolExecution.call.toolId,
             params: toolExecution.call.params,
             status: toolExecution.result.success ? 'completed' : 'failed',
-            result: toolExecution.result.success ? toolExecution.result.data : null,
+            result: toolExecution.result.success ? (toolExecution.result.data as Record<string, unknown> | null) : null,
             error: toolExecution.result.success ? null : toolExecution.result.error || null,
             started_at: new Date(Date.now() - toolExecution.executionTime).toISOString(),
             finished_at: new Date().toISOString(),

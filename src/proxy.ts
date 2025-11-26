@@ -86,13 +86,15 @@ export async function proxy(request: NextRequest) {
     }
 
     // Check if user has admin role
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('user_id', user.id)
-      .single();
+      // Workaround: Type inference issue with profiles table - cast needed
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: profile } = await (supabase as any)
+        .from('profiles')
+        .select('role')
+        .eq('user_id', user.id)
+        .single() as { data: { role?: string } | null; error: unknown };
 
-    if (!profile || profile.role !== 'admin') {
+      if (!profile || profile.role !== 'admin') {
       // Not admin, redirect to dashboard
       return NextResponse.redirect(new URL('/app/dashboard', request.url));
     }

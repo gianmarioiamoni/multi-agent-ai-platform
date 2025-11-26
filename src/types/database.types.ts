@@ -53,16 +53,87 @@ export interface Database {
           updated_at?: string;
         };
       };
-      // Additional tables will be added in Sprint 2
       agents: {
-        Row: Record<string, never>;
-        Insert: Record<string, never>;
-        Update: Record<string, never>;
+        Row: {
+          id: string;
+          owner_id: string;
+          name: string;
+          description: string | null;
+          role: string;
+          model: 'gpt-4o' | 'gpt-4o-mini' | 'gpt-4-turbo' | 'gpt-3.5-turbo';
+          temperature: number;
+          max_tokens: number;
+          tools_enabled: string[];
+          config: Json;
+          status: 'active' | 'inactive' | 'archived';
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          owner_id: string;
+          name: string;
+          description?: string | null;
+          role: string;
+          model?: 'gpt-4o' | 'gpt-4o-mini' | 'gpt-4-turbo' | 'gpt-3.5-turbo';
+          temperature?: number;
+          max_tokens?: number;
+          tools_enabled?: string[];
+          config?: Json;
+          status?: 'active' | 'inactive' | 'archived';
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          owner_id?: string;
+          name?: string;
+          description?: string | null;
+          role?: string;
+          model?: 'gpt-4o' | 'gpt-4o-mini' | 'gpt-4-turbo' | 'gpt-3.5-turbo';
+          temperature?: number;
+          max_tokens?: number;
+          tools_enabled?: string[];
+          config?: Json;
+          status?: 'active' | 'inactive' | 'archived';
+          created_at?: string;
+          updated_at?: string;
+        };
       };
       workflows: {
-        Row: Record<string, never>;
-        Insert: Record<string, never>;
-        Update: Record<string, never>;
+        Row: {
+          id: string;
+          owner_id: string;
+          name: string;
+          description: string | null;
+          graph: Json;
+          status: 'draft' | 'active' | 'paused' | 'archived';
+          created_at: string;
+          updated_at: string;
+          last_run_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          owner_id: string;
+          name: string;
+          description?: string | null;
+          graph?: Json;
+          status?: 'draft' | 'active' | 'paused' | 'archived';
+          created_at?: string;
+          updated_at?: string;
+          last_run_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          owner_id?: string;
+          name?: string;
+          description?: string | null;
+          graph?: Json;
+          status?: 'draft' | 'active' | 'paused' | 'archived';
+          created_at?: string;
+          updated_at?: string;
+          last_run_at?: string | null;
+        };
       };
       logs: {
         Row: {
@@ -143,11 +214,181 @@ export interface Database {
           created_at?: string;
         };
       };
+      workflow_runs: {
+        Row: {
+          id: string;
+          workflow_id: string;
+          status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
+          input: string | null;
+          output: string | null;
+          error: string | null;
+          started_at: string | null;
+          finished_at: string | null;
+          created_by: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          workflow_id: string;
+          status?: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
+          input?: string | null;
+          output?: string | null;
+          error?: string | null;
+          started_at?: string | null;
+          finished_at?: string | null;
+          created_by: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          workflow_id?: string;
+          status?: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
+          input?: string | null;
+          output?: string | null;
+          error?: string | null;
+          started_at?: string | null;
+          finished_at?: string | null;
+          created_by?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      agent_runs: {
+        Row: {
+          id: string;
+          workflow_run_id: string;
+          agent_id: string;
+          status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
+          step_order: number;
+          input: string | null;
+          output: string | null;
+          error: string | null;
+          started_at: string | null;
+          finished_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          workflow_run_id: string;
+          agent_id: string;
+          status?: 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
+          step_order: number;
+          input?: string | null;
+          output?: string | null;
+          error?: string | null;
+          started_at?: string | null;
+          finished_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          workflow_run_id?: string;
+          agent_id?: string;
+          status?: 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
+          step_order?: number;
+          input?: string | null;
+          output?: string | null;
+          error?: string | null;
+          started_at?: string | null;
+          finished_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      tool_invocations: {
+        Row: {
+          id: string;
+          agent_run_id: string;
+          tool: string;
+          params: Json;
+          status: 'pending' | 'running' | 'completed' | 'failed';
+          result: Json | null;
+          error: string | null;
+          started_at: string | null;
+          finished_at: string | null;
+          execution_time_ms: number | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          agent_run_id: string;
+          tool: string;
+          params?: Json;
+          status?: 'pending' | 'running' | 'completed' | 'failed';
+          result?: Json | null;
+          error?: string | null;
+          started_at?: string | null;
+          finished_at?: string | null;
+          execution_time_ms?: number | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          agent_run_id?: string;
+          tool?: string;
+          params?: Json;
+          status?: 'pending' | 'running' | 'completed' | 'failed';
+          result?: Json | null;
+          error?: string | null;
+          started_at?: string | null;
+          finished_at?: string | null;
+          execution_time_ms?: number | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      stored_credentials: {
+        Row: {
+          id: string;
+          user_id: string;
+          provider: string;
+          encrypted_data: string; // BYTEA is returned as hex string in Supabase
+          is_active: boolean;
+          expires_at: string | null;
+          scopes: string[] | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          provider: string;
+          encrypted_data: string; // BYTEA input as hex string
+          is_active?: boolean;
+          expires_at?: string | null;
+          scopes?: string[] | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          provider?: string;
+          encrypted_data?: string;
+          is_active?: boolean;
+          expires_at?: string | null;
+          scopes?: string[] | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
     Enums: {
       user_role: 'user' | 'admin';
+      ai_model: 'gpt-4o' | 'gpt-4o-mini' | 'gpt-4-turbo' | 'gpt-3.5-turbo';
+      agent_status: 'active' | 'inactive' | 'archived';
+      workflow_status: 'draft' | 'active' | 'paused' | 'archived';
+      workflow_run_status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
+      agent_run_status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
+      tool_invocation_status: 'pending' | 'running' | 'completed' | 'failed';
     };
   };
 }
@@ -155,4 +396,3 @@ export interface Database {
 // Helper types for easier access
 export type UserRole = Database['public']['Enums']['user_role'];
 export type Profile = Database['public']['Tables']['profiles']['Row'];
-

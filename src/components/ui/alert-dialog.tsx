@@ -46,7 +46,7 @@ const AlertDialogDescription = DialogDescription;
 
 const AlertDialogFooter = DialogFooter;
 
-interface AlertDialogActionProps extends React.ComponentPropsWithoutRef<'button'> {
+interface AlertDialogActionProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'ref'> {
   variant?: ButtonVariant;
 }
 

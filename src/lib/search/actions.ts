@@ -40,12 +40,14 @@ export async function searchAll(query: string): Promise<{
     const results: SearchResult[] = [];
 
     // Search agents
-    const { data: agents, error: agentsError } = await supabase
+    // Workaround: Type inference issue with agents table - cast needed
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: agents, error: agentsError } = await (supabase as any)
       .from('agents')
       .select('id, name, description')
       .eq('owner_id', user.id)
       .or(`name.ilike."${searchPattern}",description.ilike."${searchPattern}"`)
-      .limit(5);
+      .limit(5) as { data: Array<{ id: string; name: string; description: string | null }> | null; error: unknown };
 
     if (agentsError) {
       console.error('Error searching agents:', agentsError);
@@ -62,12 +64,14 @@ export async function searchAll(query: string): Promise<{
     }
 
     // Search workflows
-    const { data: workflows, error: workflowsError } = await supabase
+    // Workaround: Type inference issue with workflows table - cast needed
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: workflows, error: workflowsError } = await (supabase as any)
       .from('workflows')
       .select('id, name, description')
       .eq('owner_id', user.id)
       .or(`name.ilike."${searchPattern}",description.ilike."${searchPattern}"`)
-      .limit(5);
+      .limit(5) as { data: Array<{ id: string; name: string; description: string | null }> | null; error: unknown };
 
     if (workflowsError) {
       console.error('Error searching workflows:', workflowsError);

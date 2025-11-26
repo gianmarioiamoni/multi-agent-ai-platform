@@ -35,7 +35,9 @@ export async function updateProfile(data: UpdateProfileData): Promise<ActionResu
 
     const supabase = await createClient();
 
-    const { error } = await supabase
+    // Workaround: Type inference issue with profiles table - cast needed
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error } = await (supabase as any)
       .from('profiles')
       .update({
         name: data.name,

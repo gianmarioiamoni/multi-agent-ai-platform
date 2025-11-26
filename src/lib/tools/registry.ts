@@ -12,7 +12,8 @@ import { calendarTool } from './calendar';
 import { dbOpsTool } from './db-ops';
 
 // Tool registry map
-const tools = new Map<ToolId, Tool>();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const tools = new Map<ToolId, Tool<any, any>>();
 
 // Register available tools
 tools.set('web_search', webSearchTool);

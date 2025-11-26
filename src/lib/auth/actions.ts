@@ -71,11 +71,13 @@ export const signIn = async (
 
     // After successful authentication, check if user is disabled
     if (authData.user) {
-      const { data: profile } = await supabase
+      // Workaround: Type inference issue with profiles table - cast needed
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: profile } = await (supabase as any)
         .from('profiles')
         .select('is_disabled')
         .eq('user_id', authData.user.id)
-        .single();
+        .single() as { data: { is_disabled?: boolean } | null; error: unknown };
 
       if (profile?.is_disabled === true) {
         // User is disabled, sign them out immediately

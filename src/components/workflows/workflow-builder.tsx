@@ -16,9 +16,10 @@ import { FormActions } from './workflow-builder/form-actions';
 
 interface WorkflowBuilderProps {
   agents: AgentListItem[];
+  workflowId?: string; // If provided, form is in edit mode
 }
 
-export const WorkflowBuilder = ({ agents }: WorkflowBuilderProps) => {
+export const WorkflowBuilder = ({ agents, workflowId }: WorkflowBuilderProps) => {
   const {
     form,
     steps,
@@ -28,7 +29,9 @@ export const WorkflowBuilder = ({ agents }: WorkflowBuilderProps) => {
     updateStepName,
     onSubmit,
     isSubmitting,
-  } = useWorkflowForm({ agents });
+    autoSave,
+    isEditMode,
+  } = useWorkflowForm({ agents, workflowId });
 
   return (
     <FormProvider {...form}>
@@ -67,7 +70,12 @@ export const WorkflowBuilder = ({ agents }: WorkflowBuilderProps) => {
         </Card>
 
         {/* Actions */}
-        <FormActions isLoading={isSubmitting} />
+        <FormActions 
+          isLoading={isSubmitting}
+          isEditMode={isEditMode}
+          autoSaveStatus={autoSave?.status}
+          autoSaveLastSaved={autoSave?.lastSavedAt || null}
+        />
       </form>
     </FormProvider>
   );

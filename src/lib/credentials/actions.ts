@@ -26,13 +26,15 @@ export async function getStoredCredential(
 
     const supabase = await createClient();
 
-    const { data, error } = await supabase
+    // Workaround: Type inference issue with stored_credentials table - cast needed
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (supabase as any)
       .from('stored_credentials')
       .select('encrypted_data')
       .eq('user_id', user.id)
       .eq('provider', provider)
       .eq('is_active', true)
-      .maybeSingle();
+      .maybeSingle() as { data: { encrypted_data?: string } | null; error: { code?: string; message?: string } | null };
 
     if (error) {
       if (error.code === 'PGRST116') {
@@ -62,7 +64,9 @@ export async function getStoredCredential(
           // Try base64
           encryptedBuffer = Buffer.from(encrypted, 'base64');
         }
-      } else if (encrypted instanceof Uint8Array) {
+      } else if (encrypted && typeof encrypted !== 'string' && 'length' in encrypted && 'byteLength' in encrypted) {
+        // Handle Uint8Array or similar typed arrays
+        encryptedBuffer = Buffer.from(encrypted as Uint8Array);
         encryptedBuffer = Buffer.from(encrypted);
       } else {
         return { data: null, error: 'Invalid credential format' };
@@ -114,7 +118,9 @@ export async function saveStoredCredential(
 
     const encryptedHex = '\\x' + encryptedData.toString('hex');
     
-    const { data, error } = await supabase
+    // Workaround: Type inference issue with stored_credentials table - cast needed
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (supabase as any)
       .from('stored_credentials')
       .upsert(
         {

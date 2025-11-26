@@ -42,8 +42,7 @@ export const AgentDetailActions = ({ agent }: AgentDetailActionsProps) => {
   };
 
   const handleEdit = () => {
-    // TODO: Implement agent edit page
-    info('Coming Soon', 'Agent editing is not yet available');
+    router.push(`/app/agents/${agent.id}/edit`);
   };
 
   const handleTest = () => {
