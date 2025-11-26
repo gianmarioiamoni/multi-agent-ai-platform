@@ -10,6 +10,7 @@ import { getCurrentUser } from '@/lib/auth/utils';
 import { getAgent } from './actions';
 import { orchestrateAgent } from '@/lib/ai/orchestrator';
 import type { AgentExecutionResult } from '@/types/orchestrator.types';
+import { checkRateLimit } from '@/lib/rate-limiting/rate-limiter';
 
 /**
  * Execute an agent with a user message
@@ -75,6 +76,22 @@ export async function executeAgent(
         toolCalls: [],
         totalExecutionTime: 0,
         error: 'User message is required',
+      };
+    }
+
+    // Check rate limit
+    const rateLimitResult = await checkRateLimit(user.id, 'agent:execute');
+
+    if (!rateLimitResult.allowed) {
+      const resetInMinutes = Math.ceil(
+        (rateLimitResult.resetAt.getTime() - Date.now()) / 1000 / 60
+      );
+      return {
+        success: false,
+        message: '',
+        toolCalls: [],
+        totalExecutionTime: 0,
+        error: `Rate limit exceeded. Please try again in ${resetInMinutes} minute(s). You can make 10 requests per minute.`,
       };
     }
 

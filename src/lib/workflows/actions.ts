@@ -9,6 +9,7 @@ import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import { getCurrentUser } from '@/lib/auth/utils';
 import { executeWorkflow } from './engine';
+import { checkRateLimit } from '@/lib/rate-limiting/rate-limiter';
 import type {
   Workflow,
   CreateWorkflowInput,
@@ -251,6 +252,19 @@ export async function runWorkflow(
     }
 
     const workflow = workflowResult.data;
+
+    // Check rate limit
+    const rateLimitResult = await checkRateLimit(user.id, 'workflow:run');
+
+    if (!rateLimitResult.allowed) {
+      const resetInMinutes = Math.ceil(
+        (rateLimitResult.resetAt.getTime() - Date.now()) / 1000 / 60
+      );
+      return {
+        data: null,
+        error: `Rate limit exceeded. Please try again in ${resetInMinutes} minute(s). You can run 5 workflows per 5 minutes.`,
+      };
+    }
 
     // Execute workflow
     const result = await executeWorkflow(workflow, input, user.id);

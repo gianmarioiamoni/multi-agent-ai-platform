@@ -28,7 +28,7 @@ Creates table for encrypted OAuth tokens:
 - Encryption support (AES-256-GCM)
 - Indexes for performance
 
-**Apply migration**: See `scripts/apply-migration-005.md`
+**Apply migration**: See `supabase/migrations/005_stored_credentials.sql`
 
 ## New Files Created
 
@@ -56,7 +56,7 @@ Creates table for encrypted OAuth tokens:
 
 ### Documentation
 - `docs/GOOGLE_CALENDAR_SETUP.md` - Setup guide for Google Calendar
-- `scripts/apply-migration-005.md` - Migration instructions
+- `supabase/migrations/005_stored_credentials.sql` - Database migration for stored credentials
 
 ## Updated Files
 
@@ -82,7 +82,8 @@ CREDENTIALS_ENCRYPTION_KEY=your-32-character-encryption-key
 
 1. **Apply Database Migration**
    ```bash
-   # See scripts/apply-migration-005.md for details
+   # See supabase/migrations/005_stored_credentials.sql for the migration file
+   # Apply it via Supabase Dashboard SQL Editor
    ```
 
 2. **Configure Google Calendar OAuth**
