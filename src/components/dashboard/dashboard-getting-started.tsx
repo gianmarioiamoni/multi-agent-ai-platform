@@ -4,16 +4,20 @@
  * Following SRP: Only handles getting started rendering
  */
 
+'use client';
+
+import Link from 'next/link';
+
 interface GettingStartedStep {
   number: number;
   text: string;
-  opacity: number;
+  href: string;
 }
 
 const GETTING_STARTED_STEPS: GettingStartedStep[] = [
-  { number: 1, text: 'Create your first AI agent (Sprint 2)', opacity: 1 },
-  { number: 2, text: 'Configure tools for your agent', opacity: 0.5 },
-  { number: 3, text: 'Build a workflow with multiple agents', opacity: 0.3 },
+  { number: 1, text: 'Create your first AI agent', href: '/app/agents/create' },
+  { number: 2, text: 'Configure tools for your agent', href: '/app/agents' },
+  { number: 3, text: 'Build a workflow with multiple agents', href: '/app/workflows/create' },
 ];
 
 export const DashboardGettingStarted = () => {
@@ -25,13 +29,15 @@ export const DashboardGettingStarted = () => {
       <ol className="space-y-3 text-[var(--color-foreground)]">
         {GETTING_STARTED_STEPS.map((step) => (
           <li key={step.number} className="flex items-start gap-3">
-            <span 
-              className="flex-shrink-0 w-6 h-6 rounded-full bg-[var(--color-primary)] text-white flex items-center justify-center text-sm font-semibold"
-              style={{ opacity: step.opacity }}
-            >
+            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[var(--color-primary)] text-white flex items-center justify-center text-sm font-semibold">
               {step.number}
             </span>
-            <span>{step.text}</span>
+            <Link
+              href={step.href}
+              className="hover:text-[var(--color-primary)] transition-colors"
+            >
+              {step.text}
+            </Link>
           </li>
         ))}
       </ol>

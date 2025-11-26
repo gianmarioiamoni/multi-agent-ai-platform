@@ -4,16 +4,21 @@
  * Following SRP: Only handles quick actions rendering
  */
 
+'use client';
+
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+
 interface QuickAction {
   label: string;
   href: string;
-  soon: boolean;
+  icon: string;
 }
 
 const QUICK_ACTIONS: QuickAction[] = [
-  { label: 'Create New Agent', href: '#', soon: true },
-  { label: 'Build Workflow', href: '#', soon: true },
-  { label: 'View Integrations', href: '#', soon: true },
+  { label: 'Create New Agent', href: '/app/agents/create', icon: '🤖' },
+  { label: 'Build Workflow', href: '/app/workflows/create', icon: '⚡' },
+  { label: 'View Integrations', href: '/app/integrations', icon: '🔗' },
 ];
 
 export const DashboardQuickActions = () => {
@@ -24,18 +29,15 @@ export const DashboardQuickActions = () => {
       </h2>
       <div className="space-y-3">
         {QUICK_ACTIONS.map((action) => (
-          <button
-            key={action.label}
-            className="w-full px-4 py-3 text-left rounded-lg border border-[var(--color-border)] hover:bg-[var(--color-accent)]/10 hover:border-[var(--color-accent)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={action.soon}
-          >
-            <span className="text-[var(--color-foreground)]">{action.label}</span>
-            {action.soon && (
-              <span className="ml-2 text-xs text-[var(--color-muted-foreground)]">
-                (Coming Soon)
-              </span>
-            )}
-          </button>
+          <Link key={action.label} href={action.href}>
+            <Button
+              variant="outline"
+              className="w-full justify-start text-left h-auto py-3 px-4"
+            >
+              <span className="mr-2 text-lg">{action.icon}</span>
+              <span>{action.label}</span>
+            </Button>
+          </Link>
         ))}
       </div>
     </div>

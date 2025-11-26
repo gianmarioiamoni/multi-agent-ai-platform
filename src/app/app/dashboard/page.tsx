@@ -10,7 +10,6 @@ import { DashboardHeader } from '@/components/dashboard/dashboard-header';
 import { DashboardStatsGrid } from '@/components/dashboard/dashboard-stats-grid';
 import { DashboardQuickActions } from '@/components/dashboard/dashboard-quick-actions';
 import { DashboardGettingStarted } from '@/components/dashboard/dashboard-getting-started';
-import { DashboardSprintProgress } from '@/components/dashboard/dashboard-sprint-progress';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -29,8 +28,6 @@ export default async function DashboardPage() {
         <DashboardQuickActions />
         <DashboardGettingStarted />
       </div>
-      
-      <DashboardSprintProgress />
     </div>
   );
 }
