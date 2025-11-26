@@ -16,7 +16,8 @@
     "verify:supabase": "tsx scripts/verify-supabase.ts",
     "debug:db": "tsx scripts/debug-database.ts",
     "check:profile": "tsx scripts/check-profile.ts",
-    "bootstrap:admin": "tsx scripts/bootstrap-admin.ts"
+    "bootstrap:admin": "tsx scripts/bootstrap-admin.ts",
+    "seed:demo": "tsx scripts/seed-demo-data.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
