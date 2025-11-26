@@ -10,6 +10,8 @@ import { createClient } from '@/lib/supabase/server';
 import { getCurrentUser } from '@/lib/auth/utils';
 import { executeWorkflow } from './engine';
 import { checkRateLimit } from '@/lib/rate-limiting/rate-limiter';
+import { handleError, createUserFriendlyError } from '@/lib/errors/error-handler';
+import { logInfo, logWarn } from '@/lib/logging/logger';
 import type {
   Workflow,
   CreateWorkflowInput,
@@ -242,13 +244,27 @@ export async function runWorkflow(
   try {
     const user = await getCurrentUser();
     if (!user) {
-      return { data: null, error: 'Unauthorized' };
+      const errorDetails = createUserFriendlyError(
+        new Error('Unauthorized'),
+        'authentication',
+        { workflowId }
+      );
+      await logWarn('workflow.engine', 'Unauthorized workflow execution attempt', { workflowId });
+      return { data: null, error: errorDetails.userMessage };
     }
+
+    await logInfo('workflow.engine', 'Starting workflow run', { workflowId, userId: user.id, inputLength: input.length });
 
     // Get workflow
     const workflowResult = await getWorkflow(workflowId);
     if (workflowResult.error || !workflowResult.data) {
-      return { data: null, error: workflowResult.error || 'Workflow not found' };
+      const errorDetails = createUserFriendlyError(
+        new Error(workflowResult.error || 'Workflow not found'),
+        'not_found',
+        { workflowId, userId: user.id }
+      );
+      await logWarn('workflow.engine', 'Workflow not found for execution', { workflowId, userId: user.id });
+      return { data: null, error: errorDetails.userMessage };
     }
 
     const workflow = workflowResult.data;
@@ -260,10 +276,17 @@ export async function runWorkflow(
       const resetInMinutes = Math.ceil(
         (rateLimitResult.resetAt.getTime() - Date.now()) / 1000 / 60
       );
-      return {
-        data: null,
-        error: `Rate limit exceeded. Please try again in ${resetInMinutes} minute(s). You can run 5 workflows per 5 minutes.`,
-      };
+      const errorDetails = createUserFriendlyError(
+        new Error(`Rate limit exceeded. Please try again in ${resetInMinutes} minute(s).`),
+        'rate_limit',
+        { userId: user.id, workflowId }
+      );
+      await logWarn('rate_limit', 'Workflow execution rate limit exceeded', {
+        userId: user.id,
+        workflowId,
+        remaining: rateLimitResult.remaining,
+      });
+      return { data: null, error: errorDetails.userMessage };
     }
 
     // Execute workflow
@@ -279,12 +302,19 @@ export async function runWorkflow(
     revalidatePath('/app/workflows');
     revalidatePath(`/app/workflows/${workflowId}`);
 
+    await logInfo('workflow.engine', 'Workflow run completed', {
+      workflowId,
+      workflowRunId: result.workflowRunId,
+      success: result.success,
+      durationMs: result.totalExecutionTime,
+    });
+
     return { data: result, error: null };
   } catch (error) {
-    console.error('Error in runWorkflow:', error);
+    const errorMessage = await handleError(error, 'workflow_execution', { workflowId });
     return {
       data: null,
-      error: error instanceof Error ? error.message : 'An unexpected error occurred',
+      error: errorMessage,
     };
   }
 }

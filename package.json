@@ -11,6 +11,8 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:workflow": "tsx scripts/test-workflow-engine.ts",
+    "test:logging": "tsx scripts/test-logging.ts",
+    "test:logging:detailed": "tsx scripts/test-logging-detailed.ts",
     "verify:supabase": "tsx scripts/verify-supabase.ts",
     "debug:db": "tsx scripts/debug-database.ts",
     "check:profile": "tsx scripts/check-profile.ts",

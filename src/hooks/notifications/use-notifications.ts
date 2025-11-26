@@ -7,9 +7,11 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { getNotifications } from '@/lib/notifications/actions';
-import { markNotificationAsRead as markAsReadStorage, getReadNotificationIds } from '@/lib/notifications/storage';
-import { markNotificationsAsRead } from '@/lib/notifications/utils';
+import {
+  getNotifications,
+  markNotificationAsRead as markAsReadAction,
+  markNotificationsAsRead as markAllAsReadAction,
+} from '@/lib/notifications/actions';
 import type { Notification } from '@/types/notification.types';
 
 export const useNotifications = () => {
@@ -26,14 +28,9 @@ export const useNotifications = () => {
         setNotifications([]);
         setUnreadCount(0);
       } else if (data) {
-        // Get read notification IDs from localStorage
-        const readIds = Array.from(getReadNotificationIds());
-        
-        // Mark notifications as read based on storage
-        const notificationsWithReadStatus = markNotificationsAsRead(data, readIds);
-        
-        setNotifications(notificationsWithReadStatus);
-        const unread = notificationsWithReadStatus.filter((n) => !n.read).length;
+        // Read status is now included from the database
+        setNotifications(data);
+        const unread = data.filter((n) => !n.read).length;
         setUnreadCount(unread);
       }
     } catch (error) {
@@ -45,26 +42,55 @@ export const useNotifications = () => {
     }
   }, []);
 
-  const markNotificationAsRead = useCallback((notificationId: string) => {
-    // Mark as read in localStorage
-    markAsReadStorage(notificationId);
-    
-    // Update local state
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === notificationId ? { ...n, read: true } : n))
-    );
-    
-    // Update unread count
-    setUnreadCount((prev) => Math.max(0, prev - 1));
-  }, []);
+  const markNotificationAsRead = useCallback(
+    async (notificationId: string) => {
+      // Optimistically update local state
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === notificationId ? { ...n, read: true } : n))
+      );
+      setUnreadCount((prev) => Math.max(0, prev - 1));
 
-  const markAllAsRead = useCallback(() => {
+      // Mark as read in database
+      const { error } = await markAsReadAction(notificationId);
+      if (error) {
+        console.error('Error marking notification as read:', error);
+        // Revert optimistic update on error
+        setNotifications((prev) =>
+          prev.map((n) => (n.id === notificationId ? { ...n, read: false } : n))
+        );
+        setUnreadCount((prev) => prev + 1);
+      }
+    },
+    []
+  );
+
+  const markAllAsRead = useCallback(async () => {
     const unreadNotifications = notifications.filter((n) => !n.read);
-    unreadNotifications.forEach((n) => markAsReadStorage(n.id));
-    
+    if (unreadNotifications.length === 0) {
+      return;
+    }
+
+    // Optimistically update local state
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    const previousUnreadCount = unreadCount;
     setUnreadCount(0);
-  }, [notifications]);
+
+    // Mark all as read in database
+    const notificationIds = unreadNotifications.map((n) => n.id);
+    const { error } = await markAllAsReadAction(notificationIds);
+    if (error) {
+      console.error('Error marking all notifications as read:', error);
+      // Revert optimistic update on error
+      setNotifications((prev) =>
+        prev.map((n) =>
+          unreadNotifications.some((un) => un.id === n.id)
+            ? { ...n, read: false }
+            : n
+        )
+      );
+      setUnreadCount(previousUnreadCount);
+    }
+  }, [notifications, unreadCount]);
 
   return {
     notifications,

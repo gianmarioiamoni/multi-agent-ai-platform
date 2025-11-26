@@ -13,6 +13,7 @@ import type { Notification } from '@/types/notification.types';
 /**
  * Get recent notifications for the current user
  * Generates notifications from recent workflow runs and system events
+ * Includes read status from database
  */
 export async function getNotifications(): Promise<{
   data: Notification[] | null;
@@ -52,6 +53,9 @@ export async function getNotifications(): Promise<{
     if (runsError) {
       console.error('Error fetching workflow runs for notifications:', runsError);
     } else if (recentRuns) {
+      // Get notification IDs from workflow runs
+      const notificationIds: string[] = [];
+      
       // Create notifications from workflow runs
       for (const run of recentRuns) {
         const workflow = run.workflows as { name: string } | { name: string }[] | null;
@@ -61,18 +65,22 @@ export async function getNotifications(): Promise<{
           || 'Unknown Workflow';
 
         if (run.status === 'completed') {
+          const notificationId = `workflow-${run.id}-completed`;
+          notificationIds.push(notificationId);
           notifications.push({
-            id: `workflow-${run.id}-completed`,
+            id: notificationId,
             type: 'workflow_completed',
             title: 'Workflow Completed',
             message: `"${workflowName}" has completed successfully`,
             href: `/app/runs/${run.id}`,
             createdAt: run.finished_at || run.created_at,
-            read: false, // TODO: implement read status tracking
+            read: false, // Will be updated below
           });
         } else if (run.status === 'failed') {
+          const notificationId = `workflow-${run.id}-failed`;
+          notificationIds.push(notificationId);
           notifications.push({
-            id: `workflow-${run.id}-failed`,
+            id: notificationId,
             type: 'workflow_failed',
             title: 'Workflow Failed',
             message: `"${workflowName}" has failed`,
@@ -81,14 +89,34 @@ export async function getNotifications(): Promise<{
             read: false,
           });
         } else if (run.status === 'running') {
+          const notificationId = `workflow-${run.id}-started`;
+          notificationIds.push(notificationId);
           notifications.push({
-            id: `workflow-${run.id}-started`,
+            id: notificationId,
             type: 'workflow_started',
             title: 'Workflow Started',
             message: `"${workflowName}" is now running`,
             href: `/app/runs/${run.id}`,
             createdAt: run.created_at,
             read: false,
+          });
+        }
+      }
+
+      // Fetch read status from database for these notifications
+      if (notificationIds.length > 0) {
+        const { data: readNotifications, error: readError } = await supabase
+          .from('notification_reads')
+          .select('notification_id')
+          .eq('user_id', user.id)
+          .in('notification_id', notificationIds);
+
+        if (!readError && readNotifications) {
+          const readIdsSet = new Set(readNotifications.map((r) => r.notification_id));
+          
+          // Update read status in notifications
+          notifications.forEach((notification) => {
+            notification.read = readIdsSet.has(notification.id);
           });
         }
       }
@@ -134,6 +162,99 @@ export async function getUnreadNotificationCount(): Promise<{
   } catch (error) {
     console.error('Error in getUnreadNotificationCount:', error);
     return { data: null, error: 'An unexpected error occurred' };
+  }
+}
+
+/**
+ * Mark a notification as read in the database
+ */
+export async function markNotificationAsRead(
+  notificationId: string
+): Promise<{ error: string | null }> {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { error: 'Unauthorized' };
+    }
+
+    const supabase = await createClient();
+
+    // Insert read status (using ON CONFLICT to handle duplicates gracefully)
+    const { error } = await supabase
+      .from('notification_reads')
+      .insert({
+        user_id: user.id,
+        notification_id: notificationId,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      // If it's a unique constraint violation, the notification is already marked as read
+      if (error.code === '23505') {
+        return { error: null };
+      }
+      console.error('Error marking notification as read:', error);
+      return { error: 'Failed to mark notification as read' };
+    }
+
+    return { error: null };
+  } catch (error) {
+    console.error('Error in markNotificationAsRead:', error);
+    return { error: 'An unexpected error occurred' };
+  }
+}
+
+/**
+ * Mark multiple notifications as read
+ */
+export async function markNotificationsAsRead(
+  notificationIds: string[]
+): Promise<{ error: string | null }> {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { error: 'Unauthorized' };
+    }
+
+    if (notificationIds.length === 0) {
+      return { error: null };
+    }
+
+    const supabase = await createClient();
+
+    // Insert read statuses one by one to handle duplicates gracefully
+    // If a notification is already marked as read (unique constraint violation),
+    // we simply ignore that error and continue
+    let hasError = false;
+    const errors: string[] = [];
+
+    for (const notificationId of notificationIds) {
+      const { error } = await supabase
+        .from('notification_reads')
+        .insert({
+          user_id: user.id,
+          notification_id: notificationId,
+        });
+
+      if (error) {
+        // If it's a unique constraint violation, the notification is already marked as read - ignore
+        if (error.code !== '23505') {
+          hasError = true;
+          errors.push(error.message);
+        }
+      }
+    }
+
+    if (hasError) {
+      console.error('Error marking notifications as read:', errors);
+      return { error: 'Failed to mark some notifications as read' };
+    }
+
+    return { error: null };
+  } catch (error) {
+    console.error('Error in markNotificationsAsRead:', error);
+    return { error: 'An unexpected error occurred' };
   }
 }
 

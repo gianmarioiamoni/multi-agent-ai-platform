@@ -12,6 +12,9 @@ import type { Workflow, WorkflowStep } from '@/types/workflow.types';
 import type { Agent } from '@/types/agent.types';
 import type { AgentExecutionResult } from '@/types/orchestrator.types';
 import type { WorkflowExecutionResult } from '@/types/workflow-execution.types';
+import { logInfo, logError } from '@/lib/logging/logger';
+import { createScopedLogger } from '@/lib/logging/scoped-logger';
+import { handleError, createUserFriendlyError } from '@/lib/errors/error-handler';
 
 /**
  * Execute workflow sequentially
@@ -25,25 +28,38 @@ export async function executeWorkflow(
   loggers?: WorkflowExecutionLoggers
 ): Promise<WorkflowExecutionResult> {
   const startTime = Date.now();
+  const requestId = `workflow-exec-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+  
+  const logger = createScopedLogger({
+    category: 'workflow.engine',
+    workflowId: workflow.id,
+    userId,
+    requestId,
+  });
 
   // Validate workflow
   if (!workflow.graph || !workflow.graph.steps || workflow.graph.steps.length === 0) {
-    throw new Error('Workflow has no steps defined');
+    const error = new Error('Workflow has no steps defined');
+    await logger.error('Workflow validation failed: no steps', error);
+    throw error;
   }
 
   // Validate workflow status
   if (workflow.status !== 'active') {
-    throw new Error(`Workflow is not active (status: ${workflow.status})`);
+    const error = new Error(`Workflow is not active (status: ${workflow.status})`);
+    await logger.warn('Attempt to execute inactive workflow', { status: workflow.status });
+    throw error;
   }
 
   // Get ordered steps (for MVP, we use steps in order)
   const orderedSteps = getOrderedSteps(workflow.graph.steps, workflow.graph.edges);
 
-  console.log('[Workflow Engine] Starting workflow execution:', {
+  await logInfo('workflow.engine', 'Starting workflow execution', {
     workflowId: workflow.id,
     workflowName: workflow.name,
     stepCount: orderedSteps.length,
     userId,
+    requestId,
   });
 
   // Use provided loggers or default ones
@@ -79,17 +95,24 @@ export async function executeWorkflow(
       const step = orderedSteps[stepIndex];
       const stepOrder = stepIndex + 1;
 
-      console.log(`[Workflow Engine] Executing step ${stepOrder}/${orderedSteps.length}:`, {
+      await logger.info(`Executing step ${stepOrder}/${orderedSteps.length}`, {
         stepId: step.id,
         agentId: step.agentId,
         stepName: step.name,
+        workflowRunId,
       });
 
       // Get agent (use custom function if provided, otherwise use default)
       const getAgentFunction = getAgentFn || getAgent;
       const agentResult = await getAgentFunction(step.agentId);
       if (agentResult.error || !agentResult.data) {
-        throw new Error(`Agent not found: ${step.agentId} - ${agentResult.error || 'Unknown error'}`);
+        const error = new Error(`Agent not found: ${step.agentId} - ${agentResult.error || 'Unknown error'}`);
+        await logger.error(`Step ${stepOrder}: Agent not found`, error, {
+          stepOrder,
+          agentId: step.agentId,
+          workflowRunId,
+        });
+        throw error;
       }
       const agent = agentResult.data;
 
@@ -127,10 +150,18 @@ export async function executeWorkflow(
         }
 
         // Update agent run with result
+        const agentError = agentResult.success
+          ? null
+          : createUserFriendlyError(
+              new Error(agentResult.error || 'Agent execution failed'),
+              'agent_execution',
+              { agentId: step.agentId, stepOrder }
+            ).userMessage;
+            
         await workflowLoggers.updateAgentRun(agentRunId, {
           status: agentResult.success ? 'completed' : 'failed',
           output: agentResult.success ? agentResult.message : null,
-          error: agentResult.success ? null : agentResult.error || 'Agent execution failed',
+          error: agentError,
           finished_at: new Date().toISOString(),
         });
 
@@ -146,7 +177,15 @@ export async function executeWorkflow(
 
         if (!agentResult.success) {
           // Workflow fails if any step fails
-          workflowError = `Step ${stepOrder} (${step.name}) failed: ${agentResult.error || 'Unknown error'}`;
+          const errorMsg = agentResult.error || 'Unknown error';
+          workflowError = `Step ${stepOrder} (${step.name}) failed: ${errorMsg}`;
+          await logger.error(`Step ${stepOrder} failed: ${step.name}`, new Error(errorMsg), {
+            stepOrder,
+            stepName: step.name,
+            agentId: step.agentId,
+            workflowRunId,
+            agentRunId,
+          });
           break;
         }
 
@@ -154,17 +193,34 @@ export async function executeWorkflow(
         currentInput = agentResult.message;
         workflowOutput = agentResult.message;
 
-        console.log(`[Workflow Engine] Step ${stepOrder} completed:`, {
+        await logger.info(`Step ${stepOrder} completed: ${step.name}`, {
           stepId: step.id,
           outputLength: agentResult.message.length,
+          workflowRunId,
+          agentRunId,
         });
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        const errorObj = error instanceof Error ? error : new Error(String(error));
+        const errorMessage = errorObj.message;
+        const friendlyError = createUserFriendlyError(errorObj, 'agent_execution', {
+          stepOrder,
+          stepName: step.name,
+          agentId: step.agentId,
+          workflowRunId,
+        });
+        
+        await logger.error(`Step ${stepOrder} execution failed: ${step.name}`, errorObj, {
+          stepOrder,
+          stepName: step.name,
+          agentId: step.agentId,
+          workflowRunId,
+          agentRunId,
+        });
         
         // Update agent run with error
         await workflowLoggers.updateAgentRun(agentRunId, {
           status: 'failed',
-          error: errorMessage,
+          error: friendlyError.userMessage,
           finished_at: new Date().toISOString(),
         });
 
@@ -173,31 +229,31 @@ export async function executeWorkflow(
           agentId: step.agentId,
           stepOrder,
           status: 'failed',
-          error: errorMessage,
+          error: friendlyError.userMessage,
         });
 
-        workflowError = `Step ${stepOrder} (${step.name}) failed: ${errorMessage}`;
+        workflowError = `Step ${stepOrder} (${step.name}) failed: ${friendlyError.userMessage}`;
         break;
       }
     }
 
     // Update workflow run with final status
     const workflowStatus = workflowError ? 'failed' : 'completed';
+    const totalExecutionTime = Date.now() - startTime;
+    
     await workflowLoggers.updateWorkflowRun(workflowRunId, {
       status: workflowStatus,
       output: workflowOutput || null,
       error: workflowError || null,
       finished_at: new Date().toISOString(),
     });
-
-    const totalExecutionTime = Date.now() - startTime;
-
-    console.log('[Workflow Engine] Workflow execution completed:', {
+    await logger.info('Workflow execution completed', {
       workflowId: workflow.id,
       workflowRunId,
       status: workflowStatus,
       totalExecutionTime,
       agentRunsCount: agentRuns.length,
+      durationMs: totalExecutionTime,
     });
 
     return {
@@ -209,25 +265,25 @@ export async function executeWorkflow(
       totalExecutionTime,
     };
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorObj = error instanceof Error ? error : new Error(String(error));
+    const friendlyError = await handleError(errorObj, 'workflow_execution', {
+      workflowId: workflow.id,
+      workflowRunId,
+      durationMs: Date.now() - startTime,
+      requestId,
+    });
     
     // Update workflow run with error
     await workflowLoggers.updateWorkflowRun(workflowRunId, {
       status: 'failed',
-      error: errorMessage,
+      error: friendlyError,
       finished_at: new Date().toISOString(),
-    });
-
-    console.error('[Workflow Engine] Workflow execution failed:', {
-      workflowId: workflow.id,
-      workflowRunId,
-      error: errorMessage,
     });
 
     return {
       success: false,
       workflowRunId,
-      error: errorMessage,
+      error: friendlyError,
       agentRuns,
       totalExecutionTime: Date.now() - startTime,
     };
