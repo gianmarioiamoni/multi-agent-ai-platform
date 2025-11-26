@@ -9,7 +9,7 @@
 import { FormProvider } from 'react-hook-form';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import type { AgentListItem } from '@/types/agent.types';
-import { useWorkflowForm } from '@/hooks/use-workflow-form';
+import { useWorkflowForm } from '@/hooks/workflows/use-workflow-form';
 import { BasicInfoSection } from './workflow-builder/basic-info-section';
 import { StepsBuilder } from './workflow-builder/steps-builder';
 import { FormActions } from './workflow-builder/form-actions';

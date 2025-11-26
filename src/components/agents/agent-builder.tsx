@@ -8,7 +8,7 @@
 
 import { FormProvider } from 'react-hook-form';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { useAgentForm } from '@/hooks/use-agent-form';
+import { useAgentForm } from '@/hooks/agents/use-agent-form';
 import { BasicInfoSection } from './agent-builder/basic-info-section';
 import { ModelConfigSection } from './agent-builder/model-config-section';
 import { ToolsSection } from './agent-builder/tools-section';

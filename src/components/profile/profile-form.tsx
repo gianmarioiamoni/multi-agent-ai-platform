@@ -6,7 +6,7 @@
 
 'use client';
 
-import { useProfileUpdate } from '@/hooks/use-profile-update';
+import { useProfileUpdate } from '@/hooks/profile/use-profile-update';
 import { NameField } from './profile-form/name-field';
 import { UnsavedChangesAlert } from './profile-form/unsaved-changes-alert';
 import { FormActions } from './profile-form/form-actions';

@@ -6,7 +6,7 @@
 
 'use client';
 
-import { useUserRoleManagement } from '@/hooks/use-user-role-management';
+import { useUserRoleManagement } from '@/hooks/admin/use-user-role-management';
 import { UsersTableHeader } from './users-table/users-table-header';
 import { UserTableRow } from './users-table/user-table-row';
 import type { Database } from '@/types/database.types';

@@ -6,8 +6,8 @@
 
 'use client';
 
-import { useDropdown } from '@/hooks/use-dropdown';
-import { useLogout } from '@/hooks/use-logout';
+import { useDropdown } from '@/hooks/shared/use-dropdown';
+import { useLogout } from '@/hooks/auth/use-logout';
 import { UserButton } from './user-menu/user-button';
 import { DropdownMenu } from './user-menu/dropdown-menu';
 import type { UserProfile } from '@/lib/auth/utils';

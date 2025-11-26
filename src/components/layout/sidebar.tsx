@@ -7,7 +7,7 @@
 'use client';
 
 import { cn } from '@/utils/cn';
-import { useFilteredNavigation } from '@/hooks/use-filtered-navigation';
+import { useFilteredNavigation } from '@/hooks/navigation/use-filtered-navigation';
 import { MobileOverlay } from './sidebar/mobile-overlay';
 import { SidebarHeader } from './sidebar/sidebar-header';
 import { NavigationSection } from './sidebar/navigation-section';

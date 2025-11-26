@@ -6,7 +6,7 @@
 
 'use client';
 
-import { useAgentExecution } from '@/hooks/use-agent-execution';
+import { useAgentExecution } from '@/hooks/agents/use-agent-execution';
 import { AgentTestForm } from './agent-test-form';
 import { AgentResponse } from './agent-response';
 import { ToolCallsLog } from './tool-calls-log';

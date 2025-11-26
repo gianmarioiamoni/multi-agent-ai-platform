@@ -9,7 +9,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signUpSchema, type SignUpFormData } from '@/lib/validations/auth';
-import { useSignUp } from '@/hooks/use-signup';
+import { useSignUp } from '@/hooks/auth/use-signup';
 import { AuthFooter } from '@/components/ui/auth-footer';
 import { EmailForm } from './signup-form/email-form';
 import {

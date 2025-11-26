@@ -11,7 +11,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSearchParams } from 'next/navigation';
 import { signInSchema, type SignInFormData } from '@/lib/validations/auth';
-import { useSignIn } from '@/hooks/use-signin';
+import { useSignIn } from '@/hooks/auth/use-signin';
 import { useToast } from '@/contexts/toast-context';
 import { GoogleButton } from '@/components/ui/google-button';
 import { AuthDivider } from '@/components/ui/auth-divider';
