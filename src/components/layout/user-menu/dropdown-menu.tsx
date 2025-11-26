@@ -6,11 +6,13 @@
 
 import { MenuItem } from './menu-item';
 import { LogoutButton } from './logout-button';
+import { DemoBadge } from '@/components/demo/demo-badge';
 
 interface DropdownMenuProps {
   userName: string | null;
   userRole: string;
   isAdmin: boolean;
+  isDemo: boolean;
   onItemClick: () => void;
   onLogout: () => void;
   isLoggingOut: boolean;
@@ -19,7 +21,8 @@ interface DropdownMenuProps {
 export const DropdownMenu = ({ 
   userName, 
   userRole, 
-  isAdmin, 
+  isAdmin,
+  isDemo,
   onItemClick, 
   onLogout, 
   isLoggingOut 
@@ -28,9 +31,12 @@ export const DropdownMenu = ({
     <div className="absolute right-0 mt-2 w-56 bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg shadow-lg py-1 z-50">
       {/* User Info (Mobile) */}
       <div className="sm:hidden px-4 py-3 border-b border-[var(--color-border)]">
-        <p className="text-sm font-medium text-[var(--color-foreground)]">
-          {userName || 'User'}
-        </p>
+        <div className="flex items-center gap-2">
+          <p className="text-sm font-medium text-[var(--color-foreground)]">
+            {userName || 'User'}
+          </p>
+          {isDemo && <DemoBadge />}
+        </div>
         <p className="text-xs text-[var(--color-muted-foreground)] capitalize">
           {userRole}
         </p>

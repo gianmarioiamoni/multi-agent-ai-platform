@@ -8,6 +8,7 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { isDemoUser } from './demo-user';
 
 export type AuthResponse = {
   success: boolean;
@@ -52,22 +53,31 @@ export const signIn = async (
   email: string,
   password: string
 ): Promise<AuthResponse> => {
-  const supabase = await createClient();
+  try {
+    const supabase = await createClient();
 
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-  if (error) {
+    if (error) {
+      console.error('Sign in error:', error);
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+
+    revalidatePath('/', 'layout');
+    return { success: true };
+  } catch (error) {
+    console.error('Unexpected error during sign in:', error);
     return {
       success: false,
-      error: error.message,
+      error: error instanceof Error ? error.message : 'An unexpected error occurred',
     };
   }
-
-  revalidatePath('/', 'layout');
-  return { success: true };
 };
 
 /**
@@ -123,10 +133,21 @@ export const resetPassword = async (email: string): Promise<AuthResponse> => {
 
 /**
  * Update password
+ * Prevents demo user from changing password
  */
 export const updatePassword = async (
   newPassword: string
 ): Promise<AuthResponse> => {
+  // Check if current user is demo user
+  const isDemo = await isDemoUser();
+
+  if (isDemo) {
+    return {
+      success: false,
+      error: 'Password changes are not allowed for the demo account. Please contact support if you need to change your password.',
+    };
+  }
+
   const supabase = await createClient();
 
   const { error } = await supabase.auth.updateUser({

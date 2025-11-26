@@ -7,6 +7,7 @@
 'use client';
 
 import { useUserRoleManagement } from '@/hooks/admin/use-user-role-management';
+import { useDemoFlagManagement } from '@/hooks/admin/use-demo-flag-management';
 import { UsersTableHeader } from './users-table/users-table-header';
 import { UserTableRow } from './users-table/user-table-row';
 import type { Database } from '@/types/database.types';
@@ -20,6 +21,7 @@ interface UsersTableProps {
 
 export const UsersTable = ({ users, currentUserId }: UsersTableProps) => {
   const { isUpdating, updateRole } = useUserRoleManagement();
+  const { isUpdating: isDemoUpdating, updateDemoFlag } = useDemoFlagManagement();
 
   if (users.length === 0) {
     return (
@@ -40,7 +42,9 @@ export const UsersTable = ({ users, currentUserId }: UsersTableProps) => {
               user={user}
               isCurrentUser={user.user_id === currentUserId}
               isUpdating={isUpdating === user.user_id}
+              isDemoUpdating={isDemoUpdating === user.user_id}
               onRoleChange={updateRole}
+              onDemoFlagChange={updateDemoFlag}
             />
           ))}
         </tbody>

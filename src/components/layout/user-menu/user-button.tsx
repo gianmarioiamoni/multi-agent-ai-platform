@@ -5,11 +5,13 @@
  */
 
 import { UserAvatar } from '@/components/ui/user-avatar';
+import { DemoBadge } from '@/components/demo/demo-badge';
 import { cn } from '@/utils/cn';
 
 interface UserButtonProps {
   userName: string | null;
   userRole: string;
+  isDemo: boolean;
   isOpen: boolean;
   isDisabled: boolean;
   onClick: () => void;
@@ -18,6 +20,7 @@ interface UserButtonProps {
 export const UserButton = ({ 
   userName, 
   userRole, 
+  isDemo,
   isOpen, 
   isDisabled, 
   onClick 
@@ -37,9 +40,12 @@ export const UserButton = ({
 
       {/* User Info (Desktop) */}
       <div className="hidden sm:block text-left">
-        <p className="text-sm font-medium text-[var(--color-foreground)]">
-          {userName || 'User'}
-        </p>
+        <div className="flex items-center gap-2">
+          <p className="text-sm font-medium text-[var(--color-foreground)]">
+            {userName || 'User'}
+          </p>
+          {isDemo && <DemoBadge />}
+        </div>
         <p className="text-xs text-[var(--color-muted-foreground)] capitalize">
           {userRole}
         </p>

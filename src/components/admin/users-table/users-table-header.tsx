@@ -18,6 +18,9 @@ export const UsersTableHeader = () => {
           Role
         </th>
         <th className="text-left py-3 px-4 text-sm font-semibold text-[var(--color-foreground)]">
+          Demo
+        </th>
+        <th className="text-left py-3 px-4 text-sm font-semibold text-[var(--color-foreground)]">
           Joined
         </th>
         <th className="text-right py-3 px-4 text-sm font-semibold text-[var(--color-foreground)]">

@@ -10,14 +10,17 @@ import { MobileMenuToggle } from './navbar/mobile-menu-toggle';
 import { SearchBar } from './navbar/search-bar';
 import { NotificationsButton } from './navbar/notifications-button';
 
+import { DemoBadge } from '@/components/demo/demo-badge';
+
 interface NavbarProps {
   user: UserProfile;
+  isDemo: boolean;
   onMenuToggle: () => void;
 }
 
-export const Navbar = ({ user, onMenuToggle }: NavbarProps) => {
+export const Navbar = ({ user, isDemo, onMenuToggle }: NavbarProps) => {
   return (
-    <header className="h-16 border-b border-[var(--color-border)] bg-[var(--color-background)] sticky top-0 z-30 backdrop-blur-sm bg-opacity-95">
+    <header className={`h-16 border-b border-[var(--color-border)] bg-[var(--color-background)] ${isDemo ? 'sticky top-[41px]' : 'sticky top-0'} z-30 backdrop-blur-sm bg-opacity-95`}>
       <div className="h-full px-4 flex items-center justify-between gap-4">
         {/* Left: Mobile Menu Toggle */}
         <MobileMenuToggle onToggle={onMenuToggle} />
@@ -28,7 +31,7 @@ export const Navbar = ({ user, onMenuToggle }: NavbarProps) => {
         {/* Right: User Menu & Actions */}
         <div className="flex items-center gap-2">
           <NotificationsButton />
-          <UserMenu user={user} />
+          <UserMenu user={user} isDemo={isDemo} />
         </div>
       </div>
     </header>

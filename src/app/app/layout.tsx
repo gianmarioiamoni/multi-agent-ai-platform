@@ -19,7 +19,7 @@ export default async function AppLayout({
     redirect('/auth/login');
   }
 
-  // Get user profile
+  // Get user profile (includes isDemo flag)
   const profile = await getCurrentUserProfile();
   if (!profile) {
     // This should not happen if auth is working correctly
@@ -27,6 +27,6 @@ export default async function AppLayout({
     redirect('/auth/login');
   }
 
-  return <AppLayoutClient user={profile}>{children}</AppLayoutClient>;
+  return <AppLayoutClient user={profile} isDemo={profile.isDemo}>{children}</AppLayoutClient>;
 }
 

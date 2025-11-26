@@ -96,6 +96,51 @@ export async function updateUserRole(
 }
 
 /**
+ * Update user demo flag
+ */
+export async function updateUserDemoFlag(
+  userId: string,
+  isDemo: boolean
+): Promise<ActionResult> {
+  try {
+    await ensureAdmin();
+
+    const supabase = createAdminClient();
+
+    // Prevent changing own demo flag
+    const currentProfile = await getCurrentUserProfile();
+    if (currentProfile?.userId === userId) {
+      return {
+        success: false,
+        error: 'Cannot change your own demo status',
+      };
+    }
+
+    const updateData = { is_demo: isDemo };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error } = await (supabase.from('profiles') as any)
+      .update(updateData)
+      .eq('user_id', userId);
+
+    if (error) {
+      return {
+        success: false,
+        error: `Failed to update demo flag: ${error.message}`,
+      };
+    }
+
+    revalidatePath('/admin');
+    
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
+
+/**
  * Get platform statistics
  */
 export async function getPlatformStats() {

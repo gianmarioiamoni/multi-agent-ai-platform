@@ -8,21 +8,28 @@ import { formatDate } from '@/utils/format';
 import { UserAvatar } from '@/components/ui/user-avatar';
 import { UserRoleBadge } from './user-role-badge';
 import { RoleSelector } from './role-selector';
+import { DemoFlagToggle } from './demo-flag-toggle';
 import type { Profile, UserRole } from '@/types/database.types';
 
 interface UserTableRowProps {
   user: Profile;
   isCurrentUser: boolean;
   isUpdating: boolean;
+  isDemoUpdating: boolean;
   onRoleChange: (userId: string, newRole: UserRole) => void;
+  onDemoFlagChange: (userId: string, isDemo: boolean) => void;
 }
 
 export const UserTableRow = ({
   user,
   isCurrentUser,
   isUpdating,
+  isDemoUpdating,
   onRoleChange,
+  onDemoFlagChange,
 }: UserTableRowProps) => {
+  const isDemo = user.is_demo === true;
+
   return (
     <tr className="border-b border-[var(--color-border)] hover:bg-[var(--color-accent)]/5 transition-colors">
       {/* Name & Avatar */}
@@ -50,6 +57,21 @@ export const UserTableRow = ({
       {/* Role Badge */}
       <td className="py-3 px-4">
         <UserRoleBadge role={user.role} />
+      </td>
+
+      {/* Demo Flag */}
+      <td className="py-3 px-4">
+        {isCurrentUser ? (
+          <span className="text-xs text-[var(--color-muted-foreground)]">
+            N/A
+          </span>
+        ) : (
+          <DemoFlagToggle
+            isDemo={isDemo}
+            disabled={isDemoUpdating}
+            onToggle={() => onDemoFlagChange(user.user_id, !isDemo)}
+          />
+        )}
       </td>
 
       {/* Join Date */}

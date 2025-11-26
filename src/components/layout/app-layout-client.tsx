@@ -11,12 +11,15 @@ import type { UserProfile } from '@/lib/auth/utils';
 import { Sidebar } from './sidebar';
 import { Navbar } from './navbar';
 
+import { DemoModeBanner } from '@/components/demo/demo-mode-banner';
+
 interface AppLayoutClientProps {
   user: UserProfile;
+  isDemo: boolean;
   children: React.ReactNode;
 }
 
-export const AppLayoutClient = ({ user, children }: AppLayoutClientProps) => {
+export const AppLayoutClient = ({ user, isDemo, children }: AppLayoutClientProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleToggleSidebar = () => {
@@ -29,6 +32,13 @@ export const AppLayoutClient = ({ user, children }: AppLayoutClientProps) => {
 
   return (
     <div className="min-h-screen bg-[var(--color-background)]">
+      {/* Demo Mode Banner - Above everything */}
+      {isDemo && (
+        <div className="sticky top-0 z-50">
+          <DemoModeBanner />
+        </div>
+      )}
+
       {/* Sidebar */}
       <Sidebar
         userRole={user.role}
@@ -39,7 +49,7 @@ export const AppLayoutClient = ({ user, children }: AppLayoutClientProps) => {
       {/* Main Content Area */}
       <div className="lg:pl-64">
         {/* Navbar */}
-        <Navbar user={user} onMenuToggle={handleToggleSidebar} />
+        <Navbar user={user} isDemo={isDemo} onMenuToggle={handleToggleSidebar} />
 
         {/* Page Content */}
         <main className="p-4 md:p-6 lg:p-8">

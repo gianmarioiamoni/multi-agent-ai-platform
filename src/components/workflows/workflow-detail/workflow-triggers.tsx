@@ -4,11 +4,11 @@
  * Following SRP: Only handles triggers rendering
  */
 
-import type { WorkflowTriggers } from '@/types/workflow.types';
+import type { WorkflowTriggers as WorkflowTriggersType } from '@/types/workflow.types';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 interface WorkflowTriggersProps {
-  triggers: WorkflowTriggers;
+  triggers: WorkflowTriggersType;
 }
 
 export const WorkflowTriggers = ({ triggers }: WorkflowTriggersProps) => {
