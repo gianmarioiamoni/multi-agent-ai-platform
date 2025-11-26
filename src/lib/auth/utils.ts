@@ -14,6 +14,7 @@ export interface UserProfile {
   name: string | null;
   role: UserRole;
   isDemo: boolean;
+  isDisabled: boolean;
   settings: Record<string, unknown> | null;
   createdAt: string;
   updatedAt: string;
@@ -85,6 +86,7 @@ export const getCurrentUserProfile = async (): Promise<UserProfile | null> => {
     name: string | null;
     role: string;
     is_demo: boolean;
+    is_disabled: boolean;
     settings: Record<string, unknown> | null;
     created_at: string;
     updated_at: string;
@@ -96,6 +98,7 @@ export const getCurrentUserProfile = async (): Promise<UserProfile | null> => {
     name: profileData.name,
     role: profileData.role as UserRole,
     isDemo: profileData.is_demo === true,
+    isDisabled: profileData.is_disabled === true,
     settings: profileData.settings,
     createdAt: profileData.created_at,
     updatedAt: profileData.updated_at,

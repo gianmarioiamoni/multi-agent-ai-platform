@@ -9,6 +9,8 @@ import { UserAvatar } from '@/components/ui/user-avatar';
 import { UserRoleBadge } from './user-role-badge';
 import { RoleSelector } from './role-selector';
 import { DemoFlagToggle } from './demo-flag-toggle';
+import { DisabledStatusToggle } from './disabled-status-toggle';
+import { DeleteUserButton } from './delete-user-button';
 import type { Profile, UserRole } from '@/types/database.types';
 
 interface UserTableRowProps {
@@ -16,8 +18,12 @@ interface UserTableRowProps {
   isCurrentUser: boolean;
   isUpdating: boolean;
   isDemoUpdating: boolean;
+  isDisabledUpdating: boolean;
+  isDeleting: boolean;
   onRoleChange: (userId: string, newRole: UserRole) => void;
   onDemoFlagChange: (userId: string, isDemo: boolean) => void;
+  onDisabledStatusToggle: () => void;
+  onDelete: () => void;
 }
 
 export const UserTableRow = ({
@@ -25,10 +31,15 @@ export const UserTableRow = ({
   isCurrentUser,
   isUpdating,
   isDemoUpdating,
+  isDisabledUpdating,
+  isDeleting,
   onRoleChange,
   onDemoFlagChange,
+  onDisabledStatusToggle,
+  onDelete,
 }: UserTableRowProps) => {
   const isDemo = user.is_demo === true;
+  const isDisabled = user.is_disabled === true;
 
   return (
     <tr className="border-b border-[var(--color-border)] hover:bg-[var(--color-accent)]/5 transition-colors">
@@ -59,6 +70,21 @@ export const UserTableRow = ({
         <UserRoleBadge role={user.role} />
       </td>
 
+      {/* Status (Disabled/Enabled) */}
+      <td className="py-3 px-4">
+        {isCurrentUser ? (
+          <span className="text-xs text-[var(--color-muted-foreground)]">
+            N/A
+          </span>
+        ) : (
+          <DisabledStatusToggle
+            isDisabled={isDisabled}
+            disabled={isDisabledUpdating}
+            onToggle={onDisabledStatusToggle}
+          />
+        )}
+      </td>
+
       {/* Demo Flag */}
       <td className="py-3 px-4">
         {isCurrentUser ? (
@@ -80,17 +106,24 @@ export const UserTableRow = ({
       </td>
 
       {/* Actions */}
-      <td className="py-3 px-4 text-right">
+      <td className="py-3 px-4">
         {isCurrentUser ? (
           <span className="text-xs text-[var(--color-muted-foreground)]">
             Cannot modify
           </span>
         ) : (
-          <RoleSelector
-            currentRole={user.role}
-            onRoleChange={(newRole) => onRoleChange(user.user_id, newRole)}
-            disabled={isUpdating}
-          />
+          <div className="flex items-center justify-end gap-2">
+            <RoleSelector
+              currentRole={user.role}
+              onRoleChange={(newRole) => onRoleChange(user.user_id, newRole)}
+              disabled={isUpdating}
+            />
+            <DeleteUserButton
+              userName={user.name}
+              disabled={isDeleting}
+              onDelete={onDelete}
+            />
+          </div>
         )}
       </td>
     </tr>

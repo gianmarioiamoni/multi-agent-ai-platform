@@ -2,6 +2,7 @@
  * OAuth Callback Route Handler
  * Handles OAuth provider callbacks (Google)
  * Exchange code for session
+ * Checks if user is disabled before allowing access
  */
 
 import { createClient } from '@/lib/supabase/server';
@@ -15,13 +16,30 @@ export async function GET(request: NextRequest) {
   if (code) {
     const supabase = await createClient();
     
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data: authData, error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (error) {
       // Redirect to login with error
       return NextResponse.redirect(
         `${origin}/auth/login?error=${encodeURIComponent(error.message)}`
       );
+    }
+
+    // Check if user is disabled
+    if (authData.user) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('is_disabled')
+        .eq('user_id', authData.user.id)
+        .single();
+
+      if (profile?.is_disabled === true) {
+        // User is disabled, sign them out and redirect to login with error
+        await supabase.auth.signOut();
+        return NextResponse.redirect(
+          `${origin}/auth/login?error=${encodeURIComponent('Your account has been disabled. Please contact an administrator for assistance.')}`
+        );
+      }
     }
   }
 

@@ -48,6 +48,7 @@ export const signUp = async (
 
 /**
  * Sign in a user with email and password
+ * Checks if user is disabled before allowing sign in
  */
 export const signIn = async (
   email: string,
@@ -56,23 +57,39 @@ export const signIn = async (
   try {
     const supabase = await createClient();
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data: authData, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (error) {
-      console.error('Sign in error:', error);
       return {
         success: false,
         error: error.message,
       };
     }
 
+    // After successful authentication, check if user is disabled
+    if (authData.user) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('is_disabled')
+        .eq('user_id', authData.user.id)
+        .single();
+
+      if (profile?.is_disabled === true) {
+        // User is disabled, sign them out immediately
+        await supabase.auth.signOut();
+        return {
+          success: false,
+          error: 'Your account has been disabled. Please contact an administrator for assistance.',
+        };
+      }
+    }
+
     revalidatePath('/', 'layout');
     return { success: true };
   } catch (error) {
-    console.error('Unexpected error during sign in:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'An unexpected error occurred',

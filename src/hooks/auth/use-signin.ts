@@ -36,12 +36,18 @@ export function useSignIn(): UseSignInReturn {
         await new Promise(resolve => setTimeout(resolve, 100));
         window.location.href = '/app/dashboard';
       } else {
-        // Check if error is about email confirmation
-        if (result.error?.toLowerCase().includes('email') && 
-            result.error?.toLowerCase().includes('confirm')) {
+        // Check for specific error types
+        const errorLower = result.error?.toLowerCase() || '';
+        
+        if (errorLower.includes('email') && errorLower.includes('confirm')) {
           showError(
             'Email not verified',
             'Please check your email and click the verification link before signing in.'
+          );
+        } else if (errorLower.includes('disabled')) {
+          showError(
+            'Account disabled',
+            result.error || 'Your account has been disabled. Please contact an administrator for assistance.'
           );
         } else {
           showError('Sign in failed', result.error);

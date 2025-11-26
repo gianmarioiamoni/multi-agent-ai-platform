@@ -141,6 +141,117 @@ export async function updateUserDemoFlag(
 }
 
 /**
+ * Update user disabled status
+ */
+export async function updateUserDisabledStatus(
+  userId: string,
+  isDisabled: boolean
+): Promise<ActionResult> {
+  try {
+    await ensureAdmin();
+
+    const supabase = createAdminClient();
+
+    // Prevent disabling own account
+    const currentProfile = await getCurrentUserProfile();
+    if (currentProfile?.userId === userId) {
+      return {
+        success: false,
+        error: 'Cannot disable your own account',
+      };
+    }
+
+    const updateData = { is_disabled: isDisabled };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error } = await (supabase.from('profiles') as any)
+      .update(updateData)
+      .eq('user_id', userId);
+
+    if (error) {
+      return {
+        success: false,
+        error: `Failed to update disabled status: ${error.message}`,
+      };
+    }
+
+    // If disabling user, sign them out by revoking their session
+    if (isDisabled) {
+      // Use admin client to sign out the user from all sessions
+      const { error: signOutError } = await supabase.auth.admin.signOut(userId, 'global');
+      if (signOutError) {
+        // Log but don't fail - the user is already disabled in the database
+        console.error('Failed to sign out disabled user:', signOutError);
+      }
+    }
+
+    revalidatePath('/admin');
+    
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
+
+/**
+ * Delete user account
+ * This will:
+ * 1. Delete the user's profile
+ * 2. Delete the auth user (cascades to related data)
+ */
+export async function deleteUser(userId: string): Promise<ActionResult> {
+  try {
+    await ensureAdmin();
+
+    const supabase = createAdminClient();
+
+    // Prevent deleting own account
+    const currentProfile = await getCurrentUserProfile();
+    if (currentProfile?.userId === userId) {
+      return {
+        success: false,
+        error: 'Cannot delete your own account',
+      };
+    }
+
+    // First, get user email for confirmation message
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+
+    if (!profile) {
+      return {
+        success: false,
+        error: 'User not found',
+      };
+    }
+
+    // Delete the auth user (this will cascade to profile and other related data)
+    const { error: deleteError } = await supabase.auth.admin.deleteUser(userId);
+
+    if (deleteError) {
+      return {
+        success: false,
+        error: `Failed to delete user: ${deleteError.message}`,
+      };
+    }
+
+    revalidatePath('/admin');
+    
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
+
+/**
  * Get platform statistics
  */
 export async function getPlatformStats() {

@@ -25,6 +25,7 @@ export interface Database {
           name: string | null;
           role: 'user' | 'admin';
           is_demo: boolean;
+          is_disabled: boolean;
           settings: Json | null;
           created_at: string;
           updated_at: string;
@@ -35,6 +36,7 @@ export interface Database {
           name?: string | null;
           role?: 'user' | 'admin';
           is_demo?: boolean;
+          is_disabled?: boolean;
           settings?: Json | null;
           created_at?: string;
           updated_at?: string;
@@ -45,6 +47,7 @@ export interface Database {
           name?: string | null;
           role?: 'user' | 'admin';
           is_demo?: boolean;
+          is_disabled?: boolean;
           settings?: Json | null;
           created_at?: string;
           updated_at?: string;

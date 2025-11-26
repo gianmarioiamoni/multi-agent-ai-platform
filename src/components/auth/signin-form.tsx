@@ -27,11 +27,11 @@ import {
 } from '@/components/ui/card';
 
 export const SignInForm = () => {
-  const { info } = useToast();
+  const { info, error: showError } = useToast();
   const searchParams = useSearchParams();
   const { isLoading, isGoogleLoading, handleEmailSignIn, handleGoogleSignIn } = useSignIn();
 
-  // Show info toast if user just signed up
+  // Show info/error toasts based on query parameters
   useEffect(() => {
     if (searchParams.get('verified') === 'false') {
       info(
@@ -39,7 +39,20 @@ export const SignInForm = () => {
         'We sent you a verification link. Please verify your email before signing in.'
       );
     }
-  }, [searchParams, info]);
+
+    const errorParam = searchParams.get('error');
+    if (errorParam) {
+      const errorMessage = decodeURIComponent(errorParam);
+      if (errorMessage.toLowerCase().includes('disabled')) {
+        showError(
+          'Account disabled',
+          errorMessage
+        );
+      } else {
+        showError('Sign in failed', errorMessage);
+      }
+    }
+  }, [searchParams, info, showError]);
 
   const {
     register,
