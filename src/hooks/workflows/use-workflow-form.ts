@@ -17,13 +17,15 @@ import type { AgentListItem } from '@/types/agent.types';
 import type { WorkflowStep } from '@/types/workflow.types';
 import { useAutoSave } from '@/hooks/shared/use-auto-save';
 import type { AutoSaveStatus } from '@/hooks/shared/use-auto-save';
+import type { Workflow } from '@/types/workflow.types';
 
 interface UseWorkflowFormOptions {
   agents: AgentListItem[];
   workflowId?: string; // If provided, form is in edit mode
+  workflow?: Workflow; // If provided, pre-loaded workflow data (avoids reload)
 }
 
-export const useWorkflowForm = ({ agents, workflowId }: UseWorkflowFormOptions) => {
+export const useWorkflowForm = ({ agents, workflowId, workflow }: UseWorkflowFormOptions) => {
   const router = useRouter();
   const { addToast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,32 +45,62 @@ export const useWorkflowForm = ({ agents, workflowId }: UseWorkflowFormOptions) 
 
   // Load workflow data in edit mode
   useEffect(() => {
-    if (!workflowId) return;
+    if (!workflowId) {
+      setIsLoadingWorkflow(false);
+      return;
+    }
 
-    const loadWorkflow = async () => {
-      setIsLoadingWorkflow(true);
-      const { data: workflow, error } = await getWorkflow(workflowId);
-
-      if (error || !workflow) {
-        addToast('error', 'Error', error || 'Failed to load workflow');
-        router.push('/app/workflows');
-        return;
-      }
-
-      // Convert workflow steps to form format
+    // If workflow data is already provided, use it directly (avoids reload)
+    if (workflow) {
+      setIsLoadingWorkflow(false);
       const formSteps = workflow.graph.steps.map((step) => ({
         agentId: step.agentId,
         name: step.name,
       }));
 
-      // Populate form with workflow data
       const formData: CreateWorkflowFormData = {
         name: workflow.name || '',
         description: workflow.description || '',
         steps: formSteps,
       };
       
-      // Reset form with loaded data
+      form.reset(formData, { 
+        keepDefaultValues: false,
+        keepValues: false,
+        keepDirty: false,
+        keepIsSubmitted: false,
+        keepTouched: false,
+        keepIsValid: false,
+        keepSubmitCount: false,
+      });
+      setSteps(formSteps);
+      return;
+    }
+
+    // Otherwise, load from server
+    const loadWorkflow = async () => {
+      setIsLoadingWorkflow(true);
+      const { data: loadedWorkflow, error } = await getWorkflow(workflowId);
+
+      if (error || !loadedWorkflow) {
+        addToast('error', 'Error', error || 'Failed to load workflow');
+        router.push('/app/workflows');
+        return;
+      }
+
+      // Convert workflow steps to form format
+      const formSteps = loadedWorkflow.graph.steps.map((step) => ({
+        agentId: step.agentId,
+        name: step.name,
+      }));
+
+      // Populate form with workflow data
+      const formData: CreateWorkflowFormData = {
+        name: loadedWorkflow.name || '',
+        description: loadedWorkflow.description || '',
+        steps: formSteps,
+      };
+      
       form.reset(formData, { 
         keepDefaultValues: false,
         keepValues: false,
@@ -83,7 +115,7 @@ export const useWorkflowForm = ({ agents, workflowId }: UseWorkflowFormOptions) 
     };
 
     loadWorkflow();
-  }, [workflowId, form, router, addToast]);
+  }, [workflowId, workflow, form, router, addToast]);
 
   // Sync steps with form
   form.watch('steps');

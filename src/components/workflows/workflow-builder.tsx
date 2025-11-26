@@ -14,12 +14,16 @@ import { BasicInfoSection } from './workflow-builder/basic-info-section';
 import { StepsBuilder } from './workflow-builder/steps-builder';
 import { FormActions } from './workflow-builder/form-actions';
 
+import type { Workflow } from '@/types/workflow.types';
+
 interface WorkflowBuilderProps {
   agents: AgentListItem[];
-  workflowId?: string; // If provided, form is in edit mode
+  workflowId?: string; // If provided, form is in edit mode (for compatibility)
+  workflow?: Workflow; // If provided, form is in edit mode with pre-loaded data
 }
 
-export const WorkflowBuilder = ({ agents, workflowId }: WorkflowBuilderProps) => {
+export const WorkflowBuilder = ({ agents, workflowId, workflow }: WorkflowBuilderProps) => {
+  const resolvedWorkflowId = workflow?.id || workflowId;
   const {
     form,
     steps,
@@ -31,7 +35,7 @@ export const WorkflowBuilder = ({ agents, workflowId }: WorkflowBuilderProps) =>
     isSubmitting,
     autoSave,
     isEditMode,
-  } = useWorkflowForm({ agents, workflowId });
+  } = useWorkflowForm({ agents, workflowId: resolvedWorkflowId, workflow });
 
   return (
     <FormProvider {...form}>

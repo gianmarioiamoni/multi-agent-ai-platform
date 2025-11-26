@@ -50,7 +50,7 @@ export default async function EditWorkflowPage({ params }: EditWorkflowPageProps
         </p>
       </div>
 
-      <WorkflowBuilder workflowId={workflow.id} agents={agents} />
+      <WorkflowBuilder workflow={workflow} agents={agents} />
     </div>
   );
 }

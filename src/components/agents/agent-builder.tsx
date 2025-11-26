@@ -14,13 +14,17 @@ import { ModelConfigSection } from './agent-builder/model-config-section';
 import { ToolsSection } from './agent-builder/tools-section';
 import { FormActions } from './agent-builder/form-actions';
 
+import type { Agent } from '@/types/agent.types';
+
 interface AgentBuilderProps {
   defaultModel?: string;
-  agentId?: string; // If provided, form is in edit mode
+  agentId?: string; // If provided, form is in edit mode (for compatibility)
+  agent?: Agent; // If provided, form is in edit mode with pre-loaded data
 }
 
-export const AgentBuilder = ({ defaultModel, agentId }: AgentBuilderProps) => {
-  const { form, isLoading, handleSubmit, autoSave, isEditMode } = useAgentForm(defaultModel, agentId);
+export const AgentBuilder = ({ defaultModel, agentId, agent }: AgentBuilderProps) => {
+  const resolvedAgentId = agent?.id || agentId;
+  const { form, isLoading, handleSubmit, autoSave, isEditMode } = useAgentForm(defaultModel, resolvedAgentId, agent);
 
   return (
     <FormProvider {...form}>

@@ -41,7 +41,7 @@ export default async function EditAgentPage({ params }: EditAgentPageProps) {
         </p>
       </div>
 
-      <AgentBuilder agentId={agent.id} defaultModel={defaultModel} />
+      <AgentBuilder agent={agent} defaultModel={defaultModel} />
     </div>
   );
 }

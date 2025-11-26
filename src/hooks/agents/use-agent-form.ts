@@ -16,13 +16,15 @@ import { createAgentSchema, type CreateAgentFormData } from '@/lib/validations/a
 import { AVAILABLE_MODELS } from '@/types/agent.types';
 import { useAutoSave } from '@/hooks/shared/use-auto-save';
 import type { AutoSaveStatus } from '@/hooks/shared/use-auto-save';
+import type { Agent } from '@/types/agent.types';
 
 interface UseAgentFormProps {
   defaultModel?: string;
   agentId?: string; // If provided, form is in edit mode
+  agent?: Agent; // If provided, pre-loaded agent data (avoids reload)
 }
 
-export const useAgentForm = (defaultModel?: string, agentId?: string) => {
+export const useAgentForm = (defaultModel?: string, agentId?: string, agent?: Agent) => {
   const router = useRouter();
   const { addToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -39,6 +41,7 @@ export const useAgentForm = (defaultModel?: string, agentId?: string) => {
     resolver: zodResolver(createAgentSchema) as any,
     defaultValues: {
       name: '',
+      description: '',
       role: '',
       model: validDefaultModel as CreateAgentFormData['model'],
       temperature: 0.7,
@@ -49,22 +52,17 @@ export const useAgentForm = (defaultModel?: string, agentId?: string) => {
 
   // Load agent data in edit mode
   useEffect(() => {
-    if (!agentId) return;
+    if (!agentId) {
+      setIsLoadingAgent(false);
+      return;
+    }
 
-    const loadAgent = async () => {
-      setIsLoadingAgent(true);
-      const { data: agent, error } = await getAgent(agentId);
-
-      if (error || !agent) {
-        addToast('error', 'Error', error || 'Failed to load agent');
-        router.push('/app/agents');
-        return;
-      }
-
-      // Populate form with agent data
-      // Ensure all required fields have values
+    // If agent data is already provided, use it directly (avoids reload)
+    if (agent) {
+      setIsLoadingAgent(false);
       const formData: CreateAgentFormData = {
         name: agent.name || '',
+        description: agent.description || '',
         role: agent.role || '',
         model: agent.model as CreateAgentFormData['model'],
         temperature: agent.temperature ?? 0.7,
@@ -72,8 +70,40 @@ export const useAgentForm = (defaultModel?: string, agentId?: string) => {
         tools_enabled: (agent.tools_enabled || []) as CreateAgentFormData['tools_enabled'],
       };
       
-      // Reset form with loaded data
-      // This updates all form fields and form state
+      form.reset(formData, { 
+        keepDefaultValues: false,
+        keepValues: false,
+        keepDirty: false,
+        keepIsSubmitted: false,
+        keepTouched: false,
+        keepIsValid: false,
+        keepSubmitCount: false,
+      });
+      return;
+    }
+
+    // Otherwise, load from server
+    const loadAgent = async () => {
+      setIsLoadingAgent(true);
+      const { data: loadedAgent, error } = await getAgent(agentId);
+
+      if (error || !loadedAgent) {
+        addToast('error', 'Error', error || 'Failed to load agent');
+        router.push('/app/agents');
+        return;
+      }
+
+      // Populate form with agent data
+      const formData: CreateAgentFormData = {
+        name: loadedAgent.name || '',
+        description: loadedAgent.description || '',
+        role: loadedAgent.role || '',
+        model: loadedAgent.model as CreateAgentFormData['model'],
+        temperature: loadedAgent.temperature ?? 0.7,
+        max_tokens: loadedAgent.max_tokens ?? 2000,
+        tools_enabled: (loadedAgent.tools_enabled || []) as CreateAgentFormData['tools_enabled'],
+      };
+      
       form.reset(formData, { 
         keepDefaultValues: false,
         keepValues: false,
@@ -88,7 +118,7 @@ export const useAgentForm = (defaultModel?: string, agentId?: string) => {
     };
 
     loadAgent();
-  }, [agentId, form, router, addToast]);
+  }, [agentId, agent, form, router, addToast]);
 
   // Auto-save function for edit mode
   const handleAutoSave = async (data: CreateAgentFormData) => {
