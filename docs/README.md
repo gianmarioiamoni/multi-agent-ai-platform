@@ -72,6 +72,10 @@ Documentazione sprint e implementazioni.
 - [SPRINT3_WEEK6_IMPLEMENTATION.md](./sprints/SPRINT3_WEEK6_IMPLEMENTATION.md) - Implementazione Sprint 3 Week 6
 - [NAVIGATION_SYSTEM.md](./sprints/NAVIGATION_SYSTEM.md) - Sistema navigazione
 
+### 👥 [User Guide](./user-guide/)
+Manuale utente completo per gli utenti finali.
+- [USER_MANUAL.md](./user-guide/USER_MANUAL.md) - Manuale utente completo (inglese)
+
 ### 📊 [Analysis](./analysis/)
 Analisi e documentazione tecnica dettagliata.
 - [AUTO_SAVE_IMPLEMENTATION_ANALYSIS.md](./analysis/AUTO_SAVE_IMPLEMENTATION_ANALYSIS.md) - Analisi auto-save
