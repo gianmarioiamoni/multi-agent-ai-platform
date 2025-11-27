@@ -16,57 +16,79 @@ import type {
 
 /**
  * Get email tool configuration from database or env vars (fallback)
+ * Priority order:
+ * 1. Gmail (GMAIL_USER + GMAIL_APP_PASSWORD) - simplest configuration
+ * 2. Generic SMTP (SMTP_HOST + SMTP_PORT + SMTP_USER + SMTP_PASSWORD)
+ * 3. API-based providers (EMAIL_API_KEY + EMAIL_FROM)
+ * 4. Database configuration
  */
 export async function getEmailToolConfig(): Promise<EmailToolConfig | null> {
+  // Priority 1: Check for Gmail configuration (simplest)
+  const gmailUser = process.env.GMAIL_USER;
+  const gmailAppPassword = process.env.GMAIL_APP_PASSWORD;
+
+  if (gmailUser && gmailAppPassword) {
+    return {
+      provider: 'smtp',
+      enabled: true,
+      smtp_host: 'smtp.gmail.com',
+      smtp_port: 587,
+      smtp_user: gmailUser,
+      smtp_password: gmailAppPassword,
+      smtp_from_email: gmailUser,
+    };
+  }
+
+  // Priority 2: Check for generic SMTP configuration
+  const provider = process.env.EMAIL_PROVIDER || 'smtp';
+
+  if (provider === 'smtp') {
+    const smtpHost = process.env.SMTP_HOST;
+    const smtpPort = process.env.SMTP_PORT;
+    const smtpUser = process.env.SMTP_USER;
+    const smtpPass = process.env.SMTP_PASSWORD;
+    const smtpFrom = process.env.SMTP_FROM_EMAIL || smtpUser;
+
+    if (smtpHost && smtpPort && smtpUser && smtpPass) {
+      return {
+        provider: 'smtp',
+        enabled: true,
+        smtp_host: smtpHost,
+        smtp_port: parseInt(smtpPort, 10),
+        smtp_user: smtpUser,
+        smtp_password: smtpPass,
+        smtp_from_email: smtpFrom || undefined,
+      };
+    }
+  } else {
+    // Priority 3: API-based provider (Resend, SendGrid, Mailgun)
+    const apiKey = process.env.EMAIL_API_KEY;
+    const fromEmail = process.env.EMAIL_FROM || process.env.SMTP_FROM_EMAIL;
+
+    if (apiKey && fromEmail) {
+      return {
+        provider: provider as EmailToolConfig['provider'],
+        enabled: true,
+        api_key: apiKey,
+        from_email: fromEmail,
+      };
+    }
+  }
+
+  // Priority 4: If env vars are not available, try database (with error handling)
   try {
-    // Try to get from database first
     const { data: dbConfig } = await getToolConfig('email');
 
     if (dbConfig && dbConfig.enabled) {
       return dbConfig.config as unknown as EmailToolConfig;
     }
-
-    // Fallback to environment variables (for backward compatibility)
-    const provider = process.env.EMAIL_PROVIDER || 'smtp';
-
-    if (provider === 'smtp') {
-      const smtpHost = process.env.SMTP_HOST;
-      const smtpPort = process.env.SMTP_PORT;
-      const smtpUser = process.env.SMTP_USER;
-      const smtpPass = process.env.SMTP_PASSWORD;
-      const smtpFrom = process.env.SMTP_FROM_EMAIL || smtpUser;
-
-      if (smtpHost && smtpPort && smtpUser && smtpPass) {
-        return {
-          provider: 'smtp',
-          enabled: true,
-          smtp_host: smtpHost,
-          smtp_port: parseInt(smtpPort, 10),
-          smtp_user: smtpUser,
-          smtp_password: smtpPass,
-          smtp_from_email: smtpFrom || undefined,
-        };
-      }
-    } else {
-      // API-based provider (Resend, SendGrid, Mailgun)
-      const apiKey = process.env.EMAIL_API_KEY;
-      const fromEmail = process.env.EMAIL_FROM || process.env.SMTP_FROM_EMAIL;
-
-      if (apiKey && fromEmail) {
-        return {
-          provider: provider as EmailToolConfig['provider'],
-          enabled: true,
-          api_key: apiKey,
-          from_email: fromEmail,
-        };
-      }
-    }
-
-    return null;
   } catch (error) {
-    console.error('[Config Loader] Error loading email config:', error);
-    return null;
+    // If database query fails, continue and return null
+    // This allows the system to work even if DB is temporarily unavailable
+    console.warn('[Config Loader] Could not load email config from database, using env vars only:', error);
   }
+
+  return null;
 }
 
 /**

@@ -16,6 +16,7 @@
     "verify:supabase": "tsx scripts/verify-supabase.ts",
     "debug:db": "tsx scripts/debug-database.ts",
     "check:profile": "tsx scripts/check-profile.ts",
+    "check:email": "tsx scripts/check-email-config.ts",
     "bootstrap:admin": "tsx scripts/bootstrap-admin.ts",
     "seed:demo": "tsx scripts/seed-demo-data.ts"
   },

@@ -27,9 +27,18 @@ async function sendAdminEmail(formData: ContactFormData): Promise<{ success: boo
   }
 
   // Get email config to check if email is enabled
+  // getEmailToolConfig already handles DB -> env vars fallback
   const emailConfig = await getEmailToolConfig();
+  
   if (!emailConfig || !emailConfig.enabled) {
-    logError('Contact form: Email service is not configured');
+    // Log detailed error for debugging
+    const hasEnvVars = !!(process.env.SMTP_HOST && process.env.SMTP_PORT && process.env.SMTP_USER && process.env.SMTP_PASSWORD);
+    logError('Contact form: Email service is not configured', {
+      hasConfig: !!emailConfig,
+      configEnabled: emailConfig?.enabled,
+      hasEnvVars,
+      hasAdminEmail: !!ADMIN_EMAIL,
+    });
     return {
       success: false,
       error: 'Email service is not configured. Please contact support directly.',
@@ -129,10 +138,12 @@ async function sendAdminEmail(formData: ContactFormData): Promise<{ success: boo
  */
 async function sendConfirmationEmail(formData: ContactFormData): Promise<{ success: boolean; error?: string }> {
   // Get email config to check if email is enabled
+  // getEmailToolConfig already handles DB -> env vars fallback
   const emailConfig = await getEmailToolConfig();
+  
   if (!emailConfig || !emailConfig.enabled) {
     // If email is not configured, don't fail the form submission
-    // Just log a warning
+    // Just log a warning (admin email was already sent if form reached here)
     logError('Contact form: Email service not configured, skipping confirmation email');
     return { success: true }; // Don't fail the submission
   }
