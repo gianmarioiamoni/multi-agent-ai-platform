@@ -50,6 +50,11 @@ export const navigationSections: NavSection[] = [
         href: '/app/contact',
         icon: 'email',
       },
+      {
+        label: 'Help Center',
+        href: '/app/help',
+        icon: 'help',
+      },
     ],
   },
   {
