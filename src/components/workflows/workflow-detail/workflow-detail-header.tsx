@@ -2,12 +2,10 @@
  * Workflow Detail Header Component
  * Displays workflow header with title, status, and actions
  * Following SRP: Only handles header rendering
+ * Server Component - static content with Link only
  */
 
-'use client';
-
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import type { Workflow } from '@/types/workflow.types';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

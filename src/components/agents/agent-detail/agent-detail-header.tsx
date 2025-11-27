@@ -2,9 +2,8 @@
  * Agent Detail Header Component
  * Displays agent header with title, status, and actions
  * Following SRP: Only handles header rendering
+ * Server Component - static content with Link only
  */
-
-'use client';
 
 import Link from 'next/link';
 import type { Agent } from '@/types/agent.types';
