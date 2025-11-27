@@ -7,9 +7,9 @@
 'use client';
 
 import { useAccountDetails } from '@/hooks/account/use-account-details';
-import { AccountDetailsHeader } from './account-details-header';
-import { AccountDetailsItem } from './account-details-item';
-import { AccountDetailsRoleBadge } from './account-details-role-badge';
+import { AccountDetailsHeader } from './account-details-section/account-details-header';
+import { AccountDetailsItem } from './account-details-section/account-details-item';
+import { AccountDetailsRoleBadge } from './account-details-section/account-details-role-badge';
 
 interface AccountDetailsSectionProps {
   userId: string;
