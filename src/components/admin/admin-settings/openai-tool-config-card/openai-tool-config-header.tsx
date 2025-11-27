@@ -1,0 +1,50 @@
+/**
+ * OpenAI Tool Config Header Component
+ * Header with title, description, and enabled toggle
+ * Following SRP: Only handles header rendering
+ */
+
+'use client';
+
+import { CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+
+interface OpenAIToolConfigHeaderProps {
+  enabled: boolean;
+  onToggle: () => void;
+}
+
+export const OpenAIToolConfigHeader = ({
+  enabled,
+  onToggle,
+}: OpenAIToolConfigHeaderProps) => {
+  return (
+    <CardHeader>
+      <div className="flex items-center justify-between">
+        <div>
+          <CardTitle>OpenAI Configuration</CardTitle>
+          <CardDescription>
+            Configure OpenAI API settings and rate limits for all users.
+          </CardDescription>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={enabled}
+          onClick={onToggle}
+          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-offset-2 ${
+            enabled
+              ? 'bg-[var(--color-primary)]'
+              : 'bg-[var(--color-muted)]'
+          }`}
+        >
+          <span
+            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+              enabled ? 'translate-x-6' : 'translate-x-1'
+            }`}
+          />
+        </button>
+      </div>
+    </CardHeader>
+  );
+};
+

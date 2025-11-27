@@ -11,8 +11,8 @@ import type { ToolConfigRow } from '@/types/tool-config.types';
 
 // Tool configuration card components
 import { EmailToolConfigCard } from './email-tool-config-card/email-tool-config-card';
-import { WebSearchToolConfigCard } from './web-search-tool-config-card';
-import { OpenAIToolConfigCard } from './openai-tool-config-card';
+import { WebSearchToolConfigCard } from './web-search-tool-config-card/web-search-tool-config-card';
+import { OpenAIToolConfigCard } from './openai-tool-config-card/openai-tool-config-card';
 
 interface AdminSettingsClientProps {
   initialConfigs: ToolConfigRow[];
