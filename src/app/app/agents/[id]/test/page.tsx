@@ -8,6 +8,7 @@ import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth/utils';
 import { getAgent } from '@/lib/agents/actions';
 import { AgentTestClient } from '@/components/agents/agent-test/agent-test-client';
+import { BreadcrumbsLabelUpdater } from '@/components/breadcrumbs/breadcrumbs-provider';
 
 interface AgentTestPageProps {
   params: Promise<{ id: string }>;
@@ -37,6 +38,11 @@ export default async function AgentTestPage({ params }: AgentTestPageProps) {
 
   return (
     <div className="container mx-auto py-8">
+      {/* Update breadcrumbs with agent name */}
+      <BreadcrumbsLabelUpdater customLabels={{ 
+        [`/app/agents/${id}`]: agent.name,
+        [`/app/agents/${id}/test`]: 'Test Agent'
+      }} />
       <AgentTestClient agentId={agent.id} agentName={agent.name} />
     </div>
   );

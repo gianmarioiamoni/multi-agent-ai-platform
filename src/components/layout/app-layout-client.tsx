@@ -10,6 +10,7 @@ import { useState } from 'react';
 import type { UserProfile } from '@/lib/auth/utils';
 import { Sidebar } from './sidebar';
 import { Navbar } from './navbar';
+import { Breadcrumbs } from '@/components/breadcrumbs/breadcrumbs';
 
 import { DemoModeBanner } from '@/components/demo/demo-mode-banner';
 
@@ -53,6 +54,8 @@ export const AppLayoutClient = ({ user, isDemo, children }: AppLayoutClientProps
 
         {/* Page Content */}
         <main className="p-4 md:p-6 lg:p-8">
+          {/* Breadcrumbs - positioned at top left, small and non-invasive */}
+          <Breadcrumbs />
           {children}
         </main>
       </div>

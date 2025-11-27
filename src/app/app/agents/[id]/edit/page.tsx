@@ -8,6 +8,7 @@ import { notFound } from 'next/navigation';
 import { getAgent } from '@/lib/agents/actions';
 import { getDefaultModel } from '@/lib/settings/utils';
 import { AgentBuilder } from '@/components/agents/agent-builder';
+import { BreadcrumbsLabelUpdater } from '@/components/breadcrumbs/breadcrumbs-provider';
 
 interface EditAgentPageProps {
   params: Promise<{ id: string }>;
@@ -34,6 +35,11 @@ export default async function EditAgentPage({ params }: EditAgentPageProps) {
 
   return (
     <div className="container mx-auto max-w-4xl">
+      {/* Update breadcrumbs with agent name */}
+      <BreadcrumbsLabelUpdater customLabels={{ 
+        [`/app/agents/${id}`]: agent.name,
+        [`/app/agents/${id}/edit`]: 'Edit'
+      }} />
       <div className="mb-6">
         <h1 className="text-3xl font-bold">Edit AI Agent</h1>
         <p className="text-muted-foreground mt-1">

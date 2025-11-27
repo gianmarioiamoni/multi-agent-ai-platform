@@ -8,6 +8,7 @@ import { notFound } from 'next/navigation';
 import { getWorkflow } from '@/lib/workflows/actions';
 import { WorkflowDetailHeader } from '@/components/workflows/workflow-detail/workflow-detail-header';
 import { WorkflowDetailContent } from '@/components/workflows/workflow-detail/workflow-detail-content';
+import { BreadcrumbsLabelUpdater } from '@/components/breadcrumbs/breadcrumbs-provider';
 
 interface WorkflowDetailPageProps {
   params: Promise<{ id: string }>;
@@ -33,6 +34,8 @@ export default async function WorkflowDetailPage({ params }: WorkflowDetailPageP
 
   return (
     <div className="space-y-6">
+      {/* Update breadcrumbs with workflow name */}
+      <BreadcrumbsLabelUpdater customLabels={{ [`/app/workflows/${id}`]: workflow.name }} />
       <WorkflowDetailHeader workflow={workflow} />
       <WorkflowDetailContent workflow={workflow} />
     </div>

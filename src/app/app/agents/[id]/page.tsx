@@ -8,6 +8,7 @@ import { notFound } from 'next/navigation';
 import { getAgent } from '@/lib/agents/actions';
 import { AgentDetailHeader } from '@/components/agents/agent-detail/agent-detail-header';
 import { AgentDetailContent } from '@/components/agents/agent-detail/agent-detail-content';
+import { BreadcrumbsLabelUpdater } from '@/components/breadcrumbs/breadcrumbs-provider';
 
 interface AgentDetailPageProps {
   params: Promise<{ id: string }>;
@@ -33,6 +34,8 @@ export default async function AgentDetailPage({ params }: AgentDetailPageProps) 
 
   return (
     <div className="space-y-6">
+      {/* Update breadcrumbs with agent name */}
+      <BreadcrumbsLabelUpdater customLabels={{ [`/app/agents/${id}`]: agent.name }} />
       <AgentDetailHeader agent={agent} />
       <AgentDetailContent agent={agent} />
     </div>

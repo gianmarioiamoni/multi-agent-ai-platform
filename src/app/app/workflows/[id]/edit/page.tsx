@@ -8,6 +8,7 @@ import { notFound } from 'next/navigation';
 import { getWorkflow } from '@/lib/workflows/actions';
 import { getAgents } from '@/lib/agents/actions';
 import { WorkflowBuilder } from '@/components/workflows/workflow-builder';
+import { BreadcrumbsLabelUpdater } from '@/components/breadcrumbs/breadcrumbs-provider';
 
 interface EditWorkflowPageProps {
   params: Promise<{ id: string }>;
@@ -43,6 +44,11 @@ export default async function EditWorkflowPage({ params }: EditWorkflowPageProps
 
   return (
     <div className="space-y-6">
+      {/* Update breadcrumbs with workflow name */}
+      <BreadcrumbsLabelUpdater customLabels={{ 
+        [`/app/workflows/${id}`]: workflow.name,
+        [`/app/workflows/${id}/edit`]: 'Edit'
+      }} />
       <div>
         <h1 className="text-3xl font-bold">Edit Workflow</h1>
         <p className="text-muted-foreground mt-1">

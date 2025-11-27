@@ -9,6 +9,7 @@ import { notFound } from 'next/navigation';
 import { getWorkflowRun } from '@/lib/workflows/actions';
 import { RunDetailHeader } from '@/components/runs/run-detail-header';
 import { RunTimeline } from '@/components/runs/run-timeline';
+import { BreadcrumbsLabelUpdater } from '@/components/breadcrumbs/breadcrumbs-provider';
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -32,6 +33,10 @@ export default async function RunDetailPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
+      {/* Update breadcrumbs with run ID */}
+      <BreadcrumbsLabelUpdater customLabels={{ 
+        [`/app/runs/${id}`]: `Run #${id.substring(0, 8)}`
+      }} />
       <RunDetailHeader run={run} />
       <RunTimeline run={run} />
     </div>

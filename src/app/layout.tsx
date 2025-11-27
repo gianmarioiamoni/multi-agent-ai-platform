@@ -4,6 +4,7 @@ import './globals.css';
 import { ToastProvider } from '@/contexts/toast-context';
 import { ToastContainer } from '@/components/ui/toast-container';
 import { CookieBanner } from '@/components/cookie-banner';
+import { BreadcrumbsProvider } from '@/contexts/breadcrumbs-context';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -34,9 +35,11 @@ export default function RootLayout({
     <html lang="en" className={inter.variable}>
       <body className="font-sans antialiased">
         <ToastProvider>
-          {children}
-          <ToastContainer />
-          <CookieBanner />
+          <BreadcrumbsProvider>
+            {children}
+            <ToastContainer />
+            <CookieBanner />
+          </BreadcrumbsProvider>
         </ToastProvider>
       </body>
     </html>
