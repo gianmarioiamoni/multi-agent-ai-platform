@@ -7,13 +7,7 @@
 'use client';
 
 import { Label } from '@/components/ui/label';
-
-const AVAILABLE_MODELS = [
-  { value: 'gpt-4o', label: 'GPT-4o' },
-  { value: 'gpt-4o-mini', label: 'GPT-4o Mini' },
-  { value: 'gpt-4-turbo', label: 'GPT-4 Turbo' },
-  { value: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo' },
-];
+import { AVAILABLE_MODELS } from '@/types/agent.types';
 
 interface PreferencesSectionModelSelectProps {
   value: string;
@@ -34,8 +28,8 @@ export const PreferencesSectionModelSelect = ({
         className="w-full px-3 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] text-[var(--color-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
       >
         {AVAILABLE_MODELS.map((model) => (
-          <option key={model.value} value={model.value}>
-            {model.label}
+          <option key={model.id} value={model.id}>
+            {model.name}
           </option>
         ))}
       </select>
