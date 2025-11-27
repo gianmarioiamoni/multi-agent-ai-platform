@@ -12,6 +12,8 @@ import { AgentCardHeader } from './agent-card/agent-card-header';
 import { AgentCardModelInfo } from './agent-card/agent-card-model-info';
 import { AgentCardTools } from './agent-card/agent-card-tools';
 import { AgentCardFooter } from './agent-card/agent-card-footer';
+// Note: AgentCardHeader, AgentCardModelInfo, AgentCardTools, and AgentCardFooter are Server Components
+// They are composed within this Client Component for interactivity
 import type { AgentListItem } from '@/types/agent.types';
 
 interface AgentCardProps {

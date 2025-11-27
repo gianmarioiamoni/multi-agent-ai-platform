@@ -2,9 +2,8 @@
  * Run Detail Header Title Component
  * Title section with back button, workflow name, and run ID
  * Following SRP: Only handles title section rendering
+ * Server Component - static content with Link only
  */
-
-'use client';
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';

@@ -2,12 +2,11 @@
  * Run Detail Header Component
  * Main composition component for run detail header
  * Following SRP: Only handles component composition
+ * Server Component - uses utility function for formatting
  */
 
-'use client';
-
 import type { WorkflowRun, AgentRun, ToolInvocation } from '@/types/workflow-execution.types';
-import { useRunDetailHeader } from '@/hooks/runs/use-run-detail-header';
+import { formatRunDetailHeaderData } from '@/utils/run-status';
 import { RunDetailHeaderTitle } from './run-detail-header/run-detail-header-title';
 import { RunDetailHeaderStatus } from './run-detail-header/run-detail-header-status';
 import { RunDetailExecutionDetails } from './run-detail-header/run-detail-execution-details';
@@ -21,7 +20,7 @@ interface RunDetailHeaderProps {
 
 export const RunDetailHeader = ({ run }: RunDetailHeaderProps) => {
   const { statusColor, statusLabel, duration, formattedStartedAt, formattedFinishedAt } =
-    useRunDetailHeader({ run });
+    formatRunDetailHeaderData(run);
 
   return (
     <div className="space-y-4">

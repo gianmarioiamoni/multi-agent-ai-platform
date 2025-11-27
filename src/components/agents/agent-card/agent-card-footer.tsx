@@ -2,14 +2,14 @@
  * Agent Card Footer Component
  * Footer with creation date and test button
  * Following SRP: Only handles footer rendering
+ * Server Component - Link is SSR-safe, stopPropagation handled in parent
  */
-
-'use client';
 
 import Link from 'next/link';
 import { CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { formatDate } from '@/utils/format';
+import { AgentCardFooterTestButton } from './agent-card-footer-test-button';
 
 interface AgentCardFooterProps {
   createdAt: string;
@@ -24,11 +24,7 @@ export const AgentCardFooter = ({ createdAt, agentId, status }: AgentCardFooterP
         Created {formatDate(createdAt)}
       </div>
       {status === 'active' && (
-        <Link href={`/app/agents/${agentId}/test`} onClick={(e) => e.stopPropagation()}>
-          <Button variant="outline" size="sm">
-            Test Agent
-          </Button>
-        </Link>
+        <AgentCardFooterTestButton agentId={agentId} />
       )}
     </CardFooter>
   );

@@ -2,9 +2,8 @@
  * Agent Card Header Component
  * Header with title, description, and status badge
  * Following SRP: Only handles header rendering
+ * Server Component - static content only
  */
-
-'use client';
 
 import { CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 

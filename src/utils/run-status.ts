@@ -9,6 +9,7 @@ import type {
   AgentRunStatus,
   ToolInvocationStatus,
 } from '@/types/workflow-execution.types';
+import { formatDate } from '@/utils/format';
 
 /**
  * Union type of all run statuses
@@ -94,6 +95,30 @@ export function formatRunCardData(run: {
     statusColor: getRunStatusColor(run.status),
     statusLabel: getRunStatusLabel(run.status),
     duration: formatRunDuration(run.started_at, run.finished_at),
+  };
+}
+
+/**
+ * Format run detail header data (status, duration, formatted dates)
+ * Pure function - can be used in Server Components
+ */
+export function formatRunDetailHeaderData(run: {
+  status: RunStatus;
+  started_at: string | null;
+  finished_at: string | null;
+}): {
+  statusColor: string;
+  statusLabel: string;
+  duration: string;
+  formattedStartedAt: string;
+  formattedFinishedAt: string;
+} {
+  return {
+    statusColor: getRunStatusColor(run.status),
+    statusLabel: getRunStatusLabel(run.status),
+    duration: formatRunDuration(run.started_at, run.finished_at),
+    formattedStartedAt: run.started_at ? formatDate(run.started_at) : '—',
+    formattedFinishedAt: run.finished_at ? formatDate(run.finished_at) : '—',
   };
 }
 

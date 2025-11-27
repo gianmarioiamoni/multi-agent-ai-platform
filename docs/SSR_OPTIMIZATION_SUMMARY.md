@@ -44,15 +44,30 @@
 
 ## 📊 Impatto Stimato
 
-### Fase 1 (Quick Wins)
-- **Componenti ottimizzati**: ~12
+### Fase 1 (Quick Wins) ✅ COMPLETATO
+- **Componenti ottimizzati**: 15 componenti + 2 hooks
 - **Riduzione bundle JS**: ~5-10%
 - **Tempo implementazione**: 2-3 ore
 - **Rischi**: Bassi (componenti statici)
+- **Risultato**: 50.8% Client / 49.2% Server
 
-### Totale Potenziale
-- **Componenti ottimizzabili facilmente**: ~15-20
-- **Riduzione bundle JS massima**: ~10-15%
+### Fase 2A (Subcomponents Statici) ✅ COMPLETATO
+- **Componenti ottimizzati**: 4 componenti + 1 hook
+- **Riduzione bundle JS aggiuntiva**: ~2-3%
+- **Tempo implementazione**: ~2 ore
+- **Rischi**: Bassi (subcomponents statici)
+- **Risultato**: 48.9% Client / 51.1% Server 🎉
+
+### Fase 2B/C (Ottimizzazioni Medie) ⏭️ PROPOSTA
+- **Componenti ottimizzabili**: ~5-10 componenti
+- **Riduzione bundle JS aggiuntiva**: ~2-4%
+- **Tempo implementazione**: 6-9 ore
+- **Rischi**: Medi (richiede refactoring maggiore)
+- **Risultato target**: ~45% Client / 55% Server
+
+### Totale Potenziale (Fase 1 + 2)
+- **Componenti ottimizzabili**: ~24-29 componenti
+- **Riduzione bundle JS totale**: ~8-15%
 - **Miglioramento performance**: 10-20% FCP, 15-25% TTI
 
 ---

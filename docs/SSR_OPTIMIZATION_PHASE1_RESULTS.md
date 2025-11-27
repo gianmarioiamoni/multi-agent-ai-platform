@@ -122,14 +122,16 @@ export const AccountDetailsSection = ({ role, createdAt }) => {
 
 ### Before vs After
 
-**Prima**:
+**Prima della Fase 1**:
 - Componenti Client: ~110 (59%)
 - Componenti Server: ~75 (41%)
+- File con 'use client': 143
 
-**Dopo Fase 1**:
-- Componenti Client: ~95 (51%)
-- Componenti Server: ~90 (49%)
-- **Miglioramento**: +8% Server Components
+**Dopo la Fase 1**:
+- Componenti Client: 94 (50.8%) ⬇️ -16 (-14.5%)
+- Componenti Server: 91 (49.2%) ⬆️ +16 (+21.3%)
+- File con 'use client': 125 ⬇️ -18
+- **Miglioramento**: Rapporto Client/Server da 59/41 a 51/49
 
 ---
 
@@ -147,9 +149,19 @@ Questi componenti **devono** rimanere client-side:
 
 ## 📋 Prossimi Passi (Fase 2 - Media Priorità)
 
-1. Verificare se altri subcomponents possono essere SSR
-2. Analizzare card components per splitting Server/Client
-3. Ottimizzare altri componenti statici identificati
+Vedi documento dettagliato: `SSR_OPTIMIZATION_PHASE2_PROPOSAL.md`
+
+**Componenti identificati per Fase 2**:
+1. Subcomponents statici di card components (~5-8 componenti)
+2. Agent Card optimization (convertire onClick in Link)
+3. Detail header components (~3-5 componenti)
+4. Builder subcomponents (se statici)
+5. Settings subcomponents (se statici)
+
+**Target Fase 2**:
+- Componenti Client: ~80-85 (43-46%)
+- Componenti Server: ~100-105 (54-57%)
+- Rapporto Target: ~45/55 (Client/Server)
 
 ---
 
