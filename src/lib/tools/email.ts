@@ -5,61 +5,94 @@
  */
 
 import nodemailer, { type Transporter } from 'nodemailer';
+import { getEmailToolConfig } from '@/lib/tools/config-loader';
 import type {
   Tool,
   EmailParams,
   EmailData,
   ToolResult,
 } from '@/types/tool.types';
+import type { EmailToolConfig } from '@/types/tool-config.types';
 
 // Email tool configuration
 const EMAIL_TIMEOUT = 15000; // 15 seconds
 const MAX_RETRIES = 2;
 
 /**
- * Create and configure Nodemailer transporter
+ * Create and configure Nodemailer transporter from config
  */
-function createTransporter(): Transporter | null {
-  // Validate required environment variables
-  const smtpHost = process.env.SMTP_HOST;
-  const smtpPort = process.env.SMTP_PORT;
-  const smtpUser = process.env.SMTP_USER;
-  const smtpPass = process.env.SMTP_PASSWORD;
-  const smtpFrom = process.env.SMTP_FROM_EMAIL || smtpUser;
+async function createTransporter(): Promise<Transporter | null> {
+  // Get configuration from database (with env fallback)
+  const config = await getEmailToolConfig();
+  
+  if (!config || !config.enabled) {
+    console.error('[Email Tool] Email configuration not found or disabled');
+    return null;
+  }
 
-  if (!smtpHost || !smtpPort || !smtpUser || !smtpPass) {
-    console.error('[Email Tool] SMTP configuration incomplete:', {
-      hasHost: !!smtpHost,
-      hasPort: !!smtpPort,
-      hasUser: !!smtpUser,
-      hasPass: !!smtpPass,
+  // Handle SMTP provider
+  if (config.provider === 'smtp') {
+    const smtpHost = config.smtp_host;
+    const smtpPort = config.smtp_port;
+    const smtpUser = config.smtp_user;
+    const smtpPass = config.smtp_password;
+
+    if (!smtpHost || !smtpPort || !smtpUser || !smtpPass) {
+      console.error('[Email Tool] SMTP configuration incomplete:', {
+        hasHost: !!smtpHost,
+        hasPort: !!smtpPort,
+        hasUser: !!smtpUser,
+        hasPass: !!smtpPass,
+      });
+      return null;
+    }
+
+    // Parse port as number if it's not already
+    const port = typeof smtpPort === 'number' ? smtpPort : parseInt(String(smtpPort), 10);
+    if (isNaN(port)) {
+      console.error('[Email Tool] Invalid SMTP_PORT:', smtpPort);
+      return null;
+    }
+
+    // Create transporter
+    const transporter = nodemailer.createTransport({
+      host: smtpHost,
+      port: port,
+      secure: port === 465, // true for 465, false for other ports
+      auth: {
+        user: smtpUser,
+        pass: smtpPass,
+      },
+      // Connection timeout
+      connectionTimeout: EMAIL_TIMEOUT,
+      // Socket timeout
+      socketTimeout: EMAIL_TIMEOUT,
     });
-    return null;
+
+    return transporter;
   }
 
-  // Parse port as number
-  const port = parseInt(smtpPort, 10);
-  if (isNaN(port)) {
-    console.error('[Email Tool] Invalid SMTP_PORT:', smtpPort);
-    return null;
+  // For now, only SMTP is supported
+  // TODO: Implement Resend, SendGrid, Mailgun providers
+  console.error('[Email Tool] Provider not yet supported:', config.provider);
+  return null;
+}
+
+/**
+ * Get sender email from config
+ */
+async function getSenderEmail(config: EmailToolConfig | null): Promise<string | null> {
+  if (!config) {
+    const emailConfig = await getEmailToolConfig();
+    if (!emailConfig) return null;
+    config = emailConfig;
   }
 
-  // Create transporter
-  const transporter = nodemailer.createTransport({
-    host: smtpHost,
-    port: port,
-    secure: port === 465, // true for 465, false for other ports
-    auth: {
-      user: smtpUser,
-      pass: smtpPass,
-    },
-    // Connection timeout
-    connectionTimeout: EMAIL_TIMEOUT,
-    // Socket timeout
-    socketTimeout: EMAIL_TIMEOUT,
-  });
+  if (config.provider === 'smtp') {
+    return config.smtp_from_email || config.smtp_user || null;
+  }
 
-  return transporter;
+  return config.from_email || null;
 }
 
 /**
@@ -106,8 +139,17 @@ async function executeSendEmail(
       };
     }
 
-    // Get transporter
-    const transporter = createTransporter();
+    // Get configuration and transporter
+    const config = await getEmailToolConfig();
+    if (!config || !config.enabled) {
+      return {
+        success: false,
+        error: 'Email service is not configured. Please contact administrator.',
+        executionTime: Date.now() - startTime,
+      };
+    }
+
+    const transporter = await createTransporter();
     if (!transporter) {
       console.error('[Email Tool] Failed to create transporter');
       return {
@@ -117,12 +159,12 @@ async function executeSendEmail(
       };
     }
 
-    // Get sender email
-    const smtpFrom = process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER;
+    // Get sender email from config
+    const smtpFrom = await getSenderEmail(config);
     if (!smtpFrom) {
       return {
         success: false,
-        error: 'SMTP_FROM_EMAIL is not configured',
+        error: 'Email sender address is not configured',
         executionTime: Date.now() - startTime,
       };
     }

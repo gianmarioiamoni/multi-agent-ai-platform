@@ -107,8 +107,8 @@ export async function orchestrateAgent(
       };
     }
 
-    // Get OpenAI client
-    const client = getOpenAIClient();
+    // Get OpenAI client (async, reads from database)
+    const client = await getOpenAIClient();
 
     // Get tool schemas for enabled tools (can be empty for text-only agents)
     const toolSchemas = agent.tools_enabled && agent.tools_enabled.length > 0

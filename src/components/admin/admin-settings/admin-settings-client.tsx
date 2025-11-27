@@ -7,10 +7,12 @@
 'use client';
 
 import { useState } from 'react';
+import type { ToolConfigRow } from '@/types/tool-config.types';
+
+// Tool configuration card components
 import { EmailToolConfigCard } from './email-tool-config-card';
 import { WebSearchToolConfigCard } from './web-search-tool-config-card';
 import { OpenAIToolConfigCard } from './openai-tool-config-card';
-import type { ToolConfigRow } from '@/types/tool-config.types';
 
 interface AdminSettingsClientProps {
   initialConfigs: ToolConfigRow[];

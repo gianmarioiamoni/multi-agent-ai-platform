@@ -4,6 +4,7 @@
  * Following SRP: Only handles web search logic
  */
 
+import { getWebSearchToolConfig } from '@/lib/tools/config-loader';
 import type {
   Tool,
   WebSearchParams,
@@ -34,10 +35,19 @@ async function executeWebSearch(
   const startTime = Date.now();
 
   try {
-    // Validate API key
-    const apiKey = process.env.TAVILY_API_KEY;
+    // Get configuration from database (with env fallback)
+    const config = await getWebSearchToolConfig();
+    if (!config || !config.enabled) {
+      return {
+        success: false,
+        error: 'Web search is not configured. Please contact administrator.',
+        executionTime: Date.now() - startTime,
+      };
+    }
+
+    const apiKey = config.api_key;
     if (!apiKey) {
-      console.error('[Web Search] TAVILY_API_KEY not configured');
+      console.error('[Web Search] API key not configured');
       return {
         success: false,
         error: 'Web search is not configured. Please contact administrator.',
@@ -54,7 +64,7 @@ async function executeWebSearch(
       };
     }
 
-    const maxResults = params.maxResults || 5;
+    const maxResults = params.maxResults || config.max_results || 5;
 
     console.log('[Web Search] Executing search:', {
       query: params.query,
