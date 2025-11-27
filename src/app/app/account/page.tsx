@@ -7,7 +7,7 @@ import type { Metadata } from 'next';
 import { getCurrentUserProfile } from '@/lib/auth/utils';
 import { AccountHeader } from '@/components/account/account-header';
 import { AccountProfileSection } from '@/components/account/account-profile-section';
-import { AccountDetailsSection } from '@/components/account/account-details-section/account-details-section';
+import { AccountDetailsSection } from '@/components/account/account-details-section';
 import { AccountSecuritySection } from '@/components/account/account-security-section';
 import { DemoRestrictionsNotice } from '@/components/demo/demo-restrictions-notice';
 
