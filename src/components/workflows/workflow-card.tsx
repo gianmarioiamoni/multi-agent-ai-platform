@@ -10,24 +10,14 @@ import Link from 'next/link';
 import type { WorkflowListItem } from '@/types/workflow.types';
 import { Card } from '@/components/ui/card';
 import { formatDate } from '@/utils/format';
+import {
+  getWorkflowStatusColor,
+  getWorkflowStatusLabel,
+} from '@/utils/entity-status';
 
 interface WorkflowCardProps {
   workflow: WorkflowListItem;
 }
-
-const statusColors = {
-  draft: 'bg-gray-500',
-  active: 'bg-green-500',
-  paused: 'bg-yellow-500',
-  archived: 'bg-gray-400',
-};
-
-const statusLabels = {
-  draft: 'Draft',
-  active: 'Active',
-  paused: 'Paused',
-  archived: 'Archived',
-};
 
 export const WorkflowCard = ({ workflow }: WorkflowCardProps) => {
   return (
@@ -45,9 +35,9 @@ export const WorkflowCard = ({ workflow }: WorkflowCardProps) => {
             )}
           </div>
           <span
-            className={`px-2 py-1 text-xs font-medium text-white rounded ${statusColors[workflow.status]}`}
+            className={`px-2 py-1 text-xs font-medium text-white rounded ${getWorkflowStatusColor(workflow.status)}`}
           >
-            {statusLabels[workflow.status]}
+            {getWorkflowStatusLabel(workflow.status)}
           </span>
         </div>
         
