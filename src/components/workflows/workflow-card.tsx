@@ -2,9 +2,8 @@
  * Workflow Card Component
  * Displays a single workflow in the list
  * Following SRP: Only handles card rendering
+ * Server Component - static content with Link only
  */
-
-'use client';
 
 import Link from 'next/link';
 import type { WorkflowListItem } from '@/types/workflow.types';

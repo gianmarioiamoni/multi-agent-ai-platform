@@ -2,9 +2,8 @@
  * Dashboard Quick Actions Component
  * Displays quick action buttons
  * Following SRP: Only handles quick actions rendering
+ * Server Component - static content with Links only
  */
-
-'use client';
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';

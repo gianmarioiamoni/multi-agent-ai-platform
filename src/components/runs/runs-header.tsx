@@ -2,9 +2,8 @@
  * Runs Header Component
  * Header for workflow runs page
  * Following SRP: Only handles header rendering
+ * Server Component - static content only
  */
-
-'use client';
 
 export const RunsHeader = () => {
   return (

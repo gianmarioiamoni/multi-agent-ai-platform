@@ -117,9 +117,12 @@ export async function upsertToolConfig(
 
     const supabase = await createClient();
 
+    // Convert ToolConfig to Json type for database storage
+    const configJson = input.config as unknown as Database['public']['Tables']['tool_configs']['Insert']['config'];
+    
     const configData: Database['public']['Tables']['tool_configs']['Insert'] = {
       tool_id: input.tool_id,
-      config: input.config as Database['public']['Tables']['tool_configs']['Insert']['config'],
+      config: configJson,
       enabled: input.enabled ?? true,
       updated_by: profile.userId,
     };
@@ -175,16 +178,20 @@ export async function updateToolConfig(
       return { data: null, error: 'Tool configuration not found' };
     }
 
-    const existingConfig = existing.config as ToolConfig;
+    // Convert Json type to ToolConfig - using unknown for safe type assertion
+    const existingConfig = existing.config as unknown as ToolConfig;
 
-    // Merge configs
-    const updatedConfig: ToolConfig = {
+    // Merge configs - input.config is Partial<ToolConfig>, so we merge safely
+    const updatedConfig = {
       ...existingConfig,
       ...(input.config || {}),
-    };
+    } as ToolConfig;
 
+    // Convert ToolConfig to Json type for database storage
+    const configJson = updatedConfig as unknown as Database['public']['Tables']['tool_configs']['Update']['config'];
+    
     const updateData: Database['public']['Tables']['tool_configs']['Update'] = {
-      config: updatedConfig as Database['public']['Tables']['tool_configs']['Update']['config'],
+      config: configJson,
       enabled: input.enabled !== undefined ? input.enabled : existing.enabled,
       updated_by: profile.userId,
     };

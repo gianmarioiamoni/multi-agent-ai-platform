@@ -23,7 +23,7 @@ export async function getEmailToolConfig(): Promise<EmailToolConfig | null> {
     const { data: dbConfig } = await getToolConfig('email');
 
     if (dbConfig && dbConfig.enabled) {
-      return dbConfig.config as EmailToolConfig;
+      return dbConfig.config as unknown as EmailToolConfig;
     }
 
     // Fallback to environment variables (for backward compatibility)
@@ -78,7 +78,7 @@ export async function getWebSearchToolConfig(): Promise<WebSearchToolConfig | nu
     const { data: dbConfig } = await getToolConfig('web_search');
 
     if (dbConfig && dbConfig.enabled) {
-      return dbConfig.config as WebSearchToolConfig;
+      return dbConfig.config as unknown as WebSearchToolConfig;
     }
 
     // Fallback to environment variables (for backward compatibility)
@@ -109,7 +109,7 @@ export async function getOpenAIToolConfig(): Promise<OpenAIToolConfig | null> {
     const { data: dbConfig } = await getToolConfig('openai');
 
     if (dbConfig && dbConfig.enabled) {
-      return dbConfig.config as OpenAIToolConfig;
+      return dbConfig.config as unknown as OpenAIToolConfig;
     }
 
     // Fallback to environment variables (for backward compatibility)

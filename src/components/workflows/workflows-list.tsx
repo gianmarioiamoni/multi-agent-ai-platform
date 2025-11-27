@@ -2,9 +2,8 @@
  * Workflows List Component
  * Grid of workflow cards
  * Following SRP: Only handles list rendering
+ * Server Component - maps props to WorkflowCard components
  */
-
-'use client';
 
 import type { WorkflowListItem } from '@/types/workflow.types';
 import { WorkflowCard } from './workflow-card';

@@ -2,9 +2,9 @@
  * Agents List Component
  * Grid of agent cards
  * Following SRP: Only handles list rendering
+ * Server Component - maps props to AgentCard components
+ * Note: AgentCard remains client-side due to useRouter for navigation
  */
-
-'use client';
 
 import type { AgentListItem } from '@/types/agent.types';
 import { AgentCard } from './agent-card';

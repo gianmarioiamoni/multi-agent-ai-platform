@@ -9,6 +9,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { getCurrentUser } from '@/lib/auth/utils';
 import type { Database } from '@/types/database.types';
+import type { DatabaseEntityArray, DatabaseQueryResult } from '@/types/common.types';
 
 export type ExportedUserData = {
   export_metadata: {
@@ -136,7 +137,10 @@ export async function exportUserData(): Promise<ExportedUserData | { error: stri
       .from('profiles')
       .select('*')
       .eq('user_id', user.id)
-      .single();
+      .single() as {
+      data: { id: string; name: string | null; role: string; settings: unknown; created_at: string; updated_at: string } | null;
+      error: unknown;
+    };
 
     if (profileError || !profile) {
       return { error: 'Failed to fetch profile data' };
@@ -147,35 +151,37 @@ export async function exportUserData(): Promise<ExportedUserData | { error: stri
       .from('agents')
       .select('*')
       .eq('owner_id', user.id)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false }) as DatabaseQueryResult;
 
     // Get all user workflows
     const { data: workflows } = await supabase
       .from('workflows')
       .select('*')
       .eq('owner_id', user.id)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false }) as DatabaseQueryResult<{ id: string }>;
 
     // Get all workflow runs for user's workflows
     const workflowIds = workflows?.map((w) => w.id) || [];
-    const { data: workflowRuns } = workflowIds.length > 0
+    const workflowRunsResult = workflowIds.length > 0
       ? await supabase
           .from('workflow_runs')
           .select('*')
           .in('workflow_id', workflowIds)
           .eq('created_by', user.id)
-          .order('created_at', { ascending: false })
+          .order('created_at', { ascending: false }) as DatabaseQueryResult<{ id: string }>
       : { data: [] };
+    const workflowRuns = workflowRunsResult.data;
 
     // Get all agent runs for user's workflow runs
     const workflowRunIds = workflowRuns?.map((wr) => wr.id) || [];
-    const { data: agentRuns } = workflowRunIds.length > 0
+    const agentRunsResult = workflowRunIds.length > 0
       ? await supabase
           .from('agent_runs')
           .select('*')
           .in('workflow_run_id', workflowRunIds)
-          .order('step_order', { ascending: true })
+          .order('step_order', { ascending: true }) as DatabaseQueryResult<{ id: string }>
       : { data: [] };
+    const agentRuns = agentRunsResult.data;
 
     // Get all tool invocations for user's agent runs
     const agentRunIds = agentRuns?.map((ar) => ar.id) || [];
@@ -224,7 +230,7 @@ export async function exportUserData(): Promise<ExportedUserData | { error: stri
         created_at: profile.created_at,
         updated_at: profile.updated_at,
       },
-      agents: (agents || []).map((agent) => ({
+      agents: ((agents as DatabaseEntityArray) || []).map((agent: any) => ({
         id: agent.id,
         name: agent.name,
         description: agent.description,
@@ -238,7 +244,7 @@ export async function exportUserData(): Promise<ExportedUserData | { error: stri
         created_at: agent.created_at,
         updated_at: agent.updated_at,
       })),
-      workflows: (workflows || []).map((workflow) => ({
+      workflows: ((workflows as DatabaseEntityArray) || []).map((workflow: any) => ({
         id: workflow.id,
         name: workflow.name,
         description: workflow.description,
@@ -248,7 +254,7 @@ export async function exportUserData(): Promise<ExportedUserData | { error: stri
         updated_at: workflow.updated_at,
         last_run_at: workflow.last_run_at,
       })),
-      workflow_runs: (workflowRuns || []).map((run) => ({
+      workflow_runs: ((workflowRuns as DatabaseEntityArray) || []).map((run: any) => ({
         id: run.id,
         workflow_id: run.workflow_id,
         status: run.status,
@@ -260,7 +266,7 @@ export async function exportUserData(): Promise<ExportedUserData | { error: stri
         created_at: run.created_at,
         updated_at: run.updated_at,
       })),
-      agent_runs: (agentRuns || []).map((run) => ({
+      agent_runs: ((agentRuns as DatabaseEntityArray) || []).map((run: any) => ({
         id: run.id,
         workflow_run_id: run.workflow_run_id,
         agent_id: run.agent_id,
@@ -274,7 +280,7 @@ export async function exportUserData(): Promise<ExportedUserData | { error: stri
         created_at: run.created_at,
         updated_at: run.updated_at,
       })),
-      tool_invocations: (toolInvocations || []).map((inv) => ({
+      tool_invocations: ((toolInvocations as DatabaseEntityArray) || []).map((inv: any) => ({
         id: inv.id,
         agent_run_id: inv.agent_run_id,
         tool: inv.tool,
@@ -305,7 +311,7 @@ export async function exportUserData(): Promise<ExportedUserData | { error: stri
         created_at: cred.created_at,
         updated_at: cred.updated_at,
       })),
-      logs: (logs || []).map((log) => ({
+      logs: ((logs as DatabaseEntityArray) || []).map((log: any) => ({
         id: log.id,
         level: log.level,
         category: log.category,
@@ -317,7 +323,7 @@ export async function exportUserData(): Promise<ExportedUserData | { error: stri
         duration_ms: log.duration_ms,
         created_at: log.created_at,
       })),
-      notification_reads: (notificationReads || []).map((nr) => ({
+      notification_reads: ((notificationReads as DatabaseEntityArray) || []).map((nr: any) => ({
         id: nr.id,
         notification_id: nr.notification_id,
         read_at: nr.read_at,

@@ -2,9 +2,8 @@
  * Agents Header Component
  * Header with title and create button
  * Following SRP: Only handles header rendering
+ * Server Component - static content with Link only
  */
-
-'use client';
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';

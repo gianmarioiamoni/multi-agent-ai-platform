@@ -2,9 +2,8 @@
  * Dashboard Getting Started Component
  * Displays onboarding steps for new users
  * Following SRP: Only handles getting started rendering
+ * Server Component - static content only
  */
-
-'use client';
 
 import Link from 'next/link';
 

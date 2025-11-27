@@ -1,5 +1,5 @@
 /**
- * Centralized Common Types
+ * Common Types
  * Shared types used across the application
  */
 
@@ -14,17 +14,30 @@ export interface Toast {
 }
 
 export interface ErrorResponse {
-  success: false;
   error: string;
-  code?: string;
-  details?: Record<string, unknown>;
-}
-
-export interface SuccessResponse<T = unknown> {
-  success: true;
-  data?: T;
   message?: string;
 }
 
-export type ApiResponse<T = unknown> = SuccessResponse<T> | ErrorResponse;
+/**
+ * Generic database entity with id and other properties
+ * Used for Supabase query results when type inference fails
+ */
+export interface DatabaseEntity {
+  id: string;
+  [key: string]: unknown;
+}
 
+/**
+ * Array of database entities
+ * Used for Supabase query results when type inference fails
+ */
+export type DatabaseEntityArray = Array<DatabaseEntity>;
+
+/**
+ * Supabase query result with data array of entities
+ * Used when type inference fails and we need to cast query results
+ */
+export interface DatabaseQueryResult<T = DatabaseEntity> {
+  data: Array<T> | null;
+  error?: unknown;
+}

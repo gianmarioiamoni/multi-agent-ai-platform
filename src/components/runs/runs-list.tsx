@@ -2,9 +2,8 @@
  * Runs List Component
  * Displays list of workflow runs
  * Following SRP: Only handles list rendering
+ * Server Component - maps props to RunCard components
  */
-
-'use client';
 
 import type { WorkflowRun } from '@/types/workflow-execution.types';
 import { RunCard } from './run-card';

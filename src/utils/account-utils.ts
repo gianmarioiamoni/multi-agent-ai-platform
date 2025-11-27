@@ -1,28 +1,27 @@
 /**
- * Account Details Hook
- * Handles account details formatting logic
- * Following SRP: Only manages account details formatting
+ * Account Utilities
+ * Pure utility functions for account-related formatting
+ * These functions can be used in both Server and Client Components
  */
 
-'use client';
-
-interface UseAccountDetailsProps {
+interface FormatAccountDetailsParams {
   role: string;
   createdAt: string;
 }
 
-interface UseAccountDetailsReturn {
+interface FormattedAccountDetails {
   roleColor: string;
   formattedDate: string;
 }
 
 /**
- * Hook for formatting account details
+ * Format account details (role color and date)
+ * Pure function - no hooks, no side effects
  */
-export function useAccountDetails({
+export function formatAccountDetails({
   role,
   createdAt,
-}: UseAccountDetailsProps): UseAccountDetailsReturn {
+}: FormatAccountDetailsParams): FormattedAccountDetails {
   const roleColor =
     role === 'admin'
       ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)]'

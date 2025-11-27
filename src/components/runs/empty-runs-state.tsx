@@ -2,9 +2,8 @@
  * Empty Runs State Component
  * Shows when there are no workflow runs
  * Following SRP: Only handles empty state rendering
+ * Server Component - static content only
  */
-
-'use client';
 
 import { Card } from '@/components/ui/card';
 

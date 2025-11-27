@@ -2,9 +2,8 @@
  * Empty Agents State Component
  * Displayed when user has no agents
  * Following SRP: Only handles empty state rendering
+ * Server Component - static content with Link only
  */
-
-'use client';
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';

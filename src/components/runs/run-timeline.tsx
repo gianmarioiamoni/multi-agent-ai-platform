@@ -2,9 +2,8 @@
  * Run Timeline Component
  * Displays workflow run execution timeline with all steps
  * Following SRP: Only handles timeline rendering
+ * Server Component - maps props to AgentRunStep components
  */
-
-'use client';
 
 import type { WorkflowRun, AgentRun, ToolInvocation } from '@/types/workflow-execution.types';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';

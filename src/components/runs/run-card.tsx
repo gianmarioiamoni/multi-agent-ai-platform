@@ -2,14 +2,13 @@
  * Run Card Component
  * Main composition component for run card
  * Following SRP: Only handles component composition
+ * Server Component - static content with Link only
  */
-
-'use client';
 
 import Link from 'next/link';
 import type { WorkflowRun } from '@/types/workflow-execution.types';
 import { Card } from '@/components/ui/card';
-import { useRunCard } from '@/hooks/runs/use-run-card';
+import { formatRunCardData } from '@/utils/run-status';
 import { RunCardHeader } from './run-card/run-card-header';
 import { RunCardFooter } from './run-card/run-card-footer';
 
@@ -18,7 +17,7 @@ interface RunCardProps {
 }
 
 export const RunCard = ({ run }: RunCardProps) => {
-  const { statusColor, statusLabel, duration } = useRunCard({ run });
+  const { statusColor, statusLabel, duration } = formatRunCardData(run);
 
   return (
     <Link href={`/app/runs/${run.id}`}>

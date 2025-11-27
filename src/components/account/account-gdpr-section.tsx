@@ -2,9 +2,8 @@
  * Account GDPR Section Component
  * GDPR-related features: data export, privacy rights
  * Following SRP: Only handles GDPR section composition
+ * Server Component - composes client components where needed
  */
-
-'use client';
 
 import { AccountDataExport } from './account-gdpr-section/account-data-export';
 import Link from 'next/link';
