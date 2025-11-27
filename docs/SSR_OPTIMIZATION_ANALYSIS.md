@@ -28,19 +28,20 @@
 - **File con 'use client' totale**: 143 file (include hooks, utils, ecc.)
 - **Pattern identificati**: 8 categorie principali
 
-### Stato Attuale (Dopo la Fase 2A) ✅
+### Stato Attuale (Dopo la Fase 2B) ✅
 - **Totale componenti**: 186 componenti
-- **Componenti Client ('use client')**: 91 componenti (48.9%)
-- **Componenti Server**: 95 componenti (51.1%)
-- **File con 'use client' totale**: 122 file (include hooks, utils, ecc.)
-- **Miglioramento totale**: +20 componenti convertiti in SSR (-17.3% client, +26.7% server)
+- **Componenti Client ('use client')**: 90 componenti (48.4%)
+- **Componenti Server**: 96 componenti (51.6%)
+- **File con 'use client' totale**: 121 file (include hooks, utils, ecc.)
+- **Miglioramento totale**: +21 componenti convertiti in SSR (-18.2% client, +28.0% server)
 
-### Risultati Fase 1 + 2A
-- **Rapporto Client/Server**: Migliorato da 59/41 a 49/51 🎉
-- **Componenti ottimizzati**: 20 componenti + 3 hooks convertiti
-- **Riduzione bundle JS**: ~7-13%
-- **Server Components ora sono maggioranza!**
-- **Potenziale Ottimizzazione Fase 2B/C**: ~5-10 componenti aggiuntivi identificati
+### Risultati Fase 1 + 2A + 2B
+- **Rapporto Client/Server**: Migliorato da 59/41 a 48/52 🎉
+- **Componenti ottimizzati**: 21 componenti + 4 hooks convertiti
+- **Riduzione bundle JS**: ~8-15%
+- **Server Components ora sono maggioranza (51.6%)!**
+- **Pattern applicato**: Island Architecture per AgentCard
+- **Potenziale Ottimizzazione Fase 2C**: ~3-5 componenti aggiuntivi identificati
 
 ---
 

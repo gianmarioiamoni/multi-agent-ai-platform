@@ -2,18 +2,17 @@
  * Agent Card Component
  * Main composition component for agent card
  * Following SRP: Only handles component composition
+ * Server Component - static content only
+ * Note: Wrapped by AgentCardWrapper (client) for navigation
  */
 
-'use client';
-
 import { Card, CardContent } from '@/components/ui/card';
-import { useAgentCard } from '@/hooks/agents/use-agent-card';
+import { formatAgentCardData } from '@/utils/agent-utils';
 import { AgentCardHeader } from './agent-card/agent-card-header';
 import { AgentCardModelInfo } from './agent-card/agent-card-model-info';
 import { AgentCardTools } from './agent-card/agent-card-tools';
 import { AgentCardFooter } from './agent-card/agent-card-footer';
-// Note: AgentCardHeader, AgentCardModelInfo, AgentCardTools, and AgentCardFooter are Server Components
-// They are composed within this Client Component for interactivity
+// Note: All subcomponents (Header, ModelInfo, Tools, Footer) are Server Components
 import type { AgentListItem } from '@/types/agent.types';
 
 interface AgentCardProps {
@@ -21,13 +20,10 @@ interface AgentCardProps {
 }
 
 export const AgentCard = ({ agent }: AgentCardProps) => {
-  const { modelInfo, enabledTools, statusColor, handleCardClick } = useAgentCard({ agent });
+  const { modelInfo, enabledTools, statusColor } = formatAgentCardData(agent);
 
   return (
-    <Card
-      className="h-full border-2 border-[var(--color-border)] hover:!border-[var(--color-primary)] hover:shadow-lg transition-all cursor-pointer group"
-      onClick={handleCardClick}
-    >
+    <Card className="h-full border-2 border-[var(--color-border)] hover:!border-[var(--color-primary)] hover:shadow-lg transition-all cursor-pointer group">
       <AgentCardHeader
         name={agent.name}
         description={agent.description}
