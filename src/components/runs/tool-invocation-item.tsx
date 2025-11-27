@@ -13,19 +13,7 @@ interface ToolInvocationItemProps {
   invocation: ToolInvocation;
 }
 
-const statusColors = {
-  pending: 'bg-gray-500',
-  running: 'bg-blue-500',
-  completed: 'bg-green-500',
-  failed: 'bg-red-500',
-};
-
-const statusLabels = {
-  pending: 'Pending',
-  running: 'Running',
-  completed: 'Completed',
-  failed: 'Failed',
-};
+import { getRunStatusColor, getRunStatusLabel } from '@/utils/run-status';
 
 export const ToolInvocationItem = ({ invocation }: ToolInvocationItemProps) => {
   return (
@@ -36,9 +24,9 @@ export const ToolInvocationItem = ({ invocation }: ToolInvocationItemProps) => {
             🔧 {invocation.tool}
           </CardTitle>
           <span
-            className={`px-2 py-0.5 text-xs font-medium text-white rounded ${statusColors[invocation.status]}`}
+            className={`px-2 py-0.5 text-xs font-medium text-white rounded ${getRunStatusColor(invocation.status)}`}
           >
-            {statusLabels[invocation.status]}
+            {getRunStatusLabel(invocation.status)}
           </span>
         </div>
       </CardHeader>

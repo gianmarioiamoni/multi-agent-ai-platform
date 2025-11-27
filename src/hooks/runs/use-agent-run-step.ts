@@ -5,6 +5,7 @@
  */
 
 import type { AgentRun } from '@/types/workflow-execution.types';
+import { getRunStatusColor, getRunStatusLabel } from '@/utils/run-status';
 
 interface UseAgentRunStepProps {
   agentRun: AgentRun;
@@ -15,22 +16,6 @@ interface UseAgentRunStepReturn {
   statusLabel: string;
   duration: string;
 }
-
-const statusColors = {
-  pending: 'bg-gray-500',
-  running: 'bg-blue-500',
-  completed: 'bg-green-500',
-  failed: 'bg-red-500',
-  skipped: 'bg-orange-500',
-};
-
-const statusLabels = {
-  pending: 'Pending',
-  running: 'Running',
-  completed: 'Completed',
-  failed: 'Failed',
-  skipped: 'Skipped',
-};
 
 const getDuration = (startedAt: string | null, finishedAt: string | null): string => {
   if (!startedAt || !finishedAt) return '—';
@@ -49,8 +34,8 @@ const getDuration = (startedAt: string | null, finishedAt: string | null): strin
  * Hook for managing agent run step logic
  */
 export function useAgentRunStep({ agentRun }: UseAgentRunStepProps): UseAgentRunStepReturn {
-  const statusColor = statusColors[agentRun.status] || statusColors.pending;
-  const statusLabel = statusLabels[agentRun.status] || statusLabels.pending;
+  const statusColor = getRunStatusColor(agentRun.status);
+  const statusLabel = getRunStatusLabel(agentRun.status);
   const duration = getDuration(agentRun.started_at, agentRun.finished_at);
 
   return {

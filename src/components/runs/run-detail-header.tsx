@@ -19,21 +19,7 @@ interface RunDetailHeaderProps {
   };
 }
 
-const statusColors = {
-  pending: 'bg-gray-500',
-  running: 'bg-blue-500',
-  completed: 'bg-green-500',
-  failed: 'bg-red-500',
-  cancelled: 'bg-orange-500',
-};
-
-const statusLabels = {
-  pending: 'Pending',
-  running: 'Running',
-  completed: 'Completed',
-  failed: 'Failed',
-  cancelled: 'Cancelled',
-};
+import { getRunStatusColor, getRunStatusLabel } from '@/utils/run-status';
 
 const getDuration = (startedAt: string | null, finishedAt: string | null): string => {
   if (!startedAt || !finishedAt) return '—';
@@ -70,9 +56,9 @@ export const RunDetailHeader = ({ run }: RunDetailHeaderProps) => {
           </p>
         </div>
         <span
-          className={`px-3 py-1 text-sm font-medium text-white rounded ${statusColors[run.status]}`}
+          className={`px-3 py-1 text-sm font-medium text-white rounded ${getRunStatusColor(run.status)}`}
         >
-          {statusLabels[run.status]}
+          {getRunStatusLabel(run.status)}
         </span>
       </div>
 
