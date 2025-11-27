@@ -45,9 +45,9 @@ multi-agent-ai-platform/
 │   │   ├── auth/             # Auth utilities
 │   │   ├── ai/               # AI/LLM utilities
 │   │   └── tools/            # Tool implementations
-│   ├── hooks/                 # Custom React hooks
+│   ├── hooks/                 # Custom React hooks (28 hooks)
 │   ├── types/                 # TypeScript type definitions
-│   └── utils/                 # General utilities
+│   └── utils/                 # General utilities (pure functions)
 ├── supabase/
 │   └── migrations/           # Database migrations
 ├── docs/                      # Documentation
@@ -121,31 +121,43 @@ CREATE TABLE profiles (
 );
 ```
 
-### Future Schema (Sprint 2+)
+### Current Schema (Sprint 2+)
 
 #### agents
 Configuration for AI agents.
-- Fields: id, owner_id, name, description, model, tools_enabled[], config
+- Fields: id, owner_id, name, description, role, model, temperature, max_tokens, tools_enabled[], config, status, created_at, updated_at
 
 #### workflows
 Multi-agent workflow definitions.
-- Fields: id, owner_id, name, graph (steps, edges, triggers)
+- Fields: id, owner_id, name, description, graph (steps, edges, triggers), status, created_at, updated_at, last_run_at
 
 #### workflow_runs
 Execution history of workflows.
-- Fields: id, workflow_id, status, started_at, finished_at, created_by
+- Fields: id, workflow_id, status, started_at, finished_at, created_by, input, output, error
 
 #### agent_runs
 Individual agent executions within workflow runs.
-- Fields: id, run_id, agent_id, input, output, status
+- Fields: id, workflow_run_id, agent_id, agent_name, step_index, status, started_at, finished_at, input, output, error, tool_invocations
 
 #### tool_invocations
 Log of all tool calls made by agents.
-- Fields: id, agent_run_id, tool, params, result, status
+- Fields: id, agent_run_id, tool_name, parameters, result, status, started_at, finished_at, error
 
 #### stored_credentials
 Encrypted OAuth tokens and API keys.
-- Fields: id, user_id, provider, tokens (encrypted)
+- Fields: id, user_id, provider, encrypted_credentials, created_at, updated_at
+
+#### tool_configs
+Global tool configurations (admin-managed).
+- Fields: id, tool_name, enabled, config (JSONB), created_at, updated_at
+
+#### logs
+Structured logging for system events.
+- Fields: id, level, message, context, user_id, metadata, created_at
+
+#### notification_reads
+Track read status of notifications.
+- Fields: id, user_id, notification_id, read_at
 
 ## Security Features
 
@@ -226,9 +238,11 @@ pnpm dev
 ## Performance Considerations
 
 ### Server Components
-- Use Server Components for data fetching
-- Reduce client bundle size
+- **Current State**: 52.4% Server Components, 47.6% Client Components
+- Use Server Components for data fetching and static content
+- Reduce client bundle size by ~9-17%
 - Better SEO and initial load
+- Pattern: Island Architecture for components requiring minimal interactivity
 
 ### Data Fetching
 - Use SWR or React Query (not `useEffect`)
@@ -271,20 +285,21 @@ supabase db push
 
 ## Next Steps
 
-### Sprint 1, Week 1 (Current)
-- ✅ Supabase setup and configuration
-- ⏭️ Implement auth UI (signup/login/Google OAuth)
-- ⏭️ Create base layout (navbar, sidebar)
-- ⏭️ Profiles table with post-signup hook
+### Current Status
 
-### Sprint 1, Week 2
-- Bootstrap admin script
-- Route protection middleware
-- Admin panel UI
-- User account page
+#### Completed Features
+- ✅ **Sprint 1**: Auth, roles, base structure
+- ✅ **Sprint 2**: Agents & workflows CRUD, Web search & Email tools
+- ✅ **Sprint 3**: Multi-agent workflows, Calendar tool, DB operations tool
+- ✅ **Sprint 4**: Rate limiting, structured logging, error handling, UI improvements, demo workflows
 
-### Sprint 2+
-See `CLAUDE.md` for full roadmap.
+#### Performance Optimizations
+- ✅ **SSR Optimization**: 23 components converted to Server Components
+- ✅ **Bundle Reduction**: ~9-17% JavaScript bundle size reduction
+- ✅ **Hook Conversion**: 5 hooks converted to pure utility functions
+
+### Next Steps
+See `CLAUDE.md` for full roadmap and upcoming features.
 
 ## Resources
 
