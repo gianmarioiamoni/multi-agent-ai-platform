@@ -18,11 +18,11 @@ interface GoogleCalendarCardProps {
   onConnectionChange: () => Promise<void>;
 }
 
-export function GoogleCalendarCard({
+export const GoogleCalendarCard = ({
   isConnected,
   isLoading,
   onConnectionChange,
-}: GoogleCalendarCardProps) {
+}: GoogleCalendarCardProps) => {
   const { isConnecting, isDisconnecting, handleConnect, handleDisconnect } =
     useGoogleCalendarCard({ onConnectionChange });
 
@@ -40,5 +40,5 @@ export function GoogleCalendarCard({
       />
     </Card>
   );
-}
+};
 

@@ -11,7 +11,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/contexts/toast-context';
 import { GoogleCalendarCard } from './google-calendar-card';
 
-export function IntegrationsClient() {
+export const IntegrationsClient = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { addToast } = useToast();
@@ -49,7 +49,7 @@ export function IntegrationsClient() {
     try {
       // Check connection status
       const response = await fetch('/api/integrations/google-calendar/status');
-      const data = await response.json() as { connected: boolean };
+      const data = (await response.json()) as { connected: boolean };
       setIsConnected(data.connected);
     } catch {
       setIsConnected(false);
@@ -60,12 +60,12 @@ export function IntegrationsClient() {
 
   return (
     <div className="space-y-6">
-      <GoogleCalendarCard 
+      <GoogleCalendarCard
         isConnected={isConnected}
         isLoading={isLoading}
         onConnectionChange={checkConnectionStatus}
       />
     </div>
   );
-}
+};
 

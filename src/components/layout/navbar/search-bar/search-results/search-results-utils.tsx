@@ -7,7 +7,6 @@
 'use client';
 
 import type { SearchResult } from '@/lib/search/actions';
-import type React from 'react';
 
 export const getTypeIcon = (type: SearchResult['type']): string => {
   return type === 'agent' ? '🤖' : '⚡';
@@ -17,7 +16,7 @@ export const getTypeLabel = (type: SearchResult['type']): string => {
   return type === 'agent' ? 'Agent' : 'Workflow';
 };
 
-export const highlightMatch = (text: string, query: string): React.JSX.Element => {
+export const highlightMatch = (text: string, query: string) => {
   const lowerText = text.toLowerCase();
   const lowerQuery = query.toLowerCase();
   const index = lowerText.indexOf(lowerQuery);
