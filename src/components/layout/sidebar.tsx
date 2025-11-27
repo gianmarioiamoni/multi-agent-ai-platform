@@ -7,7 +7,7 @@
 'use client';
 
 import { cn } from '@/utils/cn';
-import { useFilteredNavigation } from '@/hooks/navigation/use-filtered-navigation';
+import { filterNavigationSections } from '@/utils/navigation-utils';
 import { MobileOverlay } from './sidebar/mobile-overlay';
 import { SidebarHeader } from './sidebar/sidebar-header';
 import { NavigationSection } from './sidebar/navigation-section';
@@ -21,7 +21,7 @@ interface SidebarProps {
 }
 
 export const Sidebar = ({ userRole, isOpen, onClose }: SidebarProps) => {
-  const filteredSections = useFilteredNavigation(userRole);
+  const filteredSections = filterNavigationSections(userRole);
 
   return (
     <>
