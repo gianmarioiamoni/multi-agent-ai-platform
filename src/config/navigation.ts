@@ -56,6 +56,12 @@ export const navigationSections: NavSection[] = [
         icon: 'admin',
         adminOnly: true,
       },
+      {
+        label: 'Settings',
+        href: '/admin/settings',
+        icon: 'admin',
+        adminOnly: true,
+      },
     ],
   },
 ];

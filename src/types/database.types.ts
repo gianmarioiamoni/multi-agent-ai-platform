@@ -214,6 +214,35 @@ export interface Database {
           created_at?: string;
         };
       };
+      tool_configs: {
+        Row: {
+          id: string;
+          tool_id: string;
+          config: Json;
+          enabled: boolean;
+          updated_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          tool_id: string;
+          config?: Json;
+          enabled?: boolean;
+          updated_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          tool_id?: string;
+          config?: Json;
+          enabled?: boolean;
+          updated_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
       workflow_runs: {
         Row: {
           id: string;
