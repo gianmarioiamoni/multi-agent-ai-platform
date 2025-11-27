@@ -17,6 +17,11 @@ export const metadata: Metadata = {
   },
   description: 'Automate your business workflows with AI agents',
   keywords: ['AI', 'automation', 'agents', 'workflow', 'business'],
+  icons: {
+    icon: '/icon.svg',
+    shortcut: '/icon.svg',
+    apple: '/icon.svg',
+  },
 };
 
 export default function RootLayout({
