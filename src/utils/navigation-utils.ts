@@ -21,6 +21,10 @@ export function filterNavigationSections(userRole: UserRole): NavSection[] {
         if (item.adminOnly && userRole !== 'admin') {
           return false;
         }
+        // Hide Pricing menu item for admin users (they have unlimited access)
+        if (item.href === '/app/pricing' && userRole === 'admin') {
+          return false;
+        }
         return true;
       }),
     }))

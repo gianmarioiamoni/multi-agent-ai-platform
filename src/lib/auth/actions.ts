@@ -75,9 +75,9 @@ export const signIn = async (
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data: profile } = await (supabase as any)
         .from('profiles')
-        .select('is_disabled')
+        .select('is_disabled, role, is_demo')
         .eq('user_id', authData.user.id)
-        .single() as { data: { is_disabled?: boolean } | null; error: unknown };
+        .single() as { data: { is_disabled?: boolean; role?: string; is_demo?: boolean } | null; error: unknown };
 
       if (profile?.is_disabled === true) {
         // User is disabled, sign them out immediately
@@ -86,6 +86,23 @@ export const signIn = async (
           success: false,
           error: 'Your account has been disabled. Please contact an administrator for assistance.',
         };
+      }
+
+      // Safety check: Verify subscription status at login (backup to cron job)
+      // Skip check for admin and demo users
+      if (profile?.role !== 'admin' && profile?.is_demo !== true) {
+        const { checkSubscriptionStatus, disableExpiredUser } = await import('@/lib/subscription/login-check');
+        const subscriptionStatus = await checkSubscriptionStatus(authData.user.id);
+
+        // Disable user if subscription expired (safety net - cron should handle this, but check here too)
+        if (subscriptionStatus.shouldDisable) {
+          await disableExpiredUser(authData.user.id);
+          await supabase.auth.signOut();
+          return {
+            success: false,
+            error: 'Your subscription has expired. Please subscribe to continue using the platform.',
+          };
+        }
       }
     }
 

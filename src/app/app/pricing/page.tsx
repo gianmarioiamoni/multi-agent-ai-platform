@@ -1,0 +1,40 @@
+/**
+ * Pricing Page
+ * Display subscription plans and pricing
+ * Following SRP: Server Component that composes UI components
+ * SSR: Fully server-side rendered with client interaction for billing toggle
+ */
+
+import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
+import { getCurrentUserProfile } from '@/lib/auth/utils';
+import { PricingHeader } from '@/components/pricing/pricing-header';
+import { PricingClient } from '@/components/pricing/pricing-client';
+
+export const metadata: Metadata = {
+  title: 'Pricing',
+  description: 'Choose the subscription plan that fits your needs. Start with a free 30-day trial.',
+};
+
+export default async function PricingPage() {
+  const profile = await getCurrentUserProfile();
+
+  // Admin users have unlimited access and should not access pricing page
+  if (!profile || profile.role === 'admin') {
+    redirect('/app/dashboard');
+  }
+
+  const currentPlan = profile.subscriptionPlan || null;
+  const nextPlan = profile.nextPlan || null;
+
+  return (
+    <div className="container mx-auto max-w-6xl space-y-6 py-8">
+      <PricingHeader />
+      <PricingClient
+        currentPlan={currentPlan}
+        nextPlan={nextPlan}
+      />
+    </div>
+  );
+}
+

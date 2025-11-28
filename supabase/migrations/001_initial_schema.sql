@@ -87,14 +87,19 @@ CREATE TRIGGER update_profiles_updated_at
   EXECUTE FUNCTION update_updated_at_column();
 
 -- Function: Create profile after signup
+-- Automatically assigns trial subscription to new users (not admin)
 CREATE OR REPLACE FUNCTION handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.profiles (user_id, name, role)
+  INSERT INTO public.profiles (user_id, name, role, subscription_plan, subscription_expires_at, trial_used, trial_days_remaining)
   VALUES (
     NEW.id,
     COALESCE(NEW.raw_user_meta_data->>'name', NEW.email),
-    'user'
+    'user',
+    'trial',
+    NOW() + INTERVAL '30 days',
+    false,
+    0
   );
   RETURN NEW;
 END;

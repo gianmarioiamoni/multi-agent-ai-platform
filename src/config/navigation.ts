@@ -46,6 +46,11 @@ export const navigationSections: NavSection[] = [
         icon: 'integrations',
       },
       {
+        label: 'Pricing',
+        href: '/app/pricing',
+        icon: 'pricing',
+      },
+      {
         label: 'Contact',
         href: '/app/contact',
         icon: 'email',

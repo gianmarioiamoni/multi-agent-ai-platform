@@ -16,6 +16,13 @@ export interface UserProfile {
   isDemo: boolean;
   isDisabled: boolean;
   settings: Record<string, unknown> | null;
+  subscriptionPlan: 'trial' | 'basic' | 'premium' | null;
+  subscriptionExpiresAt: string | null;
+  trialUsed: boolean;
+  trialDaysRemaining: number;
+  nextPlan: 'trial' | 'basic' | 'premium' | null;
+  planSwitchAt: string | null;
+  subscriptionCancelledAt: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -88,6 +95,13 @@ export const getCurrentUserProfile = async (): Promise<UserProfile | null> => {
     is_demo: boolean;
     is_disabled: boolean;
     settings: Record<string, unknown> | null;
+    subscription_plan: 'trial' | 'basic' | 'premium' | null;
+    subscription_expires_at: string | null;
+    trial_used: boolean;
+    trial_days_remaining: number | null;
+    next_plan: 'trial' | 'basic' | 'premium' | null;
+    plan_switch_at: string | null;
+    subscription_cancelled_at: string | null;
     created_at: string;
     updated_at: string;
   };
@@ -100,6 +114,13 @@ export const getCurrentUserProfile = async (): Promise<UserProfile | null> => {
     isDemo: profileData.is_demo === true,
     isDisabled: profileData.is_disabled === true,
     settings: profileData.settings,
+    subscriptionPlan: profileData.subscription_plan || null,
+    subscriptionExpiresAt: profileData.subscription_expires_at || null,
+    trialUsed: profileData.trial_used === true,
+    trialDaysRemaining: profileData.trial_days_remaining ?? 0,
+    nextPlan: profileData.next_plan || null,
+    planSwitchAt: profileData.plan_switch_at || null,
+    subscriptionCancelledAt: profileData.subscription_cancelled_at || null,
     createdAt: profileData.created_at,
     updatedAt: profileData.updated_at,
   };

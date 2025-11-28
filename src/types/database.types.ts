@@ -27,6 +27,13 @@ export interface Database {
           is_demo: boolean;
           is_disabled: boolean;
           settings: Json | null;
+          subscription_plan: 'trial' | 'basic' | 'premium' | null;
+          subscription_expires_at: string | null;
+          trial_used: boolean;
+          trial_days_remaining: number;
+          next_plan: 'trial' | 'basic' | 'premium' | null;
+          plan_switch_at: string | null;
+          subscription_cancelled_at: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -38,6 +45,13 @@ export interface Database {
           is_demo?: boolean;
           is_disabled?: boolean;
           settings?: Json | null;
+          subscription_plan?: 'trial' | 'basic' | 'premium' | null;
+          subscription_expires_at?: string | null;
+          trial_used?: boolean;
+          trial_days_remaining?: number;
+          next_plan?: 'trial' | 'basic' | 'premium' | null;
+          plan_switch_at?: string | null;
+          subscription_cancelled_at?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -49,6 +63,13 @@ export interface Database {
           is_demo?: boolean;
           is_disabled?: boolean;
           settings?: Json | null;
+          subscription_plan?: 'trial' | 'basic' | 'premium' | null;
+          subscription_expires_at?: string | null;
+          trial_used?: boolean;
+          trial_days_remaining?: number;
+          next_plan?: 'trial' | 'basic' | 'premium' | null;
+          plan_switch_at?: string | null;
+          subscription_cancelled_at?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -211,6 +232,32 @@ export interface Database {
           user_id?: string;
           notification_id?: string;
           read_at?: string;
+          created_at?: string;
+        };
+      };
+      subscription_notifications: {
+        Row: {
+          id: string;
+          user_id: string;
+          notification_type: 'expiring_soon' | 'expired' | 'disabled';
+          sent_at: string;
+          subscription_expires_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          notification_type: 'expiring_soon' | 'expired' | 'disabled';
+          sent_at?: string;
+          subscription_expires_at?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          notification_type?: 'expiring_soon' | 'expired' | 'disabled';
+          sent_at?: string;
+          subscription_expires_at?: string | null;
           created_at?: string;
         };
       };
