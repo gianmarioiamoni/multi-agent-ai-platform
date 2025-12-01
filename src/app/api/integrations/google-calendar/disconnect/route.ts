@@ -20,9 +20,10 @@ export async function POST(request: NextRequest) {
         const result = await disconnectGoogleCalendar();
         
         if (!result.success) {
-          await logError('integration', 'Failed to disconnect Google Calendar', new Error(result.error || 'Unknown error'), {
+          await logError('api', 'Failed to disconnect Google Calendar', new Error(result.error || 'Unknown error'), {
             userId: user.id,
             provider: 'google_calendar',
+            category: 'integration',
           });
           return NextResponse.json(
             { error: result.error || 'Failed to disconnect' },
@@ -33,12 +34,13 @@ export async function POST(request: NextRequest) {
         return { success: true };
       } catch (error) {
         await logError(
-          'integration',
+          'api',
           'Error disconnecting Google Calendar',
           error instanceof Error ? error : new Error(String(error)),
           {
             provider: 'google_calendar',
             userId: user.id,
+            category: 'integration',
           }
         );
         throw error;

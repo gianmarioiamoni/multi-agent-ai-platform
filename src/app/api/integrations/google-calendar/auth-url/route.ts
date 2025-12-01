@@ -20,9 +20,10 @@ export async function GET(request: NextRequest) {
         const result = await getGoogleCalendarAuthUrlAction();
         
         if ('error' in result) {
-          await logError('integration', 'Failed to get Google Calendar auth URL', new Error(result.error), {
+          await logError('api', 'Failed to get Google Calendar auth URL', new Error(result.error), {
             userId: user.id,
             provider: 'google_calendar',
+            category: 'integration',
           });
           return NextResponse.json(
             { error: result.error },
@@ -33,12 +34,13 @@ export async function GET(request: NextRequest) {
         return { url: result.url };
       } catch (error) {
         await logError(
-          'integration',
+          'api',
           'Error getting Google Calendar auth URL',
           error instanceof Error ? error : new Error(String(error)),
           {
             provider: 'google_calendar',
             userId: user.id,
+            category: 'integration',
           }
         );
         throw error;

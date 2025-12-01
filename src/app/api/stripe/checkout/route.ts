@@ -80,7 +80,9 @@ export async function POST(request: NextRequest) {
       const stripe = getStripeClient();
 
       // Get user email from auth
-      if (!user.email) {
+      const { getCurrentUser } = await import('@/lib/auth/utils');
+      const fullUser = await getCurrentUser();
+      if (!fullUser || !fullUser.email) {
         return NextResponse.json(
           { error: 'User email not found' },
           { status: 400 }
@@ -92,7 +94,7 @@ export async function POST(request: NextRequest) {
       if (!customerId) {
         // Create Stripe customer
         const customer = await stripe.customers.create({
-          email: user.email,
+          email: fullUser.email,
           name: profile.name || undefined,
           metadata: {
             user_id: profile.userId,

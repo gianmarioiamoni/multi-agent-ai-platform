@@ -4,8 +4,6 @@
  * Following SRP: Only handles security event logging
  */
 
-'use server';
-
 import { logWarn, logError } from '@/lib/logging/logger';
 import { getCurrentUser } from '@/lib/auth/utils';
 import type { NextRequest } from 'next/server';

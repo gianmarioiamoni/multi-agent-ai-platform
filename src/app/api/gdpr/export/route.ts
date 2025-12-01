@@ -45,12 +45,13 @@ export async function GET(request: NextRequest) {
         });
       } catch (error) {
         await logError(
-          'gdpr',
+          'api',
           'Error in GDPR data export API',
           error instanceof Error ? error : new Error(String(error)),
           {
             endpoint: '/api/gdpr/export',
             userId: user.id,
+            category: 'gdpr',
           }
         );
         throw error;

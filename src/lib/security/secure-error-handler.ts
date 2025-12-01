@@ -4,8 +4,6 @@
  * Following SRP: Only handles secure error formatting
  */
 
-'use server';
-
 import type { ErrorCategory } from '@/lib/errors/error-handler';
 
 const isProduction = process.env.NODE_ENV === 'production';

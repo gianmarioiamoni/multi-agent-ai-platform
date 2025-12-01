@@ -21,12 +21,13 @@ export async function GET(request: NextRequest) {
         return { connected };
       } catch (error) {
         await logError(
-          'integration',
+          'api',
           'Error checking Google Calendar connection status',
           error instanceof Error ? error : new Error(String(error)),
           {
             provider: 'google_calendar',
             userId: user.id,
+            category: 'integration',
           }
         );
         throw error;
