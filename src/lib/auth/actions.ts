@@ -9,6 +9,8 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { isDemoUser } from './demo-user';
+import { validateCsrfToken } from '@/lib/security/csrf';
+import { logCsrfMismatchFromAction } from '@/lib/security/security-logger';
 
 export type AuthResponse = {
   success: boolean;
@@ -21,8 +23,18 @@ export type AuthResponse = {
 export const signUp = async (
   email: string,
   password: string,
-  name?: string
+  name?: string,
+  csrfToken?: string
 ): Promise<AuthResponse> => {
+  // Validate CSRF token
+  if (!csrfToken || !(await validateCsrfToken(csrfToken))) {
+    await logCsrfMismatchFromAction('/auth/register');
+    return {
+      success: false,
+      error: 'Invalid security token. Please refresh the page and try again.',
+    };
+  }
+
   const supabase = await createClient();
 
   const { error } = await supabase.auth.signUp({
@@ -52,8 +64,18 @@ export const signUp = async (
  */
 export const signIn = async (
   email: string,
-  password: string
+  password: string,
+  csrfToken?: string
 ): Promise<AuthResponse> => {
+  // Validate CSRF token
+  if (!csrfToken || !(await validateCsrfToken(csrfToken))) {
+    await logCsrfMismatchFromAction('/auth/login');
+    return {
+      success: false,
+      error: 'Invalid security token. Please refresh the page and try again.',
+    };
+  }
+
   try {
     const supabase = await createClient();
 
@@ -63,6 +85,28 @@ export const signIn = async (
     });
 
     if (error) {
+      // Log failed login attempt
+      const { logSecurityEvent, extractClientInfo } = await import('@/lib/security/security-logger');
+      // Create a minimal request object for logging
+      const mockRequest = {
+        nextUrl: { pathname: '/auth/login' },
+        method: 'POST',
+        headers: new Headers(),
+      } as Parameters<typeof extractClientInfo>[0];
+      
+      const { ipAddress, userAgent } = extractClientInfo(mockRequest);
+      await logSecurityEvent({
+        type: 'failed_login',
+        ipAddress,
+        userAgent,
+        path: '/auth/login',
+        method: 'POST',
+        details: {
+          email: email ? email.substring(0, 3) + '***' : undefined,
+          reason: error.message,
+        },
+      });
+      
       return {
         success: false,
         error: error.message,
@@ -150,7 +194,19 @@ export const signInWithGoogle = async (): Promise<{ url: string }> => {
 /**
  * Reset password - send reset email
  */
-export const resetPassword = async (email: string): Promise<AuthResponse> => {
+export const resetPassword = async (
+  email: string,
+  csrfToken?: string
+): Promise<AuthResponse> => {
+  // Validate CSRF token
+  if (!csrfToken || !(await validateCsrfToken(csrfToken))) {
+    await logCsrfMismatchFromAction('/auth/reset-password');
+    return {
+      success: false,
+      error: 'Invalid security token. Please refresh the page and try again.',
+    };
+  }
+
   const supabase = await createClient();
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -172,8 +228,20 @@ export const resetPassword = async (email: string): Promise<AuthResponse> => {
  * Prevents demo user from changing password
  */
 export const updatePassword = async (
-  newPassword: string
+  newPassword: string,
+  csrfToken?: string
 ): Promise<AuthResponse> => {
+  // Validate CSRF token
+  if (!csrfToken || !(await validateCsrfToken(csrfToken))) {
+    const { getCurrentUser } = await import('./utils');
+    const user = await getCurrentUser();
+    await logCsrfMismatchFromAction('/app/account', user?.id);
+    return {
+      success: false,
+      error: 'Invalid security token. Please refresh the page and try again.',
+    };
+  }
+
   // Check if current user is demo user
   const isDemo = await isDemoUser();
 

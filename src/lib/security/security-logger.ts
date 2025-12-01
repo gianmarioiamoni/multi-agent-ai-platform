@@ -176,6 +176,25 @@ export async function logCsrfMismatch(
 }
 
 /**
+ * Log CSRF token mismatch from server action
+ * Simplified version for server actions that don't have NextRequest
+ */
+export async function logCsrfMismatchFromAction(
+  path: string,
+  userId?: string | null
+): Promise<void> {
+  await logSecurityEvent({
+    type: 'csrf_token_mismatch',
+    userId,
+    path,
+    method: 'POST',
+    details: {
+      message: 'CSRF token validation failed in server action',
+    },
+  });
+}
+
+/**
  * Detect and log potential security threats
  */
 export async function detectAndLogThreats(

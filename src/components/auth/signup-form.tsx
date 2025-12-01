@@ -21,8 +21,12 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-export const SignUpForm = () => {
-  const { isLoading, handleSignUp } = useSignUp();
+interface SignUpFormProps {
+  csrfToken: string;
+}
+
+export const SignUpForm = ({ csrfToken }: SignUpFormProps) => {
+  const { isLoading, handleSignUp } = useSignUp(csrfToken);
 
   const {
     register,

@@ -102,3 +102,16 @@ export async function getCsrfToken(): Promise<string | null> {
   return token || null;
 }
 
+/**
+ * Get or generate CSRF token for client-side use
+ * If token doesn't exist, generates a new one
+ * Returns the token value (not the signed token)
+ */
+export async function getOrGenerateCsrfToken(): Promise<string> {
+  const existingToken = await getCsrfToken();
+  if (existingToken) {
+    return existingToken;
+  }
+  return await generateCsrfToken();
+}
+

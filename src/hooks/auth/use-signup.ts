@@ -19,7 +19,7 @@ interface UseSignUpReturn {
 /**
  * Hook for managing sign up operations
  */
-export function useSignUp(): UseSignUpReturn {
+export function useSignUp(csrfToken: string): UseSignUpReturn {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const { success, error: showError } = useToast();
@@ -28,7 +28,7 @@ export function useSignUp(): UseSignUpReturn {
     setIsLoading(true);
 
     try {
-      const result = await signUp(email, password, name);
+      const result = await signUp(email, password, name, csrfToken);
 
       if (result.success) {
         success(

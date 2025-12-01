@@ -26,31 +26,41 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-export const SignInForm = () => {
+interface SignInFormProps {
+  csrfToken: string;
+}
+
+export const SignInForm = ({ csrfToken }: SignInFormProps) => {
   const { info, error: showError } = useToast();
   const searchParams = useSearchParams();
-  const { isLoading, isGoogleLoading, handleEmailSignIn, handleGoogleSignIn } = useSignIn();
+  const { isLoading, isGoogleLoading, handleEmailSignIn, handleGoogleSignIn } = useSignIn(csrfToken);
 
   // Show info/error toasts based on query parameters
   useEffect(() => {
-    if (searchParams.get('verified') === 'false') {
-      info(
-        'Check your email',
-        'We sent you a verification link. Please verify your email before signing in.'
-      );
+    const verified = searchParams.get('verified');
+    const errorParam = searchParams.get('error');
+    
+    if (verified === 'false') {
+      setTimeout(() => {
+        info(
+          'Check your email',
+          'We sent you a verification link. Please verify your email before signing in.'
+        );
+      }, 0);
     }
 
-    const errorParam = searchParams.get('error');
     if (errorParam) {
-      const errorMessage = decodeURIComponent(errorParam);
-      if (errorMessage.toLowerCase().includes('disabled')) {
-        showError(
-          'Account disabled',
-          errorMessage
-        );
-      } else {
-        showError('Sign in failed', errorMessage);
-      }
+      setTimeout(() => {
+        const errorMessage = decodeURIComponent(errorParam);
+        if (errorMessage.toLowerCase().includes('disabled')) {
+          showError(
+            'Account disabled',
+            errorMessage
+          );
+        } else {
+          showError('Sign in failed', errorMessage);
+        }
+      }, 0);
     }
   }, [searchParams, info, showError]);
 

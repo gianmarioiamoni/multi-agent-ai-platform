@@ -13,7 +13,11 @@ import { updatePassword } from '@/lib/auth/actions';
 import { updatePasswordSchema, type UpdatePasswordFormData } from '@/lib/validations/auth';
 import { useToast } from '@/contexts/toast-context';
 
-export const usePasswordChange = () => {
+interface UsePasswordChangeProps {
+  csrfToken: string;
+}
+
+export const usePasswordChange = ({ csrfToken }: UsePasswordChangeProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const { success, error: showError } = useToast();
 
@@ -28,7 +32,7 @@ export const usePasswordChange = () => {
   const onSubmit = async (data: UpdatePasswordFormData) => {
     setIsLoading(true);
     try {
-      const result = await updatePassword(data.newPassword);
+      const result = await updatePassword(data.newPassword, csrfToken);
 
       if (result.success) {
         success('Password updated', 'Your password has been successfully updated.');

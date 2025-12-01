@@ -20,7 +20,7 @@ interface UseSignInReturn {
 /**
  * Hook for managing sign in operations
  */
-export function useSignIn(): UseSignInReturn {
+export function useSignIn(csrfToken: string): UseSignInReturn {
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const { error: showError } = useToast();
@@ -29,7 +29,7 @@ export function useSignIn(): UseSignInReturn {
     setIsLoading(true);
 
     try {
-      const result = await signIn(email, password);
+      const result = await signIn(email, password, csrfToken);
 
       if (result.success) {
         // Successful login - wait for cookies to be set, then redirect

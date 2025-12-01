@@ -11,9 +11,10 @@ import { AccountDeletionSection } from './account-security/account-deletion-sect
 
 interface AccountSecuritySectionProps {
   isDemo: boolean;
+  csrfToken: string;
 }
 
-export const AccountSecuritySection = ({ isDemo }: AccountSecuritySectionProps) => {
+export const AccountSecuritySection = ({ isDemo, csrfToken }: AccountSecuritySectionProps) => {
   return (
     <div className="p-6 rounded-lg bg-[var(--color-card)] border border-[var(--color-border)] space-y-8">
       <div>
@@ -27,7 +28,7 @@ export const AccountSecuritySection = ({ isDemo }: AccountSecuritySectionProps) 
 
       {/* Password Change Section */}
       <div className="border-t border-[var(--color-border)] pt-6">
-        <AccountPasswordForm isDemo={isDemo} />
+        <AccountPasswordForm isDemo={isDemo} csrfToken={csrfToken} />
       </div>
 
       {/* Account Deletion Section */}

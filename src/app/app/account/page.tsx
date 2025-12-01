@@ -5,6 +5,7 @@
 
 import type { Metadata } from 'next';
 import { getCurrentUserProfile } from '@/lib/auth/utils';
+import { getOrGenerateCsrfToken } from '@/lib/security/csrf';
 import { AccountHeader } from '@/components/account/account-header';
 import { AccountProfileSection } from '@/components/account/account-profile-section';
 import { AccountDetailsSection } from '@/components/account/account-details-section';
@@ -23,6 +24,7 @@ export const metadata: Metadata = {
 
 export default async function AccountPage() {
   const profile = await getCurrentUserProfile();
+  const csrfToken = await getOrGenerateCsrfToken();
 
   if (!profile) {
     return null;
@@ -44,8 +46,8 @@ export default async function AccountPage() {
         nextPlan={profile.nextPlan}
         planSwitchAt={profile.planSwitchAt}
       />
-      {profile.isDemo && <DemoRestrictionsNotice />}
-      <AccountSecuritySection isDemo={profile.isDemo} />
+      {profile.isDemo ? <DemoRestrictionsNotice /> : null}
+      <AccountSecuritySection isDemo={profile.isDemo} csrfToken={csrfToken} />
       <AccountGdprSection />
     </div>
   );

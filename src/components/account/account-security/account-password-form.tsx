@@ -14,10 +14,11 @@ import { Controller } from 'react-hook-form';
 
 interface AccountPasswordFormProps {
   isDemo: boolean;
+  csrfToken: string;
 }
 
-export const AccountPasswordForm = ({ isDemo }: AccountPasswordFormProps) => {
-  const { form, isLoading, onSubmit } = usePasswordChange();
+export const AccountPasswordForm = ({ isDemo, csrfToken }: AccountPasswordFormProps) => {
+  const { form, isLoading, onSubmit } = usePasswordChange({ csrfToken });
   const {
     control,
     formState: { errors },
