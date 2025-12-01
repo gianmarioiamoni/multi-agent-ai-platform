@@ -3,19 +3,39 @@
  * Returns connection status for Google Calendar
  */
 
-import { NextResponse } from 'next/server';
+import { type NextRequest } from 'next/server';
+import { withApiSecurity } from '@/lib/security/api-security-wrapper';
 import { isGoogleCalendarConnected } from '@/lib/integrations/actions';
+import { logError } from '@/lib/logging/logger';
 
-export async function GET() {
-  try {
-    const connected = await isGoogleCalendarConnected();
-    return NextResponse.json({ connected });
-  } catch (error) {
-    console.error('[Integrations API] Error checking status:', error);
-    return NextResponse.json(
-      { connected: false, error: 'Failed to check connection status' },
-      { status: 500 }
-    );
-  }
+export async function GET(request: NextRequest) {
+  return withApiSecurity(
+    request,
+    async (req, user) => {
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
+      try {
+        const connected = await isGoogleCalendarConnected();
+        return { connected };
+      } catch (error) {
+        await logError(
+          'integration',
+          'Error checking Google Calendar connection status',
+          error instanceof Error ? error : new Error(String(error)),
+          {
+            provider: 'google_calendar',
+            userId: user.id,
+          }
+        );
+        throw error;
+      }
+    },
+    {
+      requireAuth: true,
+      rateLimitEndpoint: 'api:general',
+    }
+  );
 }
 
