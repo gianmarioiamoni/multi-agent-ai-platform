@@ -53,6 +53,14 @@ export const PricingPlanCard = ({
         </div>
       )}
 
+      {hasNextPlan && !isCurrentPlan && (
+        <div className="absolute -top-4 right-4">
+          <span className="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+            Scheduled
+          </span>
+        </div>
+      )}
+
       <CardHeader className="text-center pb-8">
         <CardTitle className="text-2xl mb-2">{plan.name}</CardTitle>
         <p className="text-muted-foreground text-sm">{plan.description}</p>
@@ -83,6 +91,15 @@ export const PricingPlanCard = ({
             </li>
           ))}
         </ul>
+
+        {/* Scheduled Plan Change Info */}
+        {hasNextPlan && !isCurrentPlan && (
+          <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+            <p className="text-xs text-blue-800 dark:text-blue-200">
+              <span className="font-semibold">Scheduled:</span> This plan will be activated at the end of your current billing period.
+            </p>
+          </div>
+        )}
 
         {/* CTA Button */}
         <PricingPlanCardButton

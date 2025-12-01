@@ -19,12 +19,16 @@ interface AccountSubscriptionSectionProps {
   isDemo: boolean;
   subscriptionPlan: SubscriptionPlan | null;
   subscriptionExpiresAt: string | null;
+  nextPlan?: SubscriptionPlan | null;
+  planSwitchAt?: string | null;
 }
 
 export const AccountSubscriptionSection = ({
   isDemo,
   subscriptionPlan,
   subscriptionExpiresAt,
+  nextPlan,
+  planSwitchAt,
 }: AccountSubscriptionSectionProps) => {
   // Demo users don't have subscription info
   if (isDemo) {
@@ -82,6 +86,28 @@ export const AccountSubscriptionSection = ({
             label="Status"
             value={<span className="text-muted-foreground">No active subscription</span>}
           />
+        )}
+
+        {/* Show scheduled plan change */}
+        {nextPlan && planSwitchAt && (
+          <>
+            <AccountDetailsItem
+              label="Upgrading To"
+              value={
+                <span className="font-semibold text-green-600">
+                  {getPlanDisplayName(nextPlan)}
+                </span>
+              }
+            />
+            <AccountDetailsItem
+              label="Change Date"
+              value={formatExpiryDate(planSwitchAt)}
+            />
+            <AccountDetailsItem
+              label="Status"
+              value={<span className="text-blue-600 font-semibold">Plan change scheduled</span>}
+            />
+          </>
         )}
       </dl>
 

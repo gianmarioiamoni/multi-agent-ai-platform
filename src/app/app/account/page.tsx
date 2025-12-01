@@ -41,6 +41,8 @@ export default async function AccountPage() {
         isDemo={profile.isDemo}
         subscriptionPlan={profile.subscriptionPlan}
         subscriptionExpiresAt={profile.subscriptionExpiresAt}
+        nextPlan={profile.nextPlan}
+        planSwitchAt={profile.planSwitchAt}
       />
       {profile.isDemo && <DemoRestrictionsNotice />}
       <AccountSecuritySection isDemo={profile.isDemo} />

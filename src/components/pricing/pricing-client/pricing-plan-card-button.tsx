@@ -10,8 +10,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/contexts/toast-context';
-import { subscribeToPlan } from '@/lib/subscription/actions';
-import { useRouter } from 'next/navigation';
 import type { SubscriptionPlanInfo } from '@/types/subscription.types';
 
 interface PricingPlanCardButtonProps {
@@ -28,8 +26,7 @@ export const PricingPlanCardButton = ({
   hasNextPlan,
 }: PricingPlanCardButtonProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const { success: showSuccess, error: showError } = useToast();
-  const router = useRouter();
+  const { error: showError } = useToast();
 
   // Trial plan: no button, just informational text
   if (plan.id === 'trial') {
@@ -46,21 +43,35 @@ export const PricingPlanCardButton = ({
 
     setIsLoading(true);
     try {
-      const result = await subscribeToPlan(plan.id as 'basic' | 'premium', billingCycle);
+      // For paid plans, redirect to Stripe Checkout
+      const response = await fetch('/api/stripe/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          plan: plan.id as 'basic' | 'premium',
+          billingCycle,
+        }),
+      });
 
-      if (result.success) {
-        if (isCurrentPlan) {
-          showSuccess(`You are already on the ${plan.name} plan.`);
-        } else {
-          showSuccess(`Successfully subscribed to ${plan.name} plan!`);
-        }
-        router.refresh(); // Refresh to show updated plan
+      const data = await response.json();
+
+      if (!response.ok) {
+        showError(data.error || 'Failed to create checkout session');
+        setIsLoading(false);
+        return;
+      }
+
+      if (data.url) {
+        // Redirect to Stripe Checkout
+        window.location.href = data.url;
       } else {
-        showError(result.error || 'Failed to subscribe to plan');
+        showError('Invalid response from checkout server');
+        setIsLoading(false);
       }
     } catch (error) {
       showError('An unexpected error occurred. Please try again.');
-    } finally {
       setIsLoading(false);
     }
   };
@@ -71,14 +82,14 @@ export const PricingPlanCardButton = ({
     <Button
       className="w-full"
       variant={plan.popular ? 'primary' : 'outline'}
-      disabled={isCurrentPlan || isLoading || hasNextPlan}
+      disabled={isCurrentPlan || isLoading}
       isLoading={isLoading}
       onClick={handleSubscribe}
     >
       {isCurrentPlan
         ? 'Current Plan'
         : hasNextPlan
-          ? 'Scheduled'
+          ? 'Subscribe Now' // Allow immediate payment even if scheduled
           : isLoading
             ? 'Processing...'
             : `Subscribe - ${price === 0 ? 'Free' : price === 9.9 ? '€9.90' : '€19.90'}/${billingCycle === 'monthly' ? 'mo' : 'yr'}`}
