@@ -24,6 +24,14 @@ Guide per configurare servizi esterni e setup iniziale.
 - [SHARING_UPSTASH_REDIS.md](./setup/SHARING_UPSTASH_REDIS.md) - Condivisione Upstash Redis tra progetti
 - [LANDING_PAGE_SETUP.md](./setup/LANDING_PAGE_SETUP.md) - Setup landing page e background images
 - [SEED_DEMO_DATA.md](./setup/SEED_DEMO_DATA.md) - Script seed dati demo
+- [STRIPE_SETUP.md](./setup/STRIPE_SETUP.md) - Setup Stripe per pagamenti
+- [STRIPE_INTEGRATION_PLAN.md](./setup/STRIPE_INTEGRATION_PLAN.md) - Piano integrazione Stripe
+- [STRIPE_IMPLEMENTATION_STATUS.md](./setup/STRIPE_IMPLEMENTATION_STATUS.md) - Stato implementazione Stripe
+- [STRIPE_TEST_MODE.md](./setup/STRIPE_TEST_MODE.md) - Guida modalità test Stripe
+- [STRIPE_WEBHOOK_SETUP.md](./setup/STRIPE_WEBHOOK_SETUP.md) - Setup webhook Stripe
+- [SUBSCRIPTION_CRON_SETUP.md](./setup/SUBSCRIPTION_CRON_SETUP.md) - Setup cron job subscription
+- [SUBSCRIPTION_SAFETY_NET_IMPLEMENTATION.md](./setup/SUBSCRIPTION_SAFETY_NET_IMPLEMENTATION.md) - Implementazione safety net subscription
+- [SUBSCRIPTION_SYSTEM_COMPLETE.md](./setup/SUBSCRIPTION_SYSTEM_COMPLETE.md) - Documentazione sistema subscription completo
 
 ### 🧪 [Testing](./testing/)
 Guide per testare funzionalità e componenti.
@@ -86,6 +94,10 @@ Analisi e documentazione tecnica dettagliata.
 - [SETTINGS_PERSISTENCE.md](./analysis/SETTINGS_PERSISTENCE.md) - Persistenza settings
 - [DEMO_USER_PROTECTION.md](./analysis/DEMO_USER_PROTECTION.md) - Protezione demo user
 - [STRUCTURED_LOGGING.md](./analysis/STRUCTURED_LOGGING.md) - Logging strutturato
+- [SUBSCRIPTION_CHECK_STRATEGY_RECOMMENDATION.md](./analysis/SUBSCRIPTION_CHECK_STRATEGY_RECOMMENDATION.md) - Raccomandazione strategia check subscription
+- [SUBSCRIPTION_EXPIRY_CHECK_ANALYSIS.md](./analysis/SUBSCRIPTION_EXPIRY_CHECK_ANALYSIS.md) - Analisi check scadenza subscription
+- [SUBSCRIPTION_EXPIRY_CHECK_STRATEGY.md](./analysis/SUBSCRIPTION_EXPIRY_CHECK_STRATEGY.md) - Strategia check scadenza subscription
+- [SUBSCRIPTION_SYSTEM_REDESIGN.md](./analysis/SUBSCRIPTION_SYSTEM_REDESIGN.md) - Redesign sistema subscription
 
 ---
 
