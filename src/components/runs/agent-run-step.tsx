@@ -37,11 +37,11 @@ export const AgentRunStep = ({ agentRun, stepNumber }: AgentRunStepProps) => {
       />
 
       <CardContent className="space-y-4">
-        {agentRun.input && <AgentRunStepInput input={agentRun.input} />}
+        {agentRun.input ? <AgentRunStepInput input={agentRun.input} /> : null}
 
-        {agentRun.output && <AgentRunStepOutput output={agentRun.output} />}
+        {agentRun.output ? <AgentRunStepOutput output={agentRun.output} /> : null}
 
-        {agentRun.error && <AgentRunStepError error={agentRun.error} />}
+        {agentRun.error ? <AgentRunStepError error={agentRun.error} /> : null}
 
         <AgentRunStepTools toolInvocations={agentRun.tool_invocations} />
       </CardContent>

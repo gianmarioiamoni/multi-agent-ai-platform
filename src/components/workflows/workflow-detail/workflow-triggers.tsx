@@ -32,9 +32,7 @@ export const WorkflowTriggers = ({ triggers }: WorkflowTriggersProps) => {
           {triggerItems.map((item) => (
             <div key={item.key} className="flex items-center justify-between">
               <span className="text-sm font-medium">{item.label}</span>
-              {item.value && (
-                <span className="text-sm text-muted-foreground">{item.value}</span>
-              )}
+              {item.value ? <span className="text-sm text-muted-foreground">{item.value}</span> : null}
             </div>
           ))}
         </div>

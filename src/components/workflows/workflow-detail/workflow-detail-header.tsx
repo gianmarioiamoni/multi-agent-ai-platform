@@ -32,11 +32,9 @@ export const WorkflowDetailHeader = ({ workflow }: WorkflowDetailHeaderProps) =>
               <CardTitle className="text-2xl">{workflow.name}</CardTitle>
               <WorkflowStatusBadge status={workflow.status} />
             </div>
-            {workflow.description && (
-              <CardDescription className="text-base mt-2">
+            {workflow.description ? <CardDescription className="text-base mt-2">
                 {workflow.description}
-              </CardDescription>
-            )}
+              </CardDescription> : null}
           </div>
           <WorkflowDetailActions workflow={workflow} />
         </div>
@@ -47,11 +45,9 @@ export const WorkflowDetailHeader = ({ workflow }: WorkflowDetailHeaderProps) =>
           <div>
             <span className="font-medium">Updated:</span> {formatDate(workflow.updated_at)}
           </div>
-          {workflow.last_run_at && (
-            <div>
+          {workflow.last_run_at ? <div>
               <span className="font-medium">Last run:</span> {formatDate(workflow.last_run_at)}
-            </div>
-          )}
+            </div> : null}
         </div>
       </CardHeader>
     </Card>

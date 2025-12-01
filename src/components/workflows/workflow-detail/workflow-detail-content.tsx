@@ -5,7 +5,6 @@
  */
 
 import type { Workflow } from '@/types/workflow.types';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { WorkflowStepsList } from './workflow-steps-list';
 import { WorkflowTriggers } from './workflow-triggers';
 

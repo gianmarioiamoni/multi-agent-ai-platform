@@ -3,6 +3,7 @@
  * Verifies that Supabase is correctly configured and the database schema is in place
  */
 
+/* eslint-disable no-console */
 import { config } from 'dotenv';
 import { resolve } from 'path';
 import { createClient } from '@supabase/supabase-js';
@@ -66,7 +67,7 @@ const verifySupabaseConnection = async (): Promise<boolean> => {
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
-    const { data: adminData, error: adminError } = await adminClient
+    const { error: adminError } = await adminClient
       .from('profiles')
       .select('count', { count: 'exact', head: true });
 

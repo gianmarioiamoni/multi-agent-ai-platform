@@ -43,7 +43,7 @@ export async function getStoredCredential(
       return { data: null, error: error.message || 'Failed to retrieve credential' };
     }
 
-    if (!data || !data.encrypted_data) {
+    if (!data?.encrypted_data) {
       return { data: null, error: 'Credential not found' };
     }
 

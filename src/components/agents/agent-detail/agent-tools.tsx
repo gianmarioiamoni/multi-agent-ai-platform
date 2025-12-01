@@ -46,16 +46,14 @@ export const AgentTools = ({ tools }: AgentToolsProps) => {
             </span>
           ))}
         </div>
-        {enabledTools.length > 0 && (
-          <div className="mt-4 space-y-2">
+        {enabledTools.length > 0 ? <div className="mt-4 space-y-2">
             {enabledTools.map((tool) => (
               <div key={tool!.id} className="text-sm">
                 <p className="font-medium">{tool!.name}</p>
                 <p className="text-muted-foreground">{tool!.description}</p>
               </div>
             ))}
-          </div>
-        )}
+          </div> : null}
       </CardContent>
     </Card>
   );

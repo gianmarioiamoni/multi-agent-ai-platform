@@ -15,14 +15,7 @@ import { createAgent, updateAgent, getAgent } from '@/lib/agents/actions';
 import { createAgentSchema, type CreateAgentFormData } from '@/lib/validations/agent';
 import { AVAILABLE_MODELS } from '@/types/agent.types';
 import { useAutoSave } from '@/hooks/shared/use-auto-save';
-import type { AutoSaveStatus } from '@/hooks/shared/use-auto-save';
 import type { Agent } from '@/types/agent.types';
-
-interface UseAgentFormProps {
-  defaultModel?: string;
-  agentId?: string; // If provided, form is in edit mode
-  agent?: Agent; // If provided, pre-loaded agent data (avoids reload)
-}
 
 export const useAgentForm = (defaultModel?: string, agentId?: string, agent?: Agent) => {
   const router = useRouter();

@@ -4,8 +4,9 @@
  * Following SRP: Only handles tool calls display
  */
 
-// @ts-nocheck - TypeScript inference issue with map return type in Next.js build
 'use client';
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import type { ToolExecution } from '@/types/orchestrator.types';
@@ -23,7 +24,7 @@ const formatJSON = (value: unknown): string => {
 };
 
 export const ToolCallsLog = ({ toolCalls }: ToolCallsLogProps) => {
-  if (toolCalls.length === 0) return null;
+  if (toolCalls.length === 0) {return null;}
 
   return (
     <Card>
@@ -75,28 +76,24 @@ export const ToolCallsLog = ({ toolCalls }: ToolCallsLogProps) => {
               </div>
 
               {/* Tool Result */}
-              {toolExecution.result.success && toolExecution.result.data && (
-                <div>
+              {toolExecution.result.success && toolExecution.result.data ? <div>
                   <p className="text-xs font-medium text-[var(--color-muted-foreground)] mb-1">
                     Result:
                   </p>
                   <pre className="text-xs bg-[var(--color-background)] p-2 rounded overflow-x-auto max-h-40 overflow-y-auto">
                     {formatJSON(toolExecution.result.data)}
                   </pre>
-                </div>
-              )}
+                </div> : null}
 
               {/* Tool Error */}
-              {!toolExecution.result.success && toolExecution.result.error && (
-                <div>
+              {!toolExecution.result.success && toolExecution.result.error ? <div>
                   <p className="text-xs font-medium text-[var(--color-muted-foreground)] mb-1">
                     Error:
                   </p>
                   <p className="text-xs text-[var(--color-destructive)]">
                     {toolExecution.result.error}
                   </p>
-                </div>
-              )}
+                </div> : null}
             </div>
           );
         })}

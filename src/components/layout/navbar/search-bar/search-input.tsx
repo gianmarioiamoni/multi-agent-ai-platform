@@ -53,11 +53,9 @@ export const SearchInput = ({
       />
 
       {/* Keyboard Shortcut (hide when typing) */}
-      {!query && (
-        <kbd className="absolute inset-y-0 right-3 hidden lg:flex items-center text-xs text-[var(--color-muted-foreground)] font-mono pointer-events-none">
+      {!query ? <kbd className="absolute inset-y-0 right-3 hidden lg:flex items-center text-xs text-[var(--color-muted-foreground)] font-mono pointer-events-none">
           ⌘K
-        </kbd>
-      )}
+        </kbd> : null}
     </>
   );
 };

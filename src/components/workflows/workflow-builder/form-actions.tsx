@@ -30,12 +30,10 @@ export const FormActions = ({
     <div className="flex items-center justify-between gap-4 pt-6 border-t">
       {/* Auto-save indicator (left side, only in edit mode) */}
       <div>
-        {isEditMode && autoSaveStatus && (
-          <AutoSaveIndicator 
+        {isEditMode && autoSaveStatus ? <AutoSaveIndicator 
             status={autoSaveStatus} 
             lastSavedAt={autoSaveLastSaved || null}
-          />
-        )}
+          /> : null}
       </div>
 
       {/* Action buttons (right side) */}

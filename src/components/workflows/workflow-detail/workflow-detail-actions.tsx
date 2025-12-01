@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type { Workflow } from '@/types/workflow.types';
 import { Button } from '@/components/ui/button';
-import { deleteWorkflow, runWorkflow } from '@/lib/workflows/actions';
+import { deleteWorkflow } from '@/lib/workflows/actions';
 import { useToast } from '@/contexts/toast-context';
 import { WorkflowRunDialog } from './workflow-run-dialog';
 
@@ -20,7 +20,7 @@ interface WorkflowDetailActionsProps {
 
 export const WorkflowDetailActions = ({ workflow }: WorkflowDetailActionsProps) => {
   const router = useRouter();
-  const { success, error: showError, info } = useToast();
+  const { success, error: showError } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
   const [showRunDialog, setShowRunDialog] = useState(false);
 
@@ -54,11 +54,9 @@ export const WorkflowDetailActions = ({ workflow }: WorkflowDetailActionsProps) 
   return (
     <>
       <div className="flex items-center gap-2">
-        {workflow.status === 'active' && (
-          <Button onClick={handleRun} size="sm">
+        {workflow.status === 'active' ? <Button onClick={handleRun} size="sm">
             Run Workflow
-          </Button>
-        )}
+          </Button> : null}
         <Button onClick={handleEdit} variant="outline" size="sm">
           Edit
         </Button>
@@ -71,13 +69,11 @@ export const WorkflowDetailActions = ({ workflow }: WorkflowDetailActionsProps) 
           {isDeleting ? 'Deleting...' : 'Delete'}
         </Button>
       </div>
-      {showRunDialog && (
-        <WorkflowRunDialog
+      {showRunDialog ? <WorkflowRunDialog
           workflow={workflow}
           open={showRunDialog}
           onOpenChange={setShowRunDialog}
-        />
-      )}
+        /> : null}
     </>
   );
 };

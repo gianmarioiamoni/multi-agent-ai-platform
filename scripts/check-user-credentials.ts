@@ -3,6 +3,7 @@
  * Verifies if a user exists in Supabase Auth
  */
 
+/* eslint-disable no-console */
 import { config } from 'dotenv';
 import { createAdminClient } from '@/lib/supabase/admin';
 

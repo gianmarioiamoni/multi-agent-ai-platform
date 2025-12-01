@@ -16,7 +16,7 @@ interface SwitchProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onC
 }
 
 export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
-  ({ className, checked = false, onCheckedChange, disabled, id, ...props }, ref) => {
+  ({ className, checked = false, onCheckedChange, disabled, ...props }, ref) => {
     const handleClick = () => {
       if (!disabled && onCheckedChange) {
         onCheckedChange(!checked);

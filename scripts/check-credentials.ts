@@ -3,6 +3,7 @@
  * Verifies that stored_credentials table exists and has correct structure
  */
 
+/* eslint-disable no-console */
 import dotenv from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '../src/types/database.types';
@@ -25,7 +26,7 @@ async function checkTable() {
 
   try {
     // Try to query the table
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('stored_credentials')
       .select('id')
       .limit(1);

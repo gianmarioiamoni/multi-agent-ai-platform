@@ -3,6 +3,7 @@
  * Quick script to test the web search tool functionality
  */
 
+/* eslint-disable no-console */
 import { config } from 'dotenv';
 import { webSearchTool } from '../src/lib/tools/web-search';
 

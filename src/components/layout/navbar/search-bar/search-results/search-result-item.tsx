@@ -44,11 +44,9 @@ export const SearchResultItem = ({
           <p className="font-medium text-sm text-[var(--color-foreground)]">
             {highlightMatch(result.name, query)}
           </p>
-          {result.description && (
-            <p className="text-sm text-[var(--color-muted-foreground)] mt-1 line-clamp-1">
+          {result.description ? <p className="text-sm text-[var(--color-muted-foreground)] mt-1 line-clamp-1">
               {highlightMatch(result.description, query)}
-            </p>
-          )}
+            </p> : null}
           <p className="text-xs text-[var(--color-muted-foreground)] mt-1">
             {getTypeLabel(result.type)}
           </p>

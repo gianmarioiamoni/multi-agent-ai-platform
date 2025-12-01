@@ -49,11 +49,8 @@ export const AutoSaveIndicator = ({ status, lastSavedAt }: AutoSaveIndicatorProp
   return (
     <div className="flex items-center gap-2 text-sm">
       <div className={`flex items-center gap-1.5 ${statusDisplay.className}`}>
-        {status === 'saving' && (
-          <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
-        )}
-        {status === 'saved' && (
-          <svg
+        {status === 'saving' ? <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" /> : null}
+        {status === 'saved' ? <svg
             className="w-3 h-3"
             fill="none"
             stroke="currentColor"
@@ -65,10 +62,8 @@ export const AutoSaveIndicator = ({ status, lastSavedAt }: AutoSaveIndicatorProp
               strokeWidth={2}
               d="M5 13l4 4L19 7"
             />
-          </svg>
-        )}
-        {status === 'error' && (
-          <svg
+          </svg> : null}
+        {status === 'error' ? <svg
             className="w-3 h-3"
             fill="none"
             stroke="currentColor"
@@ -80,15 +75,12 @@ export const AutoSaveIndicator = ({ status, lastSavedAt }: AutoSaveIndicatorProp
               strokeWidth={2}
               d="M6 18L18 6M6 6l12 12"
             />
-          </svg>
-        )}
+          </svg> : null}
         <span className="font-medium">{statusDisplay.text}</span>
       </div>
-      {status === 'saved' && lastSavedAt && (
-        <span className="text-xs text-[var(--color-muted-foreground)]">
+      {status === 'saved' && lastSavedAt ? <span className="text-xs text-[var(--color-muted-foreground)]">
           {formatTimeAgo(lastSavedAt)}
-        </span>
-      )}
+        </span> : null}
     </div>
   );
 };

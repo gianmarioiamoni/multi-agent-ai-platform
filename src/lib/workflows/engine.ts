@@ -10,9 +10,8 @@ import { createWorkflowRun, updateWorkflowRun, createAgentRun, updateAgentRun, c
 import type { WorkflowExecutionLoggers } from './engine-utils';
 import type { Workflow, WorkflowStep } from '@/types/workflow.types';
 import type { Agent } from '@/types/agent.types';
-import type { AgentExecutionResult } from '@/types/orchestrator.types';
 import type { WorkflowExecutionResult } from '@/types/workflow-execution.types';
-import { logInfo, logError } from '@/lib/logging/logger';
+import { logInfo } from '@/lib/logging/logger';
 import { createScopedLogger } from '@/lib/logging/scoped-logger';
 import { handleError, createUserFriendlyError } from '@/lib/errors/error-handler';
 
@@ -201,7 +200,6 @@ export async function executeWorkflow(
         });
       } catch (error) {
         const errorObj = error instanceof Error ? error : new Error(String(error));
-        const errorMessage = errorObj.message;
         const friendlyError = createUserFriendlyError(errorObj, 'agent_execution', {
           stepOrder,
           stepName: step.name,
@@ -297,7 +295,7 @@ export async function executeWorkflow(
  */
 function getOrderedSteps(
   steps: WorkflowStep[],
-  edges: Array<{ from: string; to: string }>
+  _edges: Array<{ from: string; to: string }>
 ): WorkflowStep[] {
   // For MVP, return steps in order
   // If edges are defined, we could validate the graph structure

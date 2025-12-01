@@ -36,7 +36,7 @@ export function useUserRoleManagement(): UseUserRoleManagementReturn {
       } else {
         showError('Update failed', result.error || 'Unknown error');
       }
-    } catch (err) {
+    } catch (_err) {
       showError('Update failed', 'An unexpected error occurred');
     } finally {
       setIsUpdating(null);

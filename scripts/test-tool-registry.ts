@@ -3,6 +3,7 @@
  * Quick script to test the tool registry functionality
  */
 
+/* eslint-disable no-console */
 import { config } from 'dotenv';
 import { 
   getTool, 

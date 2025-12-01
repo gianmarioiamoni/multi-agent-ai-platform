@@ -6,13 +6,13 @@
 
 'use client';
 
-import { Controller } from 'react-hook-form';
+import { Controller, type Control } from 'react-hook-form';
 import { Label } from '@/components/ui/label';
-import type { ContactFormValues } from '@/hooks/contact/use-contact-form';
 import type { ContactCategoryOption } from '@/types/contact.types';
+import type { ContactFormValues } from '@/hooks/contact/use-contact-form';
 
 interface ContactFormCategoryFieldProps {
-  control: any; // React Hook Form control
+  control: Control<ContactFormValues>;
   categories: ContactCategoryOption[];
   error?: string;
 }
@@ -43,11 +43,9 @@ export const ContactFormCategoryField = ({
                 </option>
               ))}
             </select>
-            {error && (
-              <p className="text-sm text-[var(--color-destructive)]" role="alert">
+            {error ? <p className="text-sm text-[var(--color-destructive)]" role="alert">
                 {error}
-              </p>
-            )}
+              </p> : null}
             <p className="text-xs text-[var(--color-muted-foreground)]">
               {categories.find((c) => c.value === field.value)?.description}
             </p>

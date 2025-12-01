@@ -200,12 +200,6 @@ export async function getNotifications(): Promise<{
     }
 
     // Check for integration errors (e.g., Google Calendar disconnections)
-    const { data: credentials, error: credsError } = await supabase
-      .from('stored_credentials')
-      .select('id, provider, created_at, updated_at')
-      .eq('user_id', user.id)
-      .eq('provider', 'google_calendar');
-
     // TODO: Add logic to detect expired/invalid credentials
     // For now, we'll skip integration error notifications
 

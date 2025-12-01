@@ -12,10 +12,9 @@ import { cn } from '@/utils/cn';
 
 interface HelpFAQItemProps {
   item: FAQItem;
-  index: number;
 }
 
-export const HelpFAQItem = ({ item, index }: HelpFAQItemProps) => {
+export const HelpFAQItem = ({ item }: HelpFAQItemProps) => {
   return (
     <Card>
       <details className="group">

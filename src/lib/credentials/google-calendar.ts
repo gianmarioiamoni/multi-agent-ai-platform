@@ -8,7 +8,6 @@ import { getStoredCredential, saveStoredCredential } from './actions';
 import type { GoogleOAuthTokens } from '@/types/credentials.types';
 
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
-const GOOGLE_CALENDAR_API_BASE = 'https://www.googleapis.com/calendar/v3';
 
 /**
  * Refresh Google OAuth token

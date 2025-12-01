@@ -55,15 +55,13 @@ export const SearchBar = () => {
           onFocus={() => setIsFocused(true)}
         />
 
-        {showResults && (
-          <SearchResults
+        {showResults ? <SearchResults
             results={results}
             query={query}
             isLoading={isLoading}
             selectedIndex={selectedIndex}
             onResultClick={handleResultClick}
-          />
-        )}
+          /> : null}
       </div>
     </div>
   );

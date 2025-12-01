@@ -91,7 +91,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlanInfo[] = [
 
 // Helper to get plan by ID
 export const getPlanById = (planId: string | null): SubscriptionPlanInfo | null => {
-  if (!planId) return null;
+  if (!planId) {return null;}
   return SUBSCRIPTION_PLANS.find((plan) => plan.id === planId) || null;
 };
 

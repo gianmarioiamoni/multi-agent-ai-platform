@@ -21,7 +21,7 @@ export const AgentTestForm = ({ onSubmit, isLoading, disabled = false }: AgentTe
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!message.trim() || isLoading || disabled) return;
+    if (!message.trim() || isLoading || disabled) {return;}
 
     onSubmit(message.trim());
     setMessage(''); // Clear input after submission

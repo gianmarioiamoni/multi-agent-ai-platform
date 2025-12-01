@@ -47,11 +47,9 @@ export const ToolsSection = () => {
               <div className="ml-3 flex-1">
                 <div className="flex items-center gap-2">
                   <span className="font-medium">{tool.name}</span>
-                  {tool.comingSoon && (
-                    <span className="px-2 py-0.5 text-xs bg-muted text-muted-foreground rounded-md">
+                  {tool.comingSoon ? <span className="px-2 py-0.5 text-xs bg-muted text-muted-foreground rounded-md">
                       Coming Soon
-                    </span>
-                  )}
+                    </span> : null}
                 </div>
                 <p className="text-sm text-muted-foreground mt-1">
                   {tool.description}
@@ -61,16 +59,12 @@ export const ToolsSection = () => {
           );
         })}
       </div>
-      {errors.tools_enabled && (
-        <p className="text-destructive text-sm mt-2">
+      {errors.tools_enabled ? <p className="text-destructive text-sm mt-2">
           {errors.tools_enabled.message}
-        </p>
-      )}
-      {selectedTools.length === 0 && (
-        <p className="text-muted-foreground text-sm mt-3">
+        </p> : null}
+      {selectedTools.length === 0 ? <p className="text-muted-foreground text-sm mt-3">
           💡 Select at least one tool to enable the agent to perform actions
-        </p>
-      )}
+        </p> : null}
     </div>
   );
 };

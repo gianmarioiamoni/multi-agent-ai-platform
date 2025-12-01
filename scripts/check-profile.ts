@@ -3,6 +3,7 @@
  * Verify if profile exists for a user
  */
 
+/* eslint-disable no-console */
 import { config } from 'dotenv';
 import { resolve } from 'path';
 import { createClient } from '@supabase/supabase-js';
@@ -26,7 +27,7 @@ const main = async () => {
   console.log(`\n🔍 Checking user and profile for: ${email}\n`);
 
   // 1. Check if user exists in auth.users
-  const { data: { users }, error: usersError } = await supabase.auth.admin.listUsers();
+  const { data: { users } } = await supabase.auth.admin.listUsers();
   
   const user = users?.find(u => u.email === email);
   

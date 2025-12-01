@@ -28,11 +28,9 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           ref={ref}
           {...props}
         />
-        {error && (
-          <p className="text-sm text-[var(--color-destructive)]" role="alert">
+        {error ? <p className="text-sm text-[var(--color-destructive)]" role="alert">
             {error}
-          </p>
-        )}
+          </p> : null}
       </div>
     );
   }

@@ -12,7 +12,6 @@ import type {
   CreateLogInput,
   LogContext,
 } from '@/types/logging.types';
-import type { Database } from '@/types/database.types';
 
 /**
  * Create a structured log entry

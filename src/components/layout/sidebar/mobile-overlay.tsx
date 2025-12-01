@@ -10,7 +10,7 @@ interface MobileOverlayProps {
 }
 
 export const MobileOverlay = ({ isVisible, onClose }: MobileOverlayProps) => {
-  if (!isVisible) return null;
+  if (!isVisible) {return null;}
 
   return (
     <div

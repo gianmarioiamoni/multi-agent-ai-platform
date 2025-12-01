@@ -12,8 +12,6 @@ import { UserButton } from './user-menu/user-button';
 import { DropdownMenu } from './user-menu/dropdown-menu';
 import type { UserProfile } from '@/lib/auth/utils';
 
-import { DemoBadge } from '@/components/demo/demo-badge';
-
 interface UserMenuProps {
   user: UserProfile;
   isDemo: boolean;
@@ -39,8 +37,7 @@ export const UserMenu = ({ user, isDemo }: UserMenuProps) => {
         onClick={toggle}
       />
 
-      {isOpen && (
-        <DropdownMenu
+      {isOpen ? <DropdownMenu
           userName={user.name}
           userRole={user.role}
           isAdmin={user.role === 'admin'}
@@ -48,8 +45,7 @@ export const UserMenu = ({ user, isDemo }: UserMenuProps) => {
           onItemClick={close}
           onLogout={onLogout}
           isLoggingOut={isLoggingOut}
-        />
-      )}
+        /> : null}
     </div>
   );
 };

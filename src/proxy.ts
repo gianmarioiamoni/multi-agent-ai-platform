@@ -15,12 +15,10 @@ import type { NextRequest } from 'next/server';
 import type { Database } from '@/types/database.types';
 
 export async function proxy(request: NextRequest) {
-  const url = request.nextUrl.clone();
-  
   const { pathname } = request.nextUrl;
 
   // Create response object
-  let response = NextResponse.next({
+  const response = NextResponse.next({
     request: {
       headers: request.headers,
     },

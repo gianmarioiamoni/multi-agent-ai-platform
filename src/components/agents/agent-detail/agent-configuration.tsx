@@ -25,11 +25,9 @@ export const AgentConfiguration = ({ agent }: AgentConfigurationProps) => {
           <div>
             <p className="text-sm text-muted-foreground mb-1">Model</p>
             <p className="text-sm font-medium">{modelInfo?.name || agent.model}</p>
-            {modelInfo?.description && (
-              <p className="text-xs text-muted-foreground mt-1">
+            {modelInfo?.description ? <p className="text-xs text-muted-foreground mt-1">
                 {modelInfo.description}
-              </p>
-            )}
+              </p> : null}
           </div>
           <div>
             <p className="text-sm text-muted-foreground mb-1">Temperature</p>

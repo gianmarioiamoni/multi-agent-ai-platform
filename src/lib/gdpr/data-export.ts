@@ -8,7 +8,6 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { getCurrentUser } from '@/lib/auth/utils';
-import type { Database } from '@/types/database.types';
 import type { DatabaseEntityArray, DatabaseQueryResult } from '@/types/common.types';
 
 export type ExportedUserData = {
@@ -174,24 +173,23 @@ export async function exportUserData(): Promise<ExportedUserData | { error: stri
 
     // Get all agent runs for user's workflow runs
     const workflowRunIds = workflowRuns?.map((wr) => wr.id) || [];
-    const agentRunsResult = workflowRunIds.length > 0
-      ? await supabase
+    const agentRuns = workflowRunIds.length > 0
+      ? (await supabase
           .from('agent_runs')
           .select('*')
           .in('workflow_run_id', workflowRunIds)
-          .order('step_order', { ascending: true }) as DatabaseQueryResult<{ id: string }>
-      : { data: [] };
-    const agentRuns = agentRunsResult.data;
+          .order('step_order', { ascending: true }) as DatabaseQueryResult<{ id: string }>).data
+      : [];
 
     // Get all tool invocations for user's agent runs
     const agentRunIds = agentRuns?.map((ar) => ar.id) || [];
-    const { data: toolInvocations } = agentRunIds.length > 0
-      ? await supabase
+    const toolInvocations = agentRunIds.length > 0
+      ? (await supabase
           .from('tool_invocations')
           .select('*')
           .in('agent_run_id', agentRunIds)
-          .order('created_at', { ascending: false })
-      : { data: [] };
+          .order('created_at', { ascending: false })).data
+      : [];
 
     // Get stored credentials (metadata only, no encrypted data)
     const { data: storedCredentials } = await supabase
@@ -230,6 +228,7 @@ export async function exportUserData(): Promise<ExportedUserData | { error: stri
         created_at: profile.created_at,
         updated_at: profile.updated_at,
       },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       agents: ((agents as DatabaseEntityArray) || []).map((agent: any) => ({
         id: agent.id,
         name: agent.name,
@@ -244,6 +243,7 @@ export async function exportUserData(): Promise<ExportedUserData | { error: stri
         created_at: agent.created_at,
         updated_at: agent.updated_at,
       })),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       workflows: ((workflows as DatabaseEntityArray) || []).map((workflow: any) => ({
         id: workflow.id,
         name: workflow.name,
@@ -254,6 +254,7 @@ export async function exportUserData(): Promise<ExportedUserData | { error: stri
         updated_at: workflow.updated_at,
         last_run_at: workflow.last_run_at,
       })),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       workflow_runs: ((workflowRuns as DatabaseEntityArray) || []).map((run: any) => ({
         id: run.id,
         workflow_id: run.workflow_id,
@@ -266,6 +267,7 @@ export async function exportUserData(): Promise<ExportedUserData | { error: stri
         created_at: run.created_at,
         updated_at: run.updated_at,
       })),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       agent_runs: ((agentRuns as DatabaseEntityArray) || []).map((run: any) => ({
         id: run.id,
         workflow_run_id: run.workflow_run_id,
@@ -280,6 +282,7 @@ export async function exportUserData(): Promise<ExportedUserData | { error: stri
         created_at: run.created_at,
         updated_at: run.updated_at,
       })),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       tool_invocations: ((toolInvocations as DatabaseEntityArray) || []).map((inv: any) => ({
         id: inv.id,
         agent_run_id: inv.agent_run_id,
@@ -311,6 +314,7 @@ export async function exportUserData(): Promise<ExportedUserData | { error: stri
         created_at: cred.created_at,
         updated_at: cred.updated_at,
       })),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       logs: ((logs as DatabaseEntityArray) || []).map((log: any) => ({
         id: log.id,
         level: log.level,
@@ -323,6 +327,7 @@ export async function exportUserData(): Promise<ExportedUserData | { error: stri
         duration_ms: log.duration_ms,
         created_at: log.created_at,
       })),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       notification_reads: ((notificationReads as DatabaseEntityArray) || []).map((nr: any) => ({
         id: nr.id,
         notification_id: nr.notification_id,

@@ -27,11 +27,9 @@ export const WorkflowCard = ({ workflow }: WorkflowCardProps) => {
             <h3 className="text-lg font-semibold text-[var(--color-foreground)] group-hover:text-[var(--color-primary)] transition-colors mb-1">
               {workflow.name}
             </h3>
-            {workflow.description && (
-              <p className="text-sm text-[var(--color-muted-foreground)] line-clamp-2">
+            {workflow.description ? <p className="text-sm text-[var(--color-muted-foreground)] line-clamp-2">
                 {workflow.description}
-              </p>
-            )}
+              </p> : null}
           </div>
           <span
             className={`px-2 py-1 text-xs font-medium text-white rounded ${getWorkflowStatusColor(workflow.status)}`}
@@ -42,9 +40,7 @@ export const WorkflowCard = ({ workflow }: WorkflowCardProps) => {
         
         <div className="flex items-center justify-between text-xs text-[var(--color-muted-foreground)]">
           <span>Created {formatDate(workflow.created_at)}</span>
-          {workflow.last_run_at && (
-            <span>Last run {formatDate(workflow.last_run_at)}</span>
-          )}
+          {workflow.last_run_at ? <span>Last run {formatDate(workflow.last_run_at)}</span> : null}
         </div>
       </Card>
     </Link>

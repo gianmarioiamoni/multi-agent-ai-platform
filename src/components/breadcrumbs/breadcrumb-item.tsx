@@ -44,9 +44,7 @@ export const BreadcrumbItem = ({ item, showSeparator = true }: BreadcrumbItemPro
           {item.label}
         </Link>
       )}
-      {showSeparator && !isActive && (
-        <ChevronRight className="w-3 h-3 text-[var(--color-muted-foreground)] mx-1 flex-shrink-0" />
-      )}
+      {showSeparator && !isActive ? <ChevronRight className="w-3 h-3 text-[var(--color-muted-foreground)] mx-1 flex-shrink-0" /> : null}
     </>
   );
 

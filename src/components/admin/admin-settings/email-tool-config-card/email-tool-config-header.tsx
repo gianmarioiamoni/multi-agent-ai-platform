@@ -7,7 +7,6 @@
 'use client';
 
 import { CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import type { EmailToolConfig } from '@/types/tool-config.types';
 
 interface EmailToolConfigHeaderProps {
   enabled: boolean;

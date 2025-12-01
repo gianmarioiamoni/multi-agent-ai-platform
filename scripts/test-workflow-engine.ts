@@ -3,6 +3,7 @@
  * Script to test workflow engine execution
  */
 
+/* eslint-disable no-console */
 import { config } from 'dotenv';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { executeWorkflow } from '@/lib/workflows/engine';
@@ -17,19 +18,11 @@ config({ path: '.env.local' });
 let supabase: ReturnType<typeof createAdminClient>;
 
 
-interface TestContext {
-  userId: string;
-  workflowId?: string;
-  agentIds: string[];
-}
-
 /**
  * Create test agents if they don't exist
  */
 async function setupTestAgents(userId: string): Promise<string[]> {
   console.log('📋 Setting up test agents...\n');
-
-  const supabase = createAdminClient();
   const agentIds: string[] = [];
 
   // Research Agent (web_search tool)

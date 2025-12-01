@@ -8,7 +8,6 @@
 
 import { FormProvider } from 'react-hook-form';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { useContactForm } from '@/hooks/contact/use-contact-form';
 import { ContactFormCategoryField } from './contact-form-category-field';
 import { ContactFormFields } from './contact-form-fields';
@@ -37,7 +36,7 @@ export const ContactForm = ({ defaultCategory, defaultEmail, defaultName }: Cont
       <CardHeader>
         <CardTitle>Contact Us</CardTitle>
         <CardDescription>
-          Fill out the form below and we'll get back to you within 2 business days.
+          Fill out the form below and we&apos;ll get back to you within 2 business days.
         </CardDescription>
       </CardHeader>
       <CardContent>

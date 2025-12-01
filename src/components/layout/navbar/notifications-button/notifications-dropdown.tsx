@@ -74,7 +74,7 @@ export const NotificationsDropdown = ({
         <div className="p-6 text-center">
           <p className="text-[var(--color-muted-foreground)] mb-2">No notifications</p>
           <p className="text-xs text-[var(--color-muted-foreground)]">
-            You're all caught up!
+            You&apos;re all caught up!
           </p>
         </div>
       </div>
@@ -85,14 +85,12 @@ export const NotificationsDropdown = ({
     <div className="absolute right-0 top-full mt-2 w-80 bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg shadow-lg z-50 max-h-96 overflow-hidden flex flex-col">
       <div className="p-4 border-b border-[var(--color-border)] flex items-center justify-between">
         <h3 className="font-semibold text-[var(--color-foreground)]">Notifications</h3>
-        {unreadCount > 0 && onMarkAllAsRead && (
-          <button
+        {unreadCount > 0 && onMarkAllAsRead ? <button
             onClick={onMarkAllAsRead}
             className="text-xs text-[var(--color-primary)] hover:text-[var(--color-primary)]/80 transition-colors"
           >
             Mark all as read
-          </button>
-        )}
+          </button> : null}
       </div>
       <div className="overflow-y-auto">
         {notifications.map((notification) => {
@@ -117,9 +115,7 @@ export const NotificationsDropdown = ({
                     {formatRelativeTime(notification.createdAt)}
                   </p>
                 </div>
-                {!notification.read && (
-                  <span className="w-2 h-2 bg-[var(--color-primary)] rounded-full flex-shrink-0 mt-2" />
-                )}
+                {!notification.read ? <span className="w-2 h-2 bg-[var(--color-primary)] rounded-full flex-shrink-0 mt-2" /> : null}
               </div>
             </div>
           );

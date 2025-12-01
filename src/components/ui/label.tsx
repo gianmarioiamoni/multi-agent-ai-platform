@@ -22,7 +22,7 @@ export const Label = ({ required, className, children, ...props }: LabelProps) =
       {...props}
     >
       {children}
-      {required && <span className="text-[var(--color-destructive)] ml-1">*</span>}
+      {required ? <span className="text-[var(--color-destructive)] ml-1">*</span> : null}
     </label>
   );
 };

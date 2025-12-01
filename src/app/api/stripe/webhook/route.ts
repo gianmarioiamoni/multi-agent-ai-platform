@@ -4,7 +4,8 @@
  * Following SRP: Only handles webhook request/response, delegates to handlers
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest} from 'next/server';
+import { NextResponse } from 'next/server';
 import { getStripeClient } from '@/lib/stripe/client';
 import { logError, logInfo } from '@/lib/logging/logger';
 import {

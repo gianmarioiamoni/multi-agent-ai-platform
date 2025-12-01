@@ -26,11 +26,9 @@ export const CookieBannerActions = ({
           Customize
         </Button>
       </Link>
-      {onReject && (
-        <CookieBannerButton onClick={onReject} variant="outline">
+      {onReject ? <CookieBannerButton onClick={onReject} variant="outline">
           Reject
-        </CookieBannerButton>
-      )}
+        </CookieBannerButton> : null}
       <CookieBannerButton onClick={onAccept} variant="primary">
         Accept All
       </CookieBannerButton>

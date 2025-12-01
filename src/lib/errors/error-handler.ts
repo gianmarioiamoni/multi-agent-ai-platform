@@ -6,6 +6,7 @@
 
 import type { LogCategory } from '@/types/logging.types';
 import { logError } from '@/lib/logging/logger';
+import { sanitizeErrorResponse, containsSensitiveInfo } from '@/lib/security/secure-error-handler';
 
 export type ErrorCategory =
   | 'authentication'
@@ -175,18 +176,25 @@ export async function handleError(
 
 /**
  * Create a standardized error response
+ * Uses secure error handler to prevent exposing sensitive information
  */
 export function createErrorResponse(
-  userMessage: string,
-  technicalMessage?: string,
-  code?: string,
-  details?: Record<string, unknown>
+  error: Error | unknown,
+  category: ErrorCategory = 'unknown',
+  includeTechnicalDetails = false
 ) {
+  const sanitized = sanitizeErrorResponse(error, category, includeTechnicalDetails);
+  
+  // Remove sensitive details in production
+  const details = containsSensitiveInfo(error) && process.env.NODE_ENV === 'production'
+    ? undefined
+    : { category };
+  
   return {
     success: false as const,
-    error: userMessage,
-    technicalMessage,
-    code,
+    error: sanitized.message,
+    technicalMessage: sanitized.technicalDetails,
+    code: sanitized.code,
     details,
   };
 }

@@ -116,8 +116,8 @@ export async function getWebSearchToolConfig(): Promise<WebSearchToolConfig | nu
     }
 
     return null;
-  } catch (error) {
-    console.error('[Config Loader] Error loading web search config:', error);
+  } catch (_error) {
+    console.error('[Config Loader] Error loading web search config:', _error instanceof Error ? _error : new Error(String(_error)));
     return null;
   }
 }

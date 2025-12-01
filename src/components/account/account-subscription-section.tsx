@@ -5,7 +5,6 @@
  * SSR: Fully server-side rendered
  */
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AccountDetailsHeader } from './account-details-section/account-details-header';
 import { AccountDetailsItem } from './account-details-section/account-details-item';
 import { getUserSubscription, getPlanDisplayName, formatExpiryDate } from '@/lib/subscription/utils';
@@ -52,11 +51,9 @@ export const AccountSubscriptionSection = ({
       <dl className="space-y-4 mb-6">
         <AccountDetailsItem label="Plan" value={displayName} />
 
-        {subscription.isActive && formattedExpiry && (
-          <>
+        {subscription.isActive && formattedExpiry ? <>
             <AccountDetailsItem label="Expires On" value={formattedExpiry} />
-            {subscription.daysRemaining !== null && (
-              <AccountDetailsItem
+            {subscription.daysRemaining !== null ? <AccountDetailsItem
                 label="Days Remaining"
                 value={
                   <span
@@ -69,28 +66,21 @@ export const AccountSubscriptionSection = ({
                     {subscription.daysRemaining} days
                   </span>
                 }
-              />
-            )}
-          </>
-        )}
+              /> : null}
+          </> : null}
 
-        {!subscription.isActive && subscription.plan && (
-          <AccountDetailsItem
+        {!subscription.isActive && subscription.plan ? <AccountDetailsItem
             label="Status"
             value={<span className="text-red-600 font-semibold">Expired</span>}
-          />
-        )}
+          /> : null}
 
-        {!subscription.plan && (
-          <AccountDetailsItem
+        {!subscription.plan ? <AccountDetailsItem
             label="Status"
             value={<span className="text-muted-foreground">No active subscription</span>}
-          />
-        )}
+          /> : null}
 
         {/* Show scheduled plan change */}
-        {nextPlan && planSwitchAt && (
-          <>
+        {nextPlan && planSwitchAt ? <>
             <AccountDetailsItem
               label="Upgrading To"
               value={
@@ -107,12 +97,10 @@ export const AccountSubscriptionSection = ({
               label="Status"
               value={<span className="text-blue-600 font-semibold">Plan change scheduled</span>}
             />
-          </>
-        )}
+          </> : null}
       </dl>
 
-      {planInfo && (
-        <div className="mt-6 pt-6 border-t border-[var(--color-border)]">
+      {planInfo ? <div className="mt-6 pt-6 border-t border-[var(--color-border)]">
           <h4 className="text-sm font-semibold mb-3">Plan Features:</h4>
           <ul className="space-y-2">
             {planInfo.features.slice(0, 4).map((feature, index) => (
@@ -122,8 +110,7 @@ export const AccountSubscriptionSection = ({
               </li>
             ))}
           </ul>
-        </div>
-      )}
+        </div> : null}
 
       <div className="mt-6">
         <Link

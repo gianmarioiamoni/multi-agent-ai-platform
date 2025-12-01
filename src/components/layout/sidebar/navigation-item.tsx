@@ -30,18 +30,16 @@ export const NavigationItem = ({ item, isActive, onClick }: NavigationItemProps)
             : 'text-[var(--color-foreground)] hover:bg-[var(--color-accent)]/10 hover:text-[var(--color-accent)]'
         )}
       >
-        {Icon && <Icon />}
+        {Icon ? <Icon /> : null}
         <span className="flex-1">{item.label}</span>
-        {item.badge && (
-          <span className={cn(
+        {item.badge ? <span className={cn(
             'px-2 py-0.5 text-xs font-semibold rounded-full',
             isActive
               ? 'bg-white/20 text-white'
               : 'bg-[var(--color-accent)]/10 text-[var(--color-accent)]'
           )}>
             {item.badge}
-          </span>
-        )}
+          </span> : null}
       </Link>
     </li>
   );

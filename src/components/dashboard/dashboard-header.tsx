@@ -18,7 +18,7 @@ export const DashboardHeader = ({ userName }: DashboardHeaderProps) => {
       </h1>
       <p className="text-[var(--color-muted-foreground)] mt-2">
         Welcome back, <span className="font-semibold text-[var(--color-foreground)]">{displayName}</span>! 
-        Here's what's happening with your AI agents today.
+        Here&apos;s what&apos;s happening with your AI agents today.
       </p>
     </div>
   );

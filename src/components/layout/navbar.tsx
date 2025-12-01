@@ -10,8 +10,6 @@ import { MobileMenuToggle } from './navbar/mobile-menu-toggle';
 import { SearchBar } from './navbar/search-bar';
 import { NotificationsButton } from './navbar/notifications-button';
 
-import { DemoBadge } from '@/components/demo/demo-badge';
-
 interface NavbarProps {
   user: UserProfile;
   isDemo: boolean;

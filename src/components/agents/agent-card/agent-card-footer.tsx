@@ -5,9 +5,7 @@
  * Server Component - Link is SSR-safe, stopPropagation handled in parent
  */
 
-import Link from 'next/link';
 import { CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { formatDate } from '@/utils/format';
 import { AgentCardFooterTestButton } from './agent-card-footer-test-button';
 
@@ -23,9 +21,7 @@ export const AgentCardFooter = ({ createdAt, agentId, status }: AgentCardFooterP
       <div className="text-xs text-muted-foreground">
         Created {formatDate(createdAt)}
       </div>
-      {status === 'active' && (
-        <AgentCardFooterTestButton agentId={agentId} />
-      )}
+      {status === 'active' ? <AgentCardFooterTestButton agentId={agentId} /> : null}
     </CardFooter>
   );
 };

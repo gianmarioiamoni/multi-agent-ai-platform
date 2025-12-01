@@ -10,7 +10,6 @@ import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import type { UserSettings } from '@/types/settings.types';
 
 interface TimezoneSectionProps {
   timezone: string;
@@ -71,8 +70,7 @@ export const TimezoneSection = ({ timezone, onUpdate, isSaving }: TimezoneSectio
           </select>
         </div>
 
-        {hasChanges && (
-          <div className="flex justify-end">
+        {hasChanges ? <div className="flex justify-end">
             <Button
               onClick={handleSave}
               disabled={isSaving}
@@ -81,8 +79,7 @@ export const TimezoneSection = ({ timezone, onUpdate, isSaving }: TimezoneSectio
             >
               {isSaving ? 'Saving...' : 'Save Timezone'}
             </Button>
-          </div>
-        )}
+          </div> : null}
       </CardContent>
     </Card>
   );

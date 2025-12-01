@@ -23,11 +23,9 @@ export const RunCardHeader = ({
         <h3 className="text-lg font-semibold text-[var(--color-foreground)] group-hover:text-[var(--color-primary)] transition-colors mb-1">
           {workflowName}
         </h3>
-        {input && (
-          <p className="text-sm text-[var(--color-muted-foreground)] line-clamp-2 mt-1">
+        {input ? <p className="text-sm text-[var(--color-muted-foreground)] line-clamp-2 mt-1">
             {input}
-          </p>
-        )}
+          </p> : null}
       </div>
       <span className={`px-2 py-1 text-xs font-medium text-white rounded ${statusColor}`}>
         {statusLabel}

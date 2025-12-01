@@ -81,7 +81,7 @@ export function getToolSchemas(toolIds: ToolId[]): Array<{
   return toolIds
     .map((toolId) => {
       const tool = getTool(toolId);
-      if (!tool) return null;
+      if (!tool) {return null;}
 
       return {
         type: 'function' as const,
@@ -101,7 +101,7 @@ export function getToolSchemas(toolIds: ToolId[]): Array<{
 export function isToolAvailable(toolId: ToolId): boolean {
   const tool = getTool(toolId);
   
-  if (!tool) return false;
+  if (!tool) {return false;}
 
   // Check tool-specific availability
   switch (toolId) {

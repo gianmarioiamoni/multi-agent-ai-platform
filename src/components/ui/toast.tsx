@@ -88,9 +88,7 @@ export const Toast = ({ toast, onRemove }: ToastProps) => {
       
       <div className="flex-1 min-w-0">
         <p className="font-semibold text-sm">{toast.title}</p>
-        {toast.message && (
-          <p className="mt-1 text-sm opacity-90">{toast.message}</p>
-        )}
+        {toast.message ? <p className="mt-1 text-sm opacity-90">{toast.message}</p> : null}
       </div>
 
       <button

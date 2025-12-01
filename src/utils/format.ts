@@ -43,7 +43,7 @@ export function formatRelativeTime(date: string | Date): string {
  * Get user initials from name
  */
 export function getUserInitials(name: string | null): string {
-  if (!name) return 'U';
+  if (!name) {return 'U';}
   
   return name
     .split(' ')
@@ -57,7 +57,7 @@ export function getUserInitials(name: string | null): string {
  * Truncate string with ellipsis
  */
 export function truncate(str: string, length: number): string {
-  if (str.length <= length) return str;
+  if (str.length <= length) {return str;}
   return `${str.slice(0, length)}...`;
 }
 

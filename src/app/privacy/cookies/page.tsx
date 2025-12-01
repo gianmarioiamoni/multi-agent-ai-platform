@@ -31,13 +31,15 @@ export default function CookiePreferencesPage() {
 
   useEffect(() => {
     const saved = getCookiePreferences();
-    setPreferences(saved || {
-      necessary: true,
-      analytics: false,
-      marketing: false,
-      timestamp: Date.now(),
-    });
-    setIsLoading(false);
+    setTimeout(() => {
+      setPreferences(saved || {
+        necessary: true,
+        analytics: false,
+        marketing: false,
+        timestamp: Date.now(),
+      });
+      setIsLoading(false);
+    }, 0);
   }, []);
 
   const handleToggle = (category: CookieCategory, enabled: boolean) => {

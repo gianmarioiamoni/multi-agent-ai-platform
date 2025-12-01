@@ -7,8 +7,7 @@
 import { getOpenAIClient, isOpenAIConfigured } from './openai-client';
 import { getToolSchemas, executeTool } from '@/lib/tools/registry';
 import type { AgentExecutionResult, ToolCall, ToolExecution } from '@/types/orchestrator.types';
-import type { Agent } from '@/types/agent.types';
-import type { ToolId } from '@/types/agent.types';
+import type { Agent, ToolId } from '@/types/agent.types';
 import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 
 const MAX_ITERATIONS = 10; // Max tool call iterations to prevent infinite loops

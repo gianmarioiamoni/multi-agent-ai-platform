@@ -84,7 +84,7 @@ async function createTransporter(): Promise<Transporter | null> {
 async function getSenderEmail(config: EmailToolConfig | null): Promise<string | null> {
   if (!config) {
     const emailConfig = await getEmailToolConfig();
-    if (!emailConfig) return null;
+    if (!emailConfig) {return null;}
     config = emailConfig;
   }
 

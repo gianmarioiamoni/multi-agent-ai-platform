@@ -9,7 +9,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { UseFormReturn, FieldValues } from 'react-hook-form';
+import type { UseFormReturn, FieldValues } from 'react-hook-form';
 import { getAutoSaveEnabled } from '@/lib/settings/actions';
 
 export type AutoSaveStatus = 'idle' | 'typing' | 'saving' | 'saved' | 'error';

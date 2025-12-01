@@ -32,11 +32,9 @@ export const AgentDetailHeader = ({ agent }: AgentDetailHeaderProps) => {
               <CardTitle className="text-2xl">{agent.name}</CardTitle>
               <AgentStatusBadge status={agent.status} />
             </div>
-            {agent.description && (
-              <CardDescription className="text-base mt-2">
+            {agent.description ? <CardDescription className="text-base mt-2">
                 {agent.description}
-              </CardDescription>
-            )}
+              </CardDescription> : null}
           </div>
           <AgentDetailActions agent={agent} />
         </div>

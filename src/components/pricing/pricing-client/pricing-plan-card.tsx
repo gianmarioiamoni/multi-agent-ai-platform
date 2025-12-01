@@ -37,29 +37,23 @@ export const PricingPlanCard = ({
         isCurrentPlan && 'border-green-500'
       )}
     >
-      {plan.popular && (
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+      {plan.popular ? <div className="absolute -top-4 left-1/2 -translate-x-1/2">
           <span className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold">
             Most Popular
           </span>
-        </div>
-      )}
+        </div> : null}
 
-      {isCurrentPlan && (
-        <div className="absolute -top-4 right-4">
+      {isCurrentPlan ? <div className="absolute -top-4 right-4">
           <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
             Current Plan
           </span>
-        </div>
-      )}
+        </div> : null}
 
-      {hasNextPlan && !isCurrentPlan && (
-        <div className="absolute -top-4 right-4">
+      {hasNextPlan && !isCurrentPlan ? <div className="absolute -top-4 right-4">
           <span className="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
             Scheduled
           </span>
-        </div>
-      )}
+        </div> : null}
 
       <CardHeader className="text-center pb-8">
         <CardTitle className="text-2xl mb-2">{plan.name}</CardTitle>
@@ -71,15 +65,11 @@ export const PricingPlanCard = ({
         <div className="text-center">
           <div className="flex items-baseline justify-center gap-2">
             <span className="text-4xl font-bold">{formatPrice(price, plan.pricing.currency)}</span>
-            {price > 0 && (
-              <span className="text-muted-foreground">
+            {price > 0 ? <span className="text-muted-foreground">
                 /{billingCycle === 'monthly' ? 'month' : 'year'}
-              </span>
-            )}
+              </span> : null}
           </div>
-          {showSavings && (
-            <p className="text-sm text-green-600 mt-2 font-medium">Save {savings}% annually</p>
-          )}
+          {showSavings ? <p className="text-sm text-green-600 mt-2 font-medium">Save {savings}% annually</p> : null}
         </div>
 
         {/* Features */}
@@ -93,13 +83,11 @@ export const PricingPlanCard = ({
         </ul>
 
         {/* Scheduled Plan Change Info */}
-        {hasNextPlan && !isCurrentPlan && (
-          <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+        {hasNextPlan && !isCurrentPlan ? <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
             <p className="text-xs text-blue-800 dark:text-blue-200">
               <span className="font-semibold">Scheduled:</span> This plan will be activated at the end of your current billing period.
             </p>
-          </div>
-        )}
+          </div> : null}
 
         {/* CTA Button */}
         <PricingPlanCardButton

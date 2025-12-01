@@ -58,11 +58,11 @@ export const getCurrentUserProfile = async (): Promise<UserProfile | null> => {
   const supabase = await createClient();
   
   // Try to get all profiles first to see if RLS is working
-  const { data: allProfiles, error: allError } = await supabase
+  const { error: allError } = await supabase
     .from('profiles')
     .select('*');
   
-  console.log('All profiles query result:', { count: allProfiles?.length, error: allError });
+  console.log('All profiles query result:', { error: allError });
   
   const { data: profile, error } = await supabase
     .from('profiles')

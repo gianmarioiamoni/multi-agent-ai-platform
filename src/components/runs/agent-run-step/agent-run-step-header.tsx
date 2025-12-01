@@ -33,9 +33,7 @@ export const AgentRunStepHeader = ({
             </span>
             <CardTitle className="text-lg">{agentName}</CardTitle>
           </div>
-          {hasDuration && (
-            <p className="text-xs text-[var(--color-muted-foreground)]">Duration: {duration}</p>
-          )}
+          {hasDuration ? <p className="text-xs text-[var(--color-muted-foreground)]">Duration: {duration}</p> : null}
         </div>
         <span className={`px-2 py-1 text-xs font-medium text-white rounded ${statusColor}`}>
           {statusLabel}

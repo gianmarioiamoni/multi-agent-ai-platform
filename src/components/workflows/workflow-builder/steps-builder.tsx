@@ -57,7 +57,7 @@ export const StepsBuilder = ({
         ) : (
           steps.map((step, index) => {
             const agent = getAgentById(step.agentId);
-            if (!agent) return null;
+            if (!agent) {return null;}
 
             const modelInfo = AVAILABLE_MODELS.find((m) => m.id === agent.model);
 
@@ -84,12 +84,10 @@ export const StepsBuilder = ({
                       </div>
                       <span>•</span>
                       <span>{modelInfo?.name || agent.model}</span>
-                      {agent.tools_enabled.length > 0 && (
-                        <>
+                      {agent.tools_enabled.length > 0 ? <>
                           <span>•</span>
                           <span>{agent.tools_enabled.length} tool(s)</span>
-                        </>
-                      )}
+                        </> : null}
                     </div>
                   </div>
 
@@ -192,11 +190,9 @@ export const StepsBuilder = ({
             );
           })}
         </select>
-        {availableAgents.length === 0 && steps.length > 0 && (
-          <p className="text-xs text-muted-foreground mt-1">
+        {availableAgents.length === 0 && steps.length > 0 ? <p className="text-xs text-muted-foreground mt-1">
             All available agents have been added to this workflow.
-          </p>
-        )}
+          </p> : null}
       </div>
     </div>
   );

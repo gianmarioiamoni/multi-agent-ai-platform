@@ -29,11 +29,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           {...props}
         />
-        {error && (
-          <p className="text-sm text-[var(--color-destructive)]" role="alert">
+        {error ? <p className="text-sm text-[var(--color-destructive)]" role="alert">
             {error}
-          </p>
-        )}
+          </p> : null}
       </div>
     );
   }

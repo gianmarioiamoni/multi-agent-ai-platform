@@ -32,12 +32,10 @@ export default async function AdminSettingsPage() {
         </p>
       </div>
 
-      {error && (
-        <div className="p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200">
+      {error ? <div className="p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200">
           <p className="font-medium">Error loading configurations</p>
           <p className="text-sm mt-1">{error}</p>
-        </div>
-      )}
+        </div> : null}
 
       <AdminSettingsClient initialConfigs={toolConfigs || []} />
     </div>

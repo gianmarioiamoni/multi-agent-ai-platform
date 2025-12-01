@@ -48,8 +48,7 @@ export const ModelConfigSection = () => {
                     <div className="flex-1">
                       <div className="flex items-center justify-between">
                         <span className="font-medium">{model.name}</span>
-                        {isSelected && (
-                          <svg
+                        {isSelected ? <svg
                             className="w-5 h-5 text-primary"
                             fill="currentColor"
                             viewBox="0 0 20 20"
@@ -59,8 +58,7 @@ export const ModelConfigSection = () => {
                               d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                               clipRule="evenodd"
                             />
-                          </svg>
-                        )}
+                          </svg> : null}
                       </div>
                       <p className="text-sm text-muted-foreground mt-1">
                         {model.description}
@@ -77,9 +75,7 @@ export const ModelConfigSection = () => {
             </div>
           )}
         />
-        {errors.model && (
-          <p className="text-destructive text-sm mt-1">{errors.model.message}</p>
-        )}
+        {errors.model ? <p className="text-destructive text-sm mt-1">{errors.model.message}</p> : null}
       </div>
 
       {/* Temperature */}
@@ -109,11 +105,9 @@ export const ModelConfigSection = () => {
               <span>Balanced (1)</span>
               <span>Creative (2)</span>
             </div>
-            {errors.temperature && (
-              <p className="text-destructive text-sm mt-1">
+            {errors.temperature ? <p className="text-destructive text-sm mt-1">
                 {errors.temperature.message}
-              </p>
-            )}
+              </p> : null}
           </div>
         )}
       />
@@ -141,13 +135,11 @@ export const ModelConfigSection = () => {
               className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
             />
             <p className="text-xs text-muted-foreground mt-1">
-              Maximum length of the agent's response
+              Maximum length of the agent&apos;s response
             </p>
-            {errors.max_tokens && (
-              <p className="text-destructive text-sm mt-1">
+            {errors.max_tokens ? <p className="text-destructive text-sm mt-1">
                 {errors.max_tokens.message}
-              </p>
-            )}
+              </p> : null}
           </div>
         )}
       />

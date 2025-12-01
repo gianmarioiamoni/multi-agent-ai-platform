@@ -41,11 +41,9 @@ export const BasicInfoSection = () => {
           placeholder="Brief description of what this agent does..."
           className="w-full min-h-[80px] px-3 py-2 bg-[var(--color-input)] border border-[var(--color-border)] rounded-lg text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-y"
         />
-        {errors.description && (
-          <p className="text-destructive text-sm mt-1">
+        {errors.description ? <p className="text-destructive text-sm mt-1">
             {errors.description.message}
-          </p>
-        )}
+          </p> : null}
       </div>
 
       {/* Role (System Prompt) */}
@@ -59,11 +57,9 @@ export const BasicInfoSection = () => {
           placeholder="You are a helpful research assistant that..."
           className="w-full min-h-[120px] px-3 py-2 bg-[var(--color-input)] border border-[var(--color-border)] rounded-lg text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-y font-mono"
         />
-        {errors.role && (
-          <p className="text-destructive text-sm mt-1">{errors.role.message}</p>
-        )}
+        {errors.role ? <p className="text-destructive text-sm mt-1">{errors.role.message}</p> : null}
         <p className="text-xs text-muted-foreground mt-1">
-          Define the agent's personality, expertise, and behavior
+          Define the agent&apos;s personality, expertise, and behavior
         </p>
       </div>
     </div>

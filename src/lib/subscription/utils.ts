@@ -10,7 +10,7 @@ import type { UserSubscription, SubscriptionPlan } from '@/types/subscription.ty
  * Calculate days remaining until subscription expires
  */
 export const calculateDaysRemaining = (expiresAt: string | null): number | null => {
-  if (!expiresAt) return null;
+  if (!expiresAt) {return null;}
   
   const expiryDate = new Date(expiresAt);
   const now = new Date();
@@ -27,7 +27,7 @@ export const isSubscriptionActive = (
   plan: SubscriptionPlan | null,
   expiresAt: string | null
 ): boolean => {
-  if (!plan || !expiresAt) return false;
+  if (!plan || !expiresAt) {return false;}
   
   const expiryDate = new Date(expiresAt);
   const now = new Date();
@@ -39,7 +39,7 @@ export const isSubscriptionActive = (
  * Format subscription expiry date
  */
 export const formatExpiryDate = (expiresAt: string | null): string | null => {
-  if (!expiresAt) return null;
+  if (!expiresAt) {return null;}
   
   return new Intl.DateTimeFormat('it-IT', {
     year: 'numeric',
@@ -91,7 +91,7 @@ export const canActivateTrial = (
   trialUsed: boolean
 ): boolean => {
   // User already has a plan or has used trial
-  if (plan || trialUsed) return false;
+  if (plan || trialUsed) {return false;}
   return true;
 };
 
@@ -100,8 +100,8 @@ export const canActivateTrial = (
  */
 export const canSelectPlan = (role: string, isDemo: boolean): boolean => {
   // Admins have unlimited access, no plan needed
-  if (role === 'admin') return false;
+  if (role === 'admin') {return false;}
   // Demo users cannot change plans
-  if (isDemo) return false;
+  if (isDemo) {return false;}
   return true;
 };

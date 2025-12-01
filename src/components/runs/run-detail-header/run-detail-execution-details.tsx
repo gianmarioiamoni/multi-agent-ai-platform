@@ -39,11 +39,11 @@ export const RunDetailExecutionDetails = ({
           duration={duration}
         />
 
-        {input && <RunDetailExecutionInput input={input} />}
+        {input ? <RunDetailExecutionInput input={input} /> : null}
 
-        {output && <RunDetailExecutionOutput output={output} />}
+        {output ? <RunDetailExecutionOutput output={output} /> : null}
 
-        {error && <RunDetailExecutionError error={error} />}
+        {error ? <RunDetailExecutionError error={error} /> : null}
       </CardContent>
     </Card>
   );

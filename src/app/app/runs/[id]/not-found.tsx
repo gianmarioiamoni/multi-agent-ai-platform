@@ -16,7 +16,7 @@ export default function NotFound() {
           Workflow Run Not Found
         </h1>
         <p className="text-[var(--color-muted-foreground)] mb-6">
-          The workflow run you're looking for doesn't exist or you don't have permission to view it.
+          The workflow run you&apos;re looking for doesn&apos;t exist or you don&apos;t have permission to view it.
         </p>
         <Link href="/app/runs">
           <Button variant="primary">Back to Runs</Button>

@@ -9,7 +9,7 @@ interface UnsavedChangesAlertProps {
 }
 
 export const UnsavedChangesAlert = ({ show }: UnsavedChangesAlertProps) => {
-  if (!show) return null;
+  if (!show) {return null;}
 
   return (
     <div className="flex items-center gap-3 p-4 rounded-lg bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/20">

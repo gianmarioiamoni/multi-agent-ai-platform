@@ -27,11 +27,9 @@ export const AgentCardHeader = ({
           <CardTitle className="text-xl group-hover:text-primary transition-colors">
             {name}
           </CardTitle>
-          {description && (
-            <CardDescription className="mt-2 line-clamp-2">
+          {description ? <CardDescription className="mt-2 line-clamp-2">
               {description}
-            </CardDescription>
-          )}
+            </CardDescription> : null}
         </div>
         <span className={`px-2 py-1 text-xs font-medium rounded-md border ${statusColor}`}>
           {status}

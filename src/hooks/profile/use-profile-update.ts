@@ -46,7 +46,7 @@ export function useProfileUpdate(initialName: string): UseProfileUpdateReturn {
       } else {
         showError('Update failed', result.error || 'Unknown error');
       }
-    } catch (err) {
+    } catch (_err) {
       showError('Update failed', 'An unexpected error occurred');
     } finally {
       setIsSubmitting(false);

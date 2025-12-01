@@ -19,7 +19,7 @@ interface AgentDetailActionsProps {
 
 export const AgentDetailActions = ({ agent }: AgentDetailActionsProps) => {
   const router = useRouter();
-  const { success, error: showError, info } = useToast();
+  const { success, error: showError } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
@@ -51,11 +51,9 @@ export const AgentDetailActions = ({ agent }: AgentDetailActionsProps) => {
 
   return (
     <div className="flex items-center gap-2">
-      {agent.status === 'active' && (
-        <Button onClick={handleTest} size="sm">
+      {agent.status === 'active' ? <Button onClick={handleTest} size="sm">
           Test Agent
-        </Button>
-      )}
+        </Button> : null}
       <Button onClick={handleEdit} variant="outline" size="sm">
         Edit
       </Button>

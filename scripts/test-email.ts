@@ -3,6 +3,7 @@
  * Script to test email sending functionality
  */
 
+/* eslint-disable no-console */
 import { config } from 'dotenv';
 import { executeTool, isToolAvailable } from '@/lib/tools/registry';
 

@@ -38,35 +38,27 @@ export const ToolInvocationItem = ({ invocation }: ToolInvocationItemProps) => {
           </pre>
         </div>
 
-        {invocation.result && (
-          <div>
+        {invocation.result ? <div>
             <p className="text-xs text-[var(--color-muted-foreground)] mb-1">Result</p>
             <pre className="text-xs bg-green-50 dark:bg-green-900/20 p-2 rounded border border-green-200 dark:border-green-800 overflow-x-auto max-h-48 overflow-y-auto">
               {JSON.stringify(invocation.result, null, 2)}
             </pre>
-          </div>
-        )}
+          </div> : null}
 
-        {invocation.error && (
-          <div>
+        {invocation.error ? <div>
             <p className="text-xs text-red-600 dark:text-red-400 mb-1">Error</p>
             <p className="text-xs bg-red-50 dark:bg-red-900/20 p-2 rounded border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 whitespace-pre-wrap">
               {invocation.error}
             </p>
-          </div>
-        )}
+          </div> : null}
 
-        {invocation.execution_time_ms !== null && (
-          <div className="flex items-center gap-4 text-xs text-[var(--color-muted-foreground)]">
+        {invocation.execution_time_ms !== null ? <div className="flex items-center gap-4 text-xs text-[var(--color-muted-foreground)]">
             <span>Execution time: {invocation.execution_time_ms}ms</span>
-            {invocation.started_at && invocation.finished_at && (
-              <span>
+            {invocation.started_at && invocation.finished_at ? <span>
                 {new Date(invocation.started_at).toLocaleTimeString()} -{' '}
                 {new Date(invocation.finished_at).toLocaleTimeString()}
-              </span>
-            )}
-          </div>
-        )}
+              </span> : null}
+          </div> : null}
       </CardContent>
     </Card>
   );

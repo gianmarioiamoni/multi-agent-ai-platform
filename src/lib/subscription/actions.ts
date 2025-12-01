@@ -26,7 +26,7 @@ interface ActionResult {
  * Calculate days remaining from a date to now
  */
 function calculateDaysRemaining(expiresAt: string | null): number {
-  if (!expiresAt) return 0;
+  if (!expiresAt) {return 0;}
   const expiryDate = new Date(expiresAt);
   const now = new Date();
   const diffTime = expiryDate.getTime() - now.getTime();

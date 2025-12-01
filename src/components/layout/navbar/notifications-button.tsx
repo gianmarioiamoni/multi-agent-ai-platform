@@ -32,14 +32,12 @@ export const NotificationsButton = () => {
       >
         <NotificationButtonIcon unreadCount={unreadCount} />
       </button>
-      {isOpen && (
-        <NotificationsDropdown
+      {isOpen ? <NotificationsDropdown
           notifications={notifications}
           isLoading={isLoading}
           onNotificationClick={handleNotificationClick}
           onMarkAllAsRead={markAllAsRead}
-        />
-      )}
+        /> : null}
     </div>
   );
 };

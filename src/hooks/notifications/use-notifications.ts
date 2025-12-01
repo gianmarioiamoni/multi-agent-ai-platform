@@ -29,16 +29,22 @@ export const useNotifications = () => {
         setUnreadCount(0);
       } else if (data) {
         // Read status is now included from the database
-        setNotifications(data);
-        const unread = data.filter((n) => !n.read).length;
-        setUnreadCount(unread);
+        setTimeout(() => {
+          setNotifications(data);
+          const unread = data.filter((n) => !n.read).length;
+          setUnreadCount(unread);
+        }, 0);
       }
-    } catch (error) {
-      console.error('Error in loadNotifications:', error);
-      setNotifications([]);
-      setUnreadCount(0);
+    } catch (_error) {
+      console.error('Error in loadNotifications:', _error);
+      setTimeout(() => {
+        setNotifications([]);
+        setUnreadCount(0);
+      }, 0);
     } finally {
-      setIsLoading(false);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 0);
     }
   }, []);
 

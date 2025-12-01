@@ -16,7 +16,6 @@ import { useToast } from '@/contexts/toast-context';
 import type { AgentListItem } from '@/types/agent.types';
 import type { WorkflowStep } from '@/types/workflow.types';
 import { useAutoSave } from '@/hooks/shared/use-auto-save';
-import type { AutoSaveStatus } from '@/hooks/shared/use-auto-save';
 import type { Workflow } from '@/types/workflow.types';
 
 interface UseWorkflowFormOptions {
@@ -46,13 +45,17 @@ export const useWorkflowForm = ({ agents, workflowId, workflow }: UseWorkflowFor
   // Load workflow data in edit mode
   useEffect(() => {
     if (!workflowId) {
-      setIsLoadingWorkflow(false);
+      setTimeout(() => {
+        setIsLoadingWorkflow(false);
+      }, 0);
       return;
     }
 
     // If workflow data is already provided, use it directly (avoids reload)
     if (workflow) {
-      setIsLoadingWorkflow(false);
+      setTimeout(() => {
+        setIsLoadingWorkflow(false);
+      }, 0);
       const formSteps = workflow.graph.steps.map((step) => ({
         agentId: step.agentId,
         name: step.name,
@@ -73,13 +76,17 @@ export const useWorkflowForm = ({ agents, workflowId, workflow }: UseWorkflowFor
         keepIsValid: false,
         keepSubmitCount: false,
       });
-      setSteps(formSteps);
+      setTimeout(() => {
+        setSteps(formSteps);
+      }, 0);
       return;
     }
 
     // Otherwise, load from server
     const loadWorkflow = async () => {
-      setIsLoadingWorkflow(true);
+      setTimeout(() => {
+        setIsLoadingWorkflow(true);
+      }, 0);
       const { data: loadedWorkflow, error } = await getWorkflow(workflowId);
 
       if (error || !loadedWorkflow) {
@@ -110,8 +117,10 @@ export const useWorkflowForm = ({ agents, workflowId, workflow }: UseWorkflowFor
         keepIsValid: false,
         keepSubmitCount: false,
       });
-      setSteps(formSteps);
-      setIsLoadingWorkflow(false);
+      setTimeout(() => {
+        setSteps(formSteps);
+        setIsLoadingWorkflow(false);
+      }, 0);
     };
 
     loadWorkflow();
@@ -122,7 +131,7 @@ export const useWorkflowForm = ({ agents, workflowId, workflow }: UseWorkflowFor
 
   const addStep = (agentId: string) => {
     const agent = agents.find((a) => a.id === agentId);
-    if (!agent) return;
+    if (!agent) {return;}
 
     const stepName = `Step ${steps.length + 1}: ${agent.name}`;
     const newStep = { agentId, name: stepName };
@@ -137,8 +146,8 @@ export const useWorkflowForm = ({ agents, workflowId, workflow }: UseWorkflowFor
   };
 
   const moveStep = (index: number, direction: 'up' | 'down') => {
-    if (direction === 'up' && index === 0) return;
-    if (direction === 'down' && index === steps.length - 1) return;
+    if (direction === 'up' && index === 0) {return;}
+    if (direction === 'down' && index === steps.length - 1) {return;}
 
     const newSteps = [...steps];
     const targetIndex = direction === 'up' ? index - 1 : index + 1;

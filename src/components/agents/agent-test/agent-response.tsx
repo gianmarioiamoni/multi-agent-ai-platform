@@ -15,7 +15,7 @@ interface AgentResponseProps {
 }
 
 export const AgentResponse = ({ message, success, executionTime }: AgentResponseProps) => {
-  if (!message) return null;
+  if (!message) {return null;}
 
   return (
     <Card>

@@ -56,8 +56,7 @@ export const LandingHowItWorks = () => {
                 </h3>
                 <p className="text-[var(--color-muted-foreground)]">{step.description}</p>
               </div>
-              {index < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-1/2 -right-4 transform -translate-y-1/2">
+              {index < steps.length - 1 ? <div className="hidden lg:block absolute top-1/2 -right-4 transform -translate-y-1/2">
                   <svg
                     className="w-8 h-8 text-[var(--color-primary)]"
                     fill="none"
@@ -71,8 +70,7 @@ export const LandingHowItWorks = () => {
                       d="M9 5l7 7-7 7"
                     />
                   </svg>
-                </div>
-              )}
+                </div> : null}
             </div>
           ))}
         </div>

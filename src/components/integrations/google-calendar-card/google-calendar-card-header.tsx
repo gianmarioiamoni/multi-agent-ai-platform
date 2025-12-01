@@ -30,11 +30,9 @@ export const GoogleCalendarCardHeader = ({ isConnected }: GoogleCalendarCardHead
             Connect your Google Calendar to let agents create and view calendar events
           </CardDescription>
         </div>
-        {isConnected && (
-          <span className="px-3 py-1 text-sm font-medium rounded-full bg-green-500/20 text-green-500">
+        {isConnected ? <span className="px-3 py-1 text-sm font-medium rounded-full bg-green-500/20 text-green-500">
             Connected
-          </span>
-        )}
+          </span> : null}
       </div>
     </CardHeader>
   );

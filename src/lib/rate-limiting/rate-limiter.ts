@@ -34,6 +34,22 @@ const workflowLimiter = new Ratelimit({
   prefix: 'multi-agent-ai:ratelimit:workflow:run',
 });
 
+// Public API rate limiter (for unauthenticated endpoints)
+const publicApiLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(20, '1 m'), // 20 requests per minute
+  analytics: true,
+  prefix: 'multi-agent-ai:ratelimit:public:api',
+});
+
+// General API rate limiter (for authenticated endpoints)
+const generalApiLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(60, '1 m'), // 60 requests per minute
+  analytics: true,
+  prefix: 'multi-agent-ai:ratelimit:api:general',
+});
+
 export type RateLimitResult = {
   allowed: boolean;
   remaining: number;
@@ -43,40 +59,44 @@ export type RateLimitResult = {
 
 /**
  * Check if a request is within rate limits
- * @param userId - User ID making the request
- * @param endpoint - Endpoint identifier (e.g., 'agent:execute', 'workflow:run')
+ * @param identifier - User ID or IP address making the request
+ * @param endpoint - Endpoint identifier (e.g., 'agent:execute', 'workflow:run', 'public:api', 'api:general')
  * @returns Rate limit check result
  */
 export async function checkRateLimit(
-  userId: string,
+  identifier: string,
   endpoint: string
 ): Promise<RateLimitResult> {
   try {
     // Select the appropriate limiter based on endpoint
     let limiter: Ratelimit;
-    let maxRequests: number;
     let windowSeconds: number;
 
     switch (endpoint) {
       case 'agent:execute':
         limiter = agentLimiter;
-        maxRequests = 10;
         windowSeconds = 60; // 1 minute
         break;
       case 'workflow:run':
         limiter = workflowLimiter;
-        maxRequests = 5;
         windowSeconds = 300; // 5 minutes
         break;
+      case 'public:api':
+        limiter = publicApiLimiter;
+        windowSeconds = 60; // 1 minute
+        break;
+      case 'api:general':
+        limiter = generalApiLimiter;
+        windowSeconds = 60; // 1 minute
+        break;
       default:
-        // Fallback to agent limiter for unknown endpoints
-        limiter = agentLimiter;
-        maxRequests = 10;
+        // Fallback to general API limiter for unknown endpoints
+        limiter = generalApiLimiter;
         windowSeconds = 60;
     }
 
-    // Check rate limit using user ID as identifier
-    const result = await limiter.limit(userId);
+    // Check rate limit using identifier (user ID or IP address)
+    const result = await limiter.limit(identifier);
 
     // Calculate reset time
     const resetAt = new Date(Date.now() + (result.reset || windowSeconds) * 1000);
@@ -89,7 +109,7 @@ export async function checkRateLimit(
   } catch (error) {
     // On error, allow the request but log the error
     // This is a fail-open approach to avoid blocking legitimate requests
-    console.error('Rate limit check error:', error);
+    console.error('Rate limit check error:', error instanceof Error ? error : new Error(String(error)));
 
     // If Redis is not configured, allow requests (for development)
     if (
@@ -129,7 +149,11 @@ export function getRateLimitConfig(endpoint: string): {
       return { maxRequests: 10, windowMinutes: 1 };
     case 'workflow:run':
       return { maxRequests: 5, windowMinutes: 5 };
+    case 'public:api':
+      return { maxRequests: 20, windowMinutes: 1 };
+    case 'api:general':
+      return { maxRequests: 60, windowMinutes: 1 };
     default:
-      return { maxRequests: 10, windowMinutes: 1 };
+      return { maxRequests: 60, windowMinutes: 1 };
   }
 }

@@ -42,7 +42,7 @@ async function wasNotificationSent(
 ): Promise<boolean> {
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = await (supabase as any)
+    const { data: _existingNotification, error } = await (supabase as any)
       .from('subscription_notifications')
       .select('id')
       .eq('user_id', userId)
@@ -98,19 +98,19 @@ async function getUserEmail(
 ): Promise<string | null> {
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = await (supabase as any)
+    const { data: userData, error } = await (supabase as any)
       .auth.admin.getUserById(userId);
 
-    if (error || !data?.user?.email) {
+    if (error || !userData?.user?.email) {
       logger.error('Failed to get user email', { userId, error: error?.message });
       return null;
     }
 
-    return data.user.email;
-  } catch (error) {
+    return userData.user.email;
+  } catch (_error) {
     logger.error('Exception getting user email', {
       userId,
-      error: error instanceof Error ? error.message : String(error),
+      error: _error instanceof Error ? _error.message : String(_error),
     });
     return null;
   }
@@ -151,10 +151,6 @@ export async function processSubscriptionExpiries(): Promise<{
 
   try {
     const supabase = createAdminClient();
-    const now = new Date().toISOString();
-    const twoDaysFromNow = new Date();
-    twoDaysFromNow.setDate(twoDaysFromNow.getDate() + 2);
-    const twoDaysFromNowISO = twoDaysFromNow.toISOString();
 
     // Get all users with active subscriptions (not admin, not demo)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -191,10 +187,9 @@ export async function processSubscriptionExpiries(): Promise<{
         const nextPlan = profile.next_plan;
         const planSwitchAt = profile.plan_switch_at;
         const subscriptionCancelledAt = profile.subscription_cancelled_at;
-        const isDisabled = profile.is_disabled;
         const userName = profile.name || null;
 
-        if (!expiresAt) continue;
+        if (!expiresAt) {continue;}
 
         const daysRemaining = calculateDaysRemaining(expiresAt);
         const expiryDate = new Date(expiresAt);

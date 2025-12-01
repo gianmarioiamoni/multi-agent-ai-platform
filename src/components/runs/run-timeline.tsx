@@ -33,7 +33,7 @@ export const RunTimeline = ({ run }: RunTimelineProps) => {
         <CardTitle>Execution Timeline</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {run.agent_runs.map((agentRun, index) => (
+        {run.agent_runs.map((agentRun) => (
           <AgentRunStep
             key={agentRun.id}
             agentRun={agentRun}

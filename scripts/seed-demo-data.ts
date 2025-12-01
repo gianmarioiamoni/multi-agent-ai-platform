@@ -8,6 +8,8 @@
  * - Demo user must be marked as demo (is_demo = true in profiles)
  */
 
+/* eslint-disable no-console */
+
 import { config } from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database.types';
@@ -234,11 +236,11 @@ async function seedDemoData() {
         existingAgents.forEach(agent => {
           // Try to match by name (this is a bit fragile, but works for demo)
           const nameLower = agent.name.toLowerCase();
-          if (nameLower.includes('research')) agentMap['research'] = agent.id;
-          if (nameLower.includes('report')) agentMap['report'] = agent.id;
-          if (nameLower.includes('email')) agentMap['email'] = agent.id;
-          if (nameLower.includes('meeting')) agentMap['meeting'] = agent.id;
-          if (nameLower.includes('operations')) agentMap['operations'] = agent.id;
+          if (nameLower.includes('research')) {agentMap['research'] = agent.id;}
+          if (nameLower.includes('report')) {agentMap['report'] = agent.id;}
+          if (nameLower.includes('email')) {agentMap['email'] = agent.id;}
+          if (nameLower.includes('meeting')) {agentMap['meeting'] = agent.id;}
+          if (nameLower.includes('operations')) {agentMap['operations'] = agent.id;}
         });
 
         // Create workflows with existing agents

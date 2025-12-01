@@ -3,10 +3,11 @@
  * Tests with explicit error checking and verification
  */
 
+/* eslint-disable no-console */
 import { config } from 'dotenv';
 import { resolve } from 'path';
 import { createAdminClient } from '../src/lib/supabase/admin';
-import { logInfo, logError, logWarn, createScopedLogger } from '../src/lib/logging/logger';
+import { logInfo } from '../src/lib/logging/logger';
 
 // Load environment variables
 config({ path: resolve(process.cwd(), '.env.local') });
@@ -65,7 +66,7 @@ async function testLoggingDetailed() {
     console.log('📋 Step 2: Testing database connection...');
     try {
       const supabase = await createAdminClient();
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('logs')
         .select('id')
         .limit(1);

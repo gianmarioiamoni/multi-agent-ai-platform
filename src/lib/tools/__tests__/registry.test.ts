@@ -73,10 +73,10 @@ describe('Tool Registry', () => {
       expect(isToolAvailable('email')).toBe(false);
       
       // Restore originals
-      if (originalHost) process.env.SMTP_HOST = originalHost;
-      if (originalPort) process.env.SMTP_PORT = originalPort;
-      if (originalUser) process.env.SMTP_USER = originalUser;
-      if (originalPass) process.env.SMTP_PASSWORD = originalPass;
+      if (originalHost) {process.env.SMTP_HOST = originalHost;}
+      if (originalPort) {process.env.SMTP_PORT = originalPort;}
+      if (originalUser) {process.env.SMTP_USER = originalUser;}
+      if (originalPass) {process.env.SMTP_PASSWORD = originalPass;}
     });
   });
 

@@ -41,7 +41,7 @@ export const HelpResourceItem = ({ resource }: HelpResourceItemProps) => {
           className={cn(getButtonStyles('outline', 'md'), 'w-full')}
         >
           {resource.title}
-          {resource.external && <ExternalLink className="ml-2 h-4 w-4" />}
+          {resource.external ? <ExternalLink className="ml-2 h-4 w-4" /> : null}
         </Link>
       </CardContent>
     </Card>

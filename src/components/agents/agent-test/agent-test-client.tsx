@@ -36,16 +36,14 @@ export const AgentTestClient = ({ agentId, agentName }: AgentTestClientProps) =>
       </div>
 
       {/* Error Display */}
-      {hasError && !result && (
-        <Card className="border-[var(--color-destructive)]">
+      {hasError && !result ? <Card className="border-[var(--color-destructive)]">
           <CardHeader>
             <CardTitle className="text-lg text-[var(--color-destructive)]">Error</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-[var(--color-destructive)]">{error}</p>
           </CardContent>
-        </Card>
-      )}
+        </Card> : null}
 
       {/* Test Form */}
       <Card>
@@ -61,31 +59,24 @@ export const AgentTestClient = ({ agentId, agentName }: AgentTestClientProps) =>
       </Card>
 
       {/* Reset Button */}
-      {hasResult && (
-        <div className="flex justify-end">
+      {hasResult ? <div className="flex justify-end">
           <Button variant="outline" size="sm" onClick={reset}>
             Clear Results
           </Button>
-        </div>
-      )}
+        </div> : null}
 
       {/* Agent Response */}
-      {result && (
-        <AgentResponse
+      {result ? <AgentResponse
           message={result.message}
           success={result.success}
           executionTime={result.totalExecutionTime}
-        />
-      )}
+        /> : null}
 
       {/* Tool Calls Log */}
-      {result && result.toolCalls.length > 0 && (
-        <ToolCallsLog toolCalls={result.toolCalls} />
-      )}
+      {result && result.toolCalls.length > 0 ? <ToolCallsLog toolCalls={result.toolCalls} /> : null}
 
       {/* Execution Summary */}
-      {result && (
-        <Card>
+      {result ? <Card>
           <CardHeader>
             <CardTitle className="text-lg">📊 Execution Summary</CardTitle>
           </CardHeader>
@@ -118,8 +109,7 @@ export const AgentTestClient = ({ agentId, agentName }: AgentTestClientProps) =>
               </div>
             </div>
           </CardContent>
-        </Card>
-      )}
+        </Card> : null}
     </div>
   );
 };

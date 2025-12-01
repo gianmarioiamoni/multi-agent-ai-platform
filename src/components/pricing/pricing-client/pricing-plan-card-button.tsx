@@ -39,7 +39,7 @@ export const PricingPlanCardButton = ({
 
   // Paid plans: show subscribe button
   const handleSubscribe = async () => {
-    if (isCurrentPlan || isLoading) return;
+    if (isCurrentPlan || isLoading) {return;}
 
     setIsLoading(true);
     try {
@@ -70,7 +70,7 @@ export const PricingPlanCardButton = ({
         showError('Invalid response from checkout server');
         setIsLoading(false);
       }
-    } catch (error) {
+    } catch (_error) {
       showError('An unexpected error occurred. Please try again.');
       setIsLoading(false);
     }

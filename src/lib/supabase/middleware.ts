@@ -8,7 +8,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import type { Database } from '@/types/database.types';
 
 export const updateSession = async (request: NextRequest) => {
-  let supabaseResponse = NextResponse.next({
+  const supabaseResponse = NextResponse.next({
     request,
   });
 

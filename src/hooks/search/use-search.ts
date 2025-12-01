@@ -27,7 +27,9 @@ export const useSearch = (inputRef: RefObject<HTMLInputElement | null>) => {
     }
 
     if (query.trim().length >= 2) {
-      setIsLoading(true);
+      setTimeout(() => {
+        setIsLoading(true);
+      }, 0);
       searchTimeoutRef.current = setTimeout(async () => {
         const { data, error } = await searchAll(query);
         if (error) {

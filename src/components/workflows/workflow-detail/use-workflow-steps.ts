@@ -37,14 +37,18 @@ export const useWorkflowSteps = (steps: WorkflowStep[]) => {
           }
         })
       );
-      setStepsWithAgents(stepsWithNames);
-      setIsLoading(false);
+      setTimeout(() => {
+        setStepsWithAgents(stepsWithNames);
+        setIsLoading(false);
+      }, 0);
     };
 
     if (steps.length > 0) {
       fetchAgentNames();
     } else {
-      setIsLoading(false);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 0);
     }
   }, [steps]);
 

@@ -4,6 +4,7 @@
  * Usage: pnpm bootstrap:admin
  */
 
+/* eslint-disable no-console */
 import { config } from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database.types';

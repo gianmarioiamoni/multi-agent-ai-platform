@@ -34,11 +34,9 @@ export const AppLayoutClient = ({ user, isDemo, children }: AppLayoutClientProps
   return (
     <div className="min-h-screen bg-[var(--color-background)]">
       {/* Demo Mode Banner - Above everything */}
-      {isDemo && (
-        <div className="sticky top-0 z-50">
+      {isDemo ? <div className="sticky top-0 z-50">
           <DemoModeBanner />
-        </div>
-      )}
+        </div> : null}
 
       {/* Sidebar */}
       <Sidebar

@@ -165,13 +165,13 @@ export async function updateWorkflow(
     const supabase = await createClient();
 
     // Verify ownership
-    const { data: existing } = await supabase
+    const { data: existingWorkflow } = await supabase
       .from('workflows')
       .select('owner_id')
       .eq('id', workflowId)
       .single();
 
-    const existingData = existing as { owner_id?: string } | null;
+    const existingData = existingWorkflow as { owner_id?: string } | null;
     if (!existingData || existingData.owner_id !== user.id) {
       return { data: null, error: 'Workflow not found' };
     }
@@ -188,7 +188,7 @@ export async function updateWorkflow(
     // even though types are correctly defined in Database. Cast to any is necessary here.
     // The data is correctly typed above (updateData: Database['public']['Tables']['workflows']['Update'])
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = await (supabase as any)
+    const { data: updatedWorkflow, error } = await (supabase as any)
       .from('workflows')
       .update(updateData)
       .eq('id', workflowId)
@@ -203,7 +203,7 @@ export async function updateWorkflow(
     revalidatePath('/app/workflows');
     revalidatePath(`/app/workflows/${workflowId}`);
 
-    return { data: data as Workflow, error: null };
+    return { data: updatedWorkflow as Workflow, error: null };
   } catch (error) {
     console.error('Error in updateWorkflow:', error);
     return { data: null, error: 'An unexpected error occurred' };
@@ -247,8 +247,8 @@ export async function deleteWorkflow(
     revalidatePath('/app/workflows');
 
     return { error: null };
-  } catch (error) {
-    console.error('Error in deleteWorkflow:', error);
+  } catch (_error) {
+    console.error('Error in deleteWorkflow:', _error);
     return { error: 'An unexpected error occurred' };
   }
 }
@@ -381,7 +381,7 @@ export async function getWorkflowRuns(): Promise<{
         || 'Unknown';
       
       // Remove workflows from the run object
-      const { workflows, ...runData } = run;
+      const { workflows: _workflows, ...runData } = run;
       
       return {
         ...runData,
@@ -439,7 +439,7 @@ export async function getWorkflowRun(runId: string): Promise<{
       ? workflow[0]?.name 
       : workflow?.name 
       || 'Unknown';
-    const { workflows, ...runDataClean } = runData;
+    const { workflows: _workflows, ...runDataClean } = runData;
 
     // Get agent runs with agent names
     // Workaround: Type inference issue with agent_runs table - cast needed
@@ -463,7 +463,7 @@ export async function getWorkflowRun(runId: string): Promise<{
     // Get tool invocations for each agent run
     const agentRunIds = (agentRunsData || []).map((ar) => ar.id);
     // Workaround: Type inference issue with tool_invocations table - cast needed
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const { data: toolInvocationsData, error: toolInvocationsError } = agentRunIds.length > 0
       ? await (supabase as any)
           .from('tool_invocations')
@@ -485,7 +485,7 @@ export async function getWorkflowRun(runId: string): Promise<{
         : agent?.name 
         || 'Unknown';
       
-      const { agents, ...arClean } = ar;
+      const { agents: _agents, ...arClean } = ar;
       
       return {
         ...arClean,

@@ -49,11 +49,9 @@ export const UserTableRow = ({
           <UserAvatar name={user.name} />
           <span className="text-[var(--color-foreground)] font-medium">
             {user.name || 'Unnamed User'}
-            {isCurrentUser && (
-              <span className="ml-2 text-xs text-[var(--color-muted-foreground)]">
+            {isCurrentUser ? <span className="ml-2 text-xs text-[var(--color-muted-foreground)]">
                 (You)
-              </span>
-            )}
+              </span> : null}
           </span>
         </div>
       </td>

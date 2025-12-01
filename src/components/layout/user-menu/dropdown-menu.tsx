@@ -35,7 +35,7 @@ export const DropdownMenu = ({
           <p className="text-sm font-medium text-[var(--color-foreground)]">
             {userName || 'User'}
           </p>
-          {isDemo && <DemoBadge />}
+          {isDemo ? <DemoBadge /> : null}
         </div>
         <p className="text-xs text-[var(--color-muted-foreground)] capitalize">
           {userRole}
@@ -66,8 +66,7 @@ export const DropdownMenu = ({
         label="Settings"
       />
 
-      {isAdmin && (
-        <MenuItem
+      {isAdmin ? <MenuItem
           href="/admin"
           onClick={onItemClick}
           variant="primary"
@@ -77,8 +76,7 @@ export const DropdownMenu = ({
             </svg>
           }
           label="Admin Panel"
-        />
-      )}
+        /> : null}
 
       <div className="my-1 border-t border-[var(--color-border)]" />
 

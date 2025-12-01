@@ -3,6 +3,7 @@
  * Tests the structured logging system
  */
 
+/* eslint-disable no-console */
 import { config } from 'dotenv';
 import { resolve } from 'path';
 import { createAdminClient } from '../src/lib/supabase/admin';
@@ -72,7 +73,7 @@ async function testLogging() {
       supabase = await createAdminClient();
       
       // Test connection by checking if logs table exists
-      const { data: tableCheck, error: tableError } = await supabase
+      const { error: tableError } = await supabase
         .from('logs')
         .select('id')
         .limit(1);

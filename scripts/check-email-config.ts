@@ -3,6 +3,7 @@
  * Verifies if email service is properly configured
  */
 
+/* eslint-disable no-console */
 import 'dotenv/config';
 
 async function checkEmailConfig() {

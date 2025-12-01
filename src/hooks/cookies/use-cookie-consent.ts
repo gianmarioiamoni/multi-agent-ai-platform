@@ -32,11 +32,13 @@ export const useCookieConsent = (): UseCookieConsentReturn => {
   const [hasConsented, setHasConsented] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
-    const status = getCookieConsent();
-    const consented = hasCookieConsent();
-    setConsentStatus(status);
-    setHasConsented(consented);
+    setTimeout(() => {
+      setIsMounted(true);
+      const status = getCookieConsent();
+      const consented = hasCookieConsent();
+      setConsentStatus(status);
+      setHasConsented(consented);
+    }, 0);
   }, []);
 
   const showBanner = isMounted && !hasConsented && consentStatus === null;

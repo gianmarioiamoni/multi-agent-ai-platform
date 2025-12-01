@@ -23,16 +23,14 @@ export const FormActions = ({ hasChanges, isSubmitting, onReset }: FormActionsPr
         {isSubmitting ? 'Saving...' : 'Save Changes'}
       </Button>
 
-      {hasChanges && (
-        <Button
+      {hasChanges ? <Button
           type="button"
           variant="outline"
           onClick={onReset}
           disabled={isSubmitting}
         >
           Reset
-        </Button>
-      )}
+        </Button> : null}
     </div>
   );
 };

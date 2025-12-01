@@ -3,6 +3,7 @@
  * Checks what tables exist and their structure
  */
 
+/* eslint-disable no-console */
 import { config } from 'dotenv';
 import { resolve } from 'path';
 import { createClient } from '@supabase/supabase-js';
@@ -86,7 +87,7 @@ const main = async () => {
     
     // Try alternative method
     console.log('\nTrying alternative method...');
-    const { data: schemaData, error: schemaError } = await supabase
+    const { error: schemaError } = await supabase
       .rpc('get_tables' as never);
     
     if (schemaError) {
