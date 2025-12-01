@@ -7,14 +7,18 @@
 'use server';
 
 import { createAdminClient } from '@/lib/supabase/admin';
-import { logInfo, logError, createScopedLogger } from '@/lib/logging/logger';
+import { logInfo, logError } from '@/lib/logging/logger';
+import { createScopedLogger } from '@/lib/logging/scoped-logger';
 import {
   sendSubscriptionExpiringSoonEmail,
   sendSubscriptionExpiredEmail,
   sendAccountDisabledEmail,
 } from './email-notifications';
 
-const logger = createScopedLogger('SubscriptionExpiryManager');
+const logger = createScopedLogger({
+  category: 'subscription',
+  context: { scope: 'SubscriptionExpiryManager' },
+});
 
 /**
  * Calculate days remaining until expiry

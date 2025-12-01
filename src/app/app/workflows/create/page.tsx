@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   description: 'Create a new multi-agent workflow',
 };
 
+// Force dynamic rendering since this page uses cookies (auth) to fetch user-specific data
+export const dynamic = 'force-dynamic';
+
 export default async function CreateWorkflowPage() {
   const { data: agents, error } = await getAgents();
 

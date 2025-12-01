@@ -18,7 +18,7 @@ import { CONTACT_CATEGORIES } from '@/lib/contact/constants';
 // Validation schema
 const contactFormSchema = z.object({
   category: z.enum(['technical', 'commercial', 'feature', 'bug', 'partnership', 'general'], {
-    required_error: 'Please select a category',
+    message: 'Please select a category',
   }),
   name: z
     .string()
@@ -38,7 +38,7 @@ const contactFormSchema = z.object({
     .max(2000, 'Message must be less than 2000 characters'),
 });
 
-type ContactFormValues = z.infer<typeof contactFormSchema>;
+export type ContactFormValues = z.infer<typeof contactFormSchema>;
 
 interface UseContactFormOptions {
   defaultCategory?: ContactCategory;

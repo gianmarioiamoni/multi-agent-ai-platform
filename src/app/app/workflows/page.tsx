@@ -14,6 +14,9 @@ export const metadata: Metadata = {
   description: 'Manage your workflows',
 };
 
+// Force dynamic rendering since this page uses cookies (auth) to fetch user-specific data
+export const dynamic = 'force-dynamic';
+
 export default async function WorkflowsPage() {
   const { data: workflows, error } = await getWorkflows();
 

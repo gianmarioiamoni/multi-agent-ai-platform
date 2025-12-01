@@ -11,6 +11,9 @@ import { getCurrentUserProfile } from '@/lib/auth/utils';
 import { PricingHeader } from '@/components/pricing/pricing-header';
 import { PricingClient } from '@/components/pricing/pricing-client';
 
+// Force dynamic rendering since this page uses cookies (auth) to fetch user-specific data
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Pricing',
   description: 'Choose the subscription plan that fits your needs. Start with a free 30-day trial.',

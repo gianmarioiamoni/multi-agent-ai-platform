@@ -37,17 +37,17 @@ export async function GET(request: Request) {
   try {
     // Verify cron secret if configured
     if (!verifyCronSecret(request)) {
-      logError('Unauthorized cron job request', {
+      logError('system', 'Unauthorized cron job request', new Error('Unauthorized'), {
         hasAuthHeader: !!request.headers.get('authorization'),
       });
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    logInfo('Subscription expiry cron job started');
+    logInfo('subscription', 'Subscription expiry cron job started');
 
     const stats = await processSubscriptionExpiries();
 
-    logInfo('Subscription expiry cron job completed', stats);
+    logInfo('subscription', 'Subscription expiry cron job completed', stats);
 
     return NextResponse.json({
       success: true,
@@ -55,9 +55,14 @@ export async function GET(request: Request) {
       stats,
     });
   } catch (error) {
-    logError('Subscription expiry cron job failed', {
-      error: error instanceof Error ? error.message : String(error),
-    });
+    logError(
+      'subscription',
+      'Subscription expiry cron job failed',
+      error instanceof Error ? error : new Error(String(error)),
+      {
+        errorMessage: error instanceof Error ? error.message : String(error),
+      }
+    );
 
     return NextResponse.json(
       {

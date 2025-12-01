@@ -10,6 +10,9 @@ import { RunsHeader } from '@/components/runs/runs-header';
 import { RunsList } from '@/components/runs/runs-list';
 import { EmptyRunsState } from '@/components/runs/empty-runs-state';
 
+// Force dynamic rendering since this page uses cookies (auth) to fetch user-specific data
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Runs',
   description: 'View workflow execution history',

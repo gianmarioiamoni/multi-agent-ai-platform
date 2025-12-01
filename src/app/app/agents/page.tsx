@@ -8,6 +8,9 @@ import { AgentsHeader } from '@/components/agents/agents-header';
 import { AgentsList } from '@/components/agents/agents-list';
 import { EmptyAgentsState } from '@/components/agents/empty-agents-state';
 
+// Force dynamic rendering since this page uses cookies (auth) to fetch user-specific data
+export const dynamic = 'force-dynamic';
+
 export default async function AgentsPage() {
   const { data: agents, error } = await getAgents();
 

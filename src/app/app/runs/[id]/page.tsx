@@ -15,6 +15,9 @@ type PageProps = {
   params: Promise<{ id: string }>;
 };
 
+// Force dynamic rendering since this page uses cookies (auth) to fetch user-specific data
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
   return {

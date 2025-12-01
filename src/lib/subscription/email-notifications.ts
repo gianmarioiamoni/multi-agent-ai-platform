@@ -22,11 +22,16 @@ async function getTransporter(): Promise<Transporter | null> {
   const config = await getEmailToolConfig();
   
   if (!config || !config.enabled || config.provider !== 'smtp') {
-    logError('Email configuration not available for subscription notifications', {
-      hasConfig: !!config,
-      enabled: config?.enabled,
-      provider: config?.provider,
-    });
+    logError(
+      'subscription',
+      'Email configuration not available for subscription notifications',
+      new Error('Email config missing or disabled'),
+      {
+        hasConfig: !!config,
+        enabled: config?.enabled,
+        provider: config?.provider,
+      }
+    );
     return null;
   }
 
@@ -36,13 +41,22 @@ async function getTransporter(): Promise<Transporter | null> {
   const smtpPass = config.smtp_password;
 
   if (!smtpHost || !smtpPort || !smtpUser || !smtpPass) {
-    logError('SMTP configuration incomplete for subscription notifications');
+    logError(
+      'subscription',
+      'SMTP configuration incomplete for subscription notifications',
+      new Error('SMTP config incomplete')
+    );
     return null;
   }
 
   const port = typeof smtpPort === 'number' ? smtpPort : parseInt(String(smtpPort), 10);
   if (isNaN(port)) {
-    logError('Invalid SMTP_PORT for subscription notifications', { port: smtpPort });
+    logError(
+      'subscription',
+      'Invalid SMTP_PORT for subscription notifications',
+      new Error(`Invalid port: ${smtpPort}`),
+      { port: smtpPort }
+    );
     return null;
   }
 
@@ -84,7 +98,11 @@ export async function sendSubscriptionExpiringSoonEmail(
   try {
     const transporter = await getTransporter();
     if (!transporter) {
-      logError('Cannot send subscription expiry warning: transporter not available');
+      logError(
+        'subscription',
+        'Cannot send subscription expiry warning: transporter not available',
+        new Error('Transporter not available')
+      );
       return false;
     }
 
@@ -163,7 +181,7 @@ This is an automated notification.
       html: htmlContent,
     });
 
-    logInfo('Subscription expiry warning email sent', {
+    logInfo('subscription', 'Subscription expiry warning email sent', {
       userEmail,
       planName,
       expiresAt,
@@ -171,10 +189,14 @@ This is an automated notification.
 
     return true;
   } catch (error) {
-    logError('Failed to send subscription expiry warning email', {
-      userEmail,
-      error: error instanceof Error ? error.message : String(error),
-    });
+    logError(
+      'subscription',
+      'Failed to send subscription expiry warning email',
+      error instanceof Error ? error : new Error(String(error)),
+      {
+        userEmail,
+      }
+    );
     return false;
   }
 }
@@ -190,7 +212,11 @@ export async function sendSubscriptionExpiredEmail(
   try {
     const transporter = await getTransporter();
     if (!transporter) {
-      logError('Cannot send subscription expired email: transporter not available');
+      logError(
+        'subscription',
+        'Cannot send subscription expired email: transporter not available',
+        new Error('Transporter not available')
+      );
       return false;
     }
 
@@ -264,17 +290,21 @@ This is an automated notification.
       html: htmlContent,
     });
 
-    logInfo('Subscription expired email sent', {
+    logInfo('subscription', 'Subscription expired email sent', {
       userEmail,
       planName,
     });
 
     return true;
   } catch (error) {
-    logError('Failed to send subscription expired email', {
-      userEmail,
-      error: error instanceof Error ? error.message : String(error),
-    });
+    logError(
+      'subscription',
+      'Failed to send subscription expired email',
+      error instanceof Error ? error : new Error(String(error)),
+      {
+        userEmail,
+      }
+    );
     return false;
   }
 }
@@ -289,7 +319,11 @@ export async function sendAccountDisabledEmail(
   try {
     const transporter = await getTransporter();
     if (!transporter) {
-      logError('Cannot send account disabled email: transporter not available');
+      logError(
+        'subscription',
+        'Cannot send account disabled email: transporter not available',
+        new Error('Transporter not available')
+      );
       return false;
     }
 
@@ -366,16 +400,20 @@ This is an automated notification.
       html: htmlContent,
     });
 
-    logInfo('Account disabled email sent', {
+    logInfo('subscription', 'Account disabled email sent', {
       userEmail,
     });
 
     return true;
   } catch (error) {
-    logError('Failed to send account disabled email', {
-      userEmail,
-      error: error instanceof Error ? error.message : String(error),
-    });
+    logError(
+      'subscription',
+      'Failed to send account disabled email',
+      error instanceof Error ? error : new Error(String(error)),
+      {
+        userEmail,
+      }
+    );
     return false;
   }
 }

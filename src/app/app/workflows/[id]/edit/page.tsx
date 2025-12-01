@@ -14,6 +14,9 @@ interface EditWorkflowPageProps {
   params: Promise<{ id: string }>;
 }
 
+// Force dynamic rendering since this page uses cookies (auth) to fetch user-specific data
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata({ params }: EditWorkflowPageProps): Promise<Metadata> {
   const { id } = await params;
   const { data: workflow } = await getWorkflow(id);

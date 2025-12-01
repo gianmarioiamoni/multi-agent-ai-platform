@@ -9,6 +9,9 @@ import { getCurrentUserProfile, getCurrentUser } from '@/lib/auth/utils';
 import { ContactForm } from '@/components/contact/contact-form';
 import { ContactPageHeader } from '@/components/contact/contact-page-header';
 
+// Force dynamic rendering since this page uses cookies (auth) to fetch user-specific data
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Contact Us',
   description: 'Get in touch with us for support, inquiries, or feedback',

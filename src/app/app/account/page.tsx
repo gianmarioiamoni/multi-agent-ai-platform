@@ -13,6 +13,9 @@ import { AccountSecuritySection } from '@/components/account/account-security-se
 import { AccountGdprSection } from '@/components/account/account-gdpr-section';
 import { DemoRestrictionsNotice } from '@/components/demo/demo-restrictions-notice';
 
+// Force dynamic rendering since this page uses cookies (auth) to fetch user-specific data
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'My Account',
   description: 'Manage your account',

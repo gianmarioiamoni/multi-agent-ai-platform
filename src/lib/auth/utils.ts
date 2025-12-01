@@ -23,6 +23,9 @@ export interface UserProfile {
   nextPlan: 'trial' | 'basic' | 'premium' | null;
   planSwitchAt: string | null;
   subscriptionCancelledAt: string | null;
+  stripeCustomerId: string | null;
+  stripeSubscriptionId: string | null;
+  stripePriceId: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -102,6 +105,9 @@ export const getCurrentUserProfile = async (): Promise<UserProfile | null> => {
     next_plan: 'trial' | 'basic' | 'premium' | null;
     plan_switch_at: string | null;
     subscription_cancelled_at: string | null;
+    stripe_customer_id: string | null;
+    stripe_subscription_id: string | null;
+    stripe_price_id: string | null;
     created_at: string;
     updated_at: string;
   };
@@ -121,6 +127,9 @@ export const getCurrentUserProfile = async (): Promise<UserProfile | null> => {
     nextPlan: profileData.next_plan || null,
     planSwitchAt: profileData.plan_switch_at || null,
     subscriptionCancelledAt: profileData.subscription_cancelled_at || null,
+    stripeCustomerId: profileData.stripe_customer_id || null,
+    stripeSubscriptionId: profileData.stripe_subscription_id || null,
+    stripePriceId: profileData.stripe_price_id || null,
     createdAt: profileData.created_at,
     updatedAt: profileData.updated_at,
   };

@@ -14,6 +14,9 @@ interface AgentTestPageProps {
   params: Promise<{ id: string }>;
 }
 
+// Force dynamic rendering since this page uses cookies (auth) to fetch user-specific data
+export const dynamic = 'force-dynamic';
+
 export default async function AgentTestPage({ params }: AgentTestPageProps) {
   // Require authentication
   const user = await getCurrentUser();

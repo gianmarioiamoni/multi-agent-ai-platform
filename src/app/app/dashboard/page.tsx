@@ -11,6 +11,9 @@ import { DashboardStatsGrid } from '@/components/dashboard/dashboard-stats-grid'
 import { DashboardQuickActions } from '@/components/dashboard/dashboard-quick-actions';
 import { DashboardGettingStarted } from '@/components/dashboard/dashboard-getting-started';
 
+// Force dynamic rendering since this page uses cookies (auth) to fetch user-specific data
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Dashboard',
   description: 'Manage your AI agents and workflows',

@@ -6,6 +6,9 @@
 import { AgentBuilder } from '@/components/agents/agent-builder';
 import { getDefaultModel } from '@/lib/settings/utils';
 
+// Force dynamic rendering since this page uses cookies (auth) to fetch user-specific data
+export const dynamic = 'force-dynamic';
+
 export default async function CreateAgentPage() {
   const defaultModel = await getDefaultModel();
 

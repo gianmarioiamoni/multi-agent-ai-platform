@@ -19,6 +19,7 @@ export type LogCategory =
   | 'auth'
   | 'api'
   | 'database'
+  | 'subscription'
   | 'system';
 
 export interface LogContext {

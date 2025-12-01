@@ -14,6 +14,9 @@ interface AgentDetailPageProps {
   params: Promise<{ id: string }>;
 }
 
+// Force dynamic rendering since this page uses cookies (auth) to fetch user-specific data
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata({ params }: AgentDetailPageProps): Promise<Metadata> {
   const { id } = await params;
   const { data: agent } = await getAgent(id);

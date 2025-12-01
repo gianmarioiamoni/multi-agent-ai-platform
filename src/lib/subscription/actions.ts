@@ -69,13 +69,7 @@ export async function subscribeToPlan(
       };
     }
 
-    // Trial cannot be selected manually
-    if (plan === 'trial') {
-      return {
-        success: false,
-        error: 'Trial is automatically assigned. You cannot manually subscribe to trial.',
-      };
-    }
+    // Note: Trial cannot be selected manually (type system prevents it since plan is 'basic' | 'premium')
 
     const supabase = await createClient();
     const now = new Date();
@@ -144,20 +138,24 @@ export async function subscribeToPlan(
       .eq('user_id', profile.userId);
 
     if (error) {
-      logError('Failed to subscribe to plan', {
-        userId: profile.userId,
-        plan,
-        billingCycle,
-        currentPlan,
-        error: error.message,
-      });
+      logError(
+        'subscription',
+        'Failed to subscribe to plan',
+        new Error(error.message),
+        {
+          userId: profile.userId,
+          plan,
+          billingCycle,
+          currentPlan,
+        }
+      );
       return {
         success: false,
         error: 'Failed to subscribe to plan. Please try again.',
       };
     }
 
-    logInfo('Subscription plan subscribed', {
+    logInfo('subscription', 'Subscription plan subscribed', {
       userId: profile.userId,
       plan,
       billingCycle,
@@ -172,9 +170,11 @@ export async function subscribeToPlan(
 
     return { success: true };
   } catch (error) {
-    logError('Error subscribing to plan', {
-      error: error instanceof Error ? error.message : String(error),
-    });
+    logError(
+      'subscription',
+      'Error subscribing to plan',
+      error instanceof Error ? error : new Error(String(error))
+    );
     return {
       success: false,
       error: 'An unexpected error occurred. Please try again.',
@@ -241,17 +241,21 @@ export async function cancelSubscription(): Promise<ActionResult> {
       .eq('user_id', profile.userId);
 
     if (error) {
-      logError('Failed to cancel subscription', {
-        userId: profile.userId,
-        error: error.message,
-      });
+      logError(
+        'subscription',
+        'Failed to cancel subscription',
+        new Error(error.message),
+        {
+          userId: profile.userId,
+        }
+      );
       return {
         success: false,
         error: 'Failed to cancel subscription. Please try again.',
       };
     }
 
-    logInfo('Subscription cancelled', {
+    logInfo('subscription', 'Subscription cancelled', {
       userId: profile.userId,
       currentPlan,
       willReturnToTrial: hasTrialDays,
@@ -264,9 +268,11 @@ export async function cancelSubscription(): Promise<ActionResult> {
 
     return { success: true };
   } catch (error) {
-    logError('Error cancelling subscription', {
-      error: error instanceof Error ? error.message : String(error),
-    });
+    logError(
+      'subscription',
+      'Error cancelling subscription',
+      error instanceof Error ? error : new Error(String(error))
+    );
     return {
       success: false,
       error: 'An unexpected error occurred. Please try again.',

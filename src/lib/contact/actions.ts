@@ -19,7 +19,11 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
  */
 async function sendAdminEmail(formData: ContactFormData): Promise<{ success: boolean; error?: string }> {
   if (!ADMIN_EMAIL) {
-    logError('Contact form: ADMIN_EMAIL environment variable not set');
+    logError(
+      'api',
+      'Contact form: ADMIN_EMAIL environment variable not set',
+      new Error('ADMIN_EMAIL not configured')
+    );
     return {
       success: false,
       error: 'Contact form is not configured. Please contact support directly.',
@@ -33,12 +37,17 @@ async function sendAdminEmail(formData: ContactFormData): Promise<{ success: boo
   if (!emailConfig || !emailConfig.enabled) {
     // Log detailed error for debugging
     const hasEnvVars = !!(process.env.SMTP_HOST && process.env.SMTP_PORT && process.env.SMTP_USER && process.env.SMTP_PASSWORD);
-    logError('Contact form: Email service is not configured', {
-      hasConfig: !!emailConfig,
-      configEnabled: emailConfig?.enabled,
-      hasEnvVars,
-      hasAdminEmail: !!ADMIN_EMAIL,
-    });
+    logError(
+      'api',
+      'Contact form: Email service is not configured',
+      new Error('Email service not configured'),
+      {
+        hasConfig: !!emailConfig,
+        configEnabled: emailConfig?.enabled,
+        hasEnvVars,
+        hasAdminEmail: !!ADMIN_EMAIL,
+      }
+    );
     return {
       success: false,
       error: 'Email service is not configured. Please contact support directly.',
@@ -118,14 +127,21 @@ async function sendAdminEmail(formData: ContactFormData): Promise<{ success: boo
   });
 
   if (!result.success) {
-    logError('Contact form: Failed to send admin email', { error: result.error });
+    logError(
+      'api',
+      'Contact form: Failed to send admin email',
+      new Error(result.error || 'Unknown error'),
+      {
+        error: result.error,
+      }
+    );
     return {
       success: false,
       error: result.error || 'Failed to send contact form. Please try again later.',
     };
   }
 
-  logInfo('Contact form: Admin email sent successfully', {
+  logInfo('api', 'Contact form: Admin email sent successfully', {
     category: formData.category,
     email: formData.email,
   });
@@ -144,7 +160,11 @@ async function sendConfirmationEmail(formData: ContactFormData): Promise<{ succe
   if (!emailConfig || !emailConfig.enabled) {
     // If email is not configured, don't fail the form submission
     // Just log a warning (admin email was already sent if form reached here)
-    logError('Contact form: Email service not configured, skipping confirmation email');
+    logError(
+      'api',
+      'Contact form: Email service not configured, skipping confirmation email',
+      new Error('Email service not configured')
+    );
     return { success: true }; // Don't fail the submission
   }
 
@@ -195,11 +215,18 @@ async function sendConfirmationEmail(formData: ContactFormData): Promise<{ succe
 
   if (!result.success) {
     // Log error but don't fail the form submission
-    logError('Contact form: Failed to send confirmation email', { error: result.error });
+    logError(
+      'api',
+      'Contact form: Failed to send confirmation email',
+      new Error(result.error || 'Unknown error'),
+      {
+        error: result.error,
+      }
+    );
     return { success: true }; // Don't fail the submission if confirmation fails
   }
 
-  logInfo('Contact form: Confirmation email sent successfully', {
+  logInfo('api', 'Contact form: Confirmation email sent successfully', {
     email: formData.email,
   });
 
@@ -225,7 +252,14 @@ export async function submitContactForm(
 
     return { success: true };
   } catch (error) {
-    logError('Contact form: Unexpected error', { error: error instanceof Error ? error.message : String(error) });
+    logError(
+      'api',
+      'Contact form: Unexpected error',
+      error instanceof Error ? error : new Error(String(error)),
+      {
+        errorMessage: error instanceof Error ? error.message : String(error),
+      }
+    );
     return {
       success: false,
       error: 'An unexpected error occurred. Please try again later.',

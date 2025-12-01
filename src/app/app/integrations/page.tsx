@@ -7,6 +7,9 @@
 import type { Metadata } from 'next';
 import { IntegrationsClient } from '@/components/integrations/integrations-client';
 
+// Force dynamic rendering since this page uses cookies (auth) to fetch user-specific data
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Integrations',
   description: 'Manage external service integrations',

@@ -39,9 +39,8 @@ export async function checkSubscriptionStatus(userId: string): Promise<Subscript
       .single();
 
     if (error || !profile) {
-      logError('Failed to check subscription status', {
+      logError('subscription', 'Failed to check subscription status', new Error(error?.message || 'Unknown error'), {
         userId,
-        error: error?.message,
       });
       return {
         isExpired: false,
@@ -97,10 +96,14 @@ export async function checkSubscriptionStatus(userId: string): Promise<Subscript
       shouldShowWarning: !isExpired && daysRemaining <= 7 && daysRemaining > 0, // Warn if 7 days or less remaining
     };
   } catch (error) {
-    logError('Error checking subscription status', {
-      userId,
-      error: error instanceof Error ? error.message : String(error),
-    });
+    logError(
+      'subscription',
+      'Error checking subscription status',
+      error instanceof Error ? error : new Error(String(error)),
+      {
+        userId,
+      }
+    );
     return {
       isExpired: false,
       daysRemaining: null,
@@ -131,20 +134,28 @@ export async function disableExpiredUser(userId: string): Promise<boolean> {
       .eq('is_disabled', false); // Only update if not already disabled
 
     if (error) {
-      logError('Failed to disable expired user at login', {
-        userId,
-        error: error.message,
-      });
+      logError(
+        'subscription',
+        'Failed to disable expired user at login',
+        new Error(error.message),
+        {
+          userId,
+        }
+      );
       return false;
     }
 
-    logInfo('Expired user disabled at login (safety net)', { userId });
+    logInfo('subscription', 'Expired user disabled at login (safety net)', { userId });
     return true;
   } catch (error) {
-    logError('Error disabling expired user at login', {
-      userId,
-      error: error instanceof Error ? error.message : String(error),
-    });
+    logError(
+      'subscription',
+      'Error disabling expired user at login',
+      error instanceof Error ? error : new Error(String(error)),
+      {
+        userId,
+      }
+    );
     return false;
   }
 }
