@@ -6,7 +6,9 @@
 
 import type { Tool, ToolResult } from '@/types/tool.types';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+import { getAppUrl } from '@/utils/url';
+
+const API_BASE_URL = getAppUrl();
 const DB_OPS_TIMEOUT = 10000; // 10 seconds
 
 /**

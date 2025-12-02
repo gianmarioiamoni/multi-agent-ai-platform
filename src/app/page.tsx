@@ -8,8 +8,9 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth/utils';
 import { LandingPageClient } from '@/components/landing/landing-page-client';
+import { getAppUrl } from '@/utils/url';
 
-const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://multiagent.ai';
+const siteUrl = getAppUrl();
 
 export const metadata: Metadata = {
   title: 'Multi-Agent AI Platform - Automate Your Business Workflows',

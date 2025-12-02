@@ -9,7 +9,9 @@ import type { Metadata } from 'next';
 import { HelpCenterHeader } from '@/components/help/help-center-header';
 import { HelpCenterContent } from '@/components/help/help-center-content';
 
-const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://multiagent.ai';
+import { getAppUrl } from '@/utils/url';
+
+const siteUrl = getAppUrl();
 
 export const metadata: Metadata = {
   title: 'Help Center - Multi-Agent AI Platform',

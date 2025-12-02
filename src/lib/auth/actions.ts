@@ -11,6 +11,7 @@ import { createClient } from '@/lib/supabase/server';
 import { isDemoUser } from './demo-user';
 import { validateCsrfToken } from '@/lib/security/csrf';
 import { logCsrfMismatchFromAction } from '@/lib/security/security-logger';
+import { getAppUrl } from '@/utils/url';
 
 export type AuthResponse = {
   success: boolean;
@@ -180,7 +181,7 @@ export const signInWithGoogle = async (): Promise<{ url: string }> => {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
+      redirectTo: `${getAppUrl()}/auth/callback`,
     },
   });
 
@@ -210,7 +211,7 @@ export const resetPassword = async (
   const supabase = await createClient();
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password`,
+    redirectTo: `${getAppUrl()}/auth/reset-password`,
   });
 
   if (error) {

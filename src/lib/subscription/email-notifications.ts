@@ -7,6 +7,7 @@
 import nodemailer, { type Transporter } from 'nodemailer';
 import { getEmailToolConfig } from '@/lib/tools/config-loader';
 import { logInfo, logError } from '@/lib/logging/logger';
+import { getAppUrl } from '@/utils/url';
 
 let cachedTransporter: Transporter | null = null;
 
@@ -140,7 +141,7 @@ export async function sendSubscriptionExpiringSoonEmail(
                 <li><strong>Premium Plan:</strong> €19.90/month or €199/year</li>
               </ul>
               <p>
-                <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/app/pricing" class="button">
+                <a href="${getAppUrl()}/app/pricing" class="button">
                   View Plans & Subscribe
                 </a>
               </p>
@@ -164,7 +165,7 @@ To continue using Multi-Agent AI Platform without interruption, please subscribe
 - Basic Plan: €9.90/month or €99/year
 - Premium Plan: €19.90/month or €199/year
 
-Visit ${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/app/pricing to view plans and subscribe.
+Visit ${getAppUrl()}/app/pricing to view plans and subscribe.
 
 If your subscription expires, your account will be disabled and you will lose access to all features.
 
@@ -249,7 +250,7 @@ export async function sendSubscriptionExpiredEmail(
                 <li><strong>Premium Plan:</strong> €19.90/month or €199/year</li>
               </ul>
               <p>
-                <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/app/pricing" class="button">
+                <a href="${getAppUrl()}/app/pricing" class="button">
                   Subscribe Now
                 </a>
               </p>
@@ -273,7 +274,7 @@ Your account will be disabled shortly. To regain access and continue using Multi
 - Basic Plan: €9.90/month or €99/year
 - Premium Plan: €19.90/month or €199/year
 
-Visit ${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/app/pricing to subscribe.
+Visit ${getAppUrl()}/app/pricing to subscribe.
 
 Once you subscribe, your account will be reactivated immediately.
 
@@ -357,7 +358,7 @@ export async function sendAccountDisabledEmail(
                 <li><strong>Premium Plan:</strong> €19.90/month or €199/year</li>
               </ul>
               <p>
-                <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/app/pricing" class="button">
+                <a href="${getAppUrl()}/app/pricing" class="button">
                   Subscribe & Reactivate Account
                 </a>
               </p>
@@ -383,7 +384,7 @@ To reactivate your account and continue using the platform, please subscribe to 
 - Basic Plan: €9.90/month or €99/year
 - Premium Plan: €19.90/month or €199/year
 
-Visit ${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/app/pricing to subscribe.
+Visit ${getAppUrl()}/app/pricing to subscribe.
 
 Once you subscribe, your account will be reactivated immediately and you'll regain full access to all your agents, workflows, and data.
 

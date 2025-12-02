@@ -5,6 +5,7 @@
  */
 
 import type { SubscriptionPlan, BillingCycle } from '@/types/subscription.types';
+import { getAppUrl } from '@/utils/url';
 
 /**
  * Mapping of our plan IDs to Stripe Price IDs
@@ -55,7 +56,7 @@ export function getStripeCheckoutUrls(): {
   successUrl: string;
   cancelUrl: string;
 } {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const baseUrl = getAppUrl();
 
   return {
     successUrl: `${baseUrl}/app/subscription/success`,

@@ -7,8 +7,9 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { getAppUrl } from '@/utils/url';
 
-const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://multiagent.ai';
+const siteUrl = getAppUrl();
 
 export const metadata: Metadata = {
   title: 'Privacy Policy - Multi-Agent AI Platform',

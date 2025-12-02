@@ -6,6 +6,7 @@
 
 import { getStoredCredential, saveStoredCredential } from './actions';
 import type { GoogleOAuthTokens } from '@/types/credentials.types';
+import { getAppUrl } from '@/utils/url';
 
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 
@@ -97,7 +98,7 @@ export async function getValidGoogleCalendarToken(): Promise<string | null> {
  */
 export function getGoogleCalendarAuthUrl(): string {
   const clientId = process.env.GOOGLE_CLIENT_ID;
-  const redirectUri = process.env.GOOGLE_REDIRECT_URI || `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback/google-calendar`;
+  const redirectUri = process.env.GOOGLE_REDIRECT_URI || `${getAppUrl()}/auth/callback/google-calendar`;
 
   if (!clientId) {
     throw new Error('GOOGLE_CLIENT_ID is not configured');
@@ -126,7 +127,7 @@ export function getGoogleCalendarAuthUrl(): string {
 export async function exchangeGoogleCalendarCode(code: string): Promise<GoogleOAuthTokens | null> {
   const clientId = process.env.GOOGLE_CLIENT_ID;
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-  const redirectUri = process.env.GOOGLE_REDIRECT_URI || `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback/google-calendar`;
+  const redirectUri = process.env.GOOGLE_REDIRECT_URI || `${getAppUrl()}/auth/callback/google-calendar`;
 
   if (!clientId || !clientSecret) {
     return null;

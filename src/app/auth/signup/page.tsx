@@ -7,8 +7,9 @@
 import type { Metadata } from 'next';
 import { SignUpForm } from '@/components/auth/signup-form';
 import { getOrGenerateCsrfToken } from '@/lib/security/csrf';
+import { getAppUrl } from '@/utils/url';
 
-const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://multiagent.ai';
+const siteUrl = getAppUrl();
 
 export const metadata: Metadata = {
   title: 'Sign Up - Multi-Agent AI Platform',

@@ -14,7 +14,9 @@ import { PricingClient } from '@/components/pricing/pricing-client';
 // Force dynamic rendering since this page uses cookies (auth) to fetch user-specific data
 export const dynamic = 'force-dynamic';
 
-const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://multiagent.ai';
+import { getAppUrl } from '@/utils/url';
+
+const siteUrl = getAppUrl();
 
 export const metadata: Metadata = {
   title: 'Pricing Plans - Multi-Agent AI Platform',

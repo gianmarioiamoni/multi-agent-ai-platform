@@ -5,6 +5,7 @@ import { ToastProvider } from '@/contexts/toast-context';
 import { ToastContainer } from '@/components/ui/toast-container';
 import { CookieBanner } from '@/components/cookie-banner';
 import { BreadcrumbsProvider } from '@/contexts/breadcrumbs-context';
+import { getAppUrl } from '@/utils/url';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -12,7 +13,7 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://multiagent.ai';
+const siteUrl = getAppUrl();
 const siteName = 'Multi-Agent AI Platform';
 const siteDescription = 'Automate your business workflows with AI agents. Create intelligent workflows, manage multiple AI agents, and streamline your operations with our powerful multi-agent platform.';
 
