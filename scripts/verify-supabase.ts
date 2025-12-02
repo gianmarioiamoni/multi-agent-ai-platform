@@ -106,7 +106,7 @@ const verifyDatabaseSchema = async (): Promise<boolean> => {
     );
 
     // Check if profiles table exists and has correct structure
-    const { data, error } = await supabase
+    const { data: _data, error } = await supabase
       .from('profiles')
       .select('*')
       .limit(0);
@@ -187,7 +187,7 @@ const verifyAdminClient = async (): Promise<boolean> => {
     );
 
     // Admin client should be able to access profiles bypassing RLS
-    const { data, error } = await adminClient
+    const { data: _data, error } = await adminClient
       .from('profiles')
       .select('count', { count: 'exact', head: true });
 

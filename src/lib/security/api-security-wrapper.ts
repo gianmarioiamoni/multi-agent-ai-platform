@@ -139,13 +139,14 @@ export async function withApiSecurity<T>(
     // Otherwise, wrap in JSON response
     return NextResponse.json(result);
   } catch (error) {
-    const sanitized = sanitizeErrorResponse(error, 'api', false);
+    const sanitized = sanitizeErrorResponse(error, 'unknown', false);
+    const errorMessage = error instanceof Error ? error.message : String(error);
     
     // Log error
     await logWarn('api', 'API route error', {
       path: request.nextUrl.pathname,
       method: request.method,
-      error: sanitized.technicalDetails || error instanceof Error ? error.message : String(error),
+      error: sanitized.technicalDetails || errorMessage,
     });
 
     return NextResponse.json(

@@ -120,7 +120,7 @@ export async function saveStoredCredential(
     
     // Workaround: Type inference issue with stored_credentials table - cast needed
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = await (supabase as any)
+    const { data: _data, error } = await (supabase as any)
       .from('stored_credentials')
       .upsert(
         {

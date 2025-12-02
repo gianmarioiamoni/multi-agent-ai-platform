@@ -7,7 +7,6 @@
 'use server';
 
 import { createAdminClient } from '@/lib/supabase/admin';
-import { logInfo, logError } from '@/lib/logging/logger';
 import { createScopedLogger } from '@/lib/logging/scoped-logger';
 import {
   sendSubscriptionExpiringSoonEmail,
@@ -57,7 +56,7 @@ async function wasNotificationSent(
       return false;
     }
 
-    return !!data;
+    return !!_existingNotification;
   } catch (error) {
     logger.error('Exception checking notification status', {
       error: error instanceof Error ? error.message : String(error),
@@ -236,7 +235,7 @@ export async function processSubscriptionExpiries(): Promise<{
           // - Already disabled
           // - Has next_plan scheduled (will be handled above)
           // - Has cancellation (already handled above)
-          if (!isDisabled && !nextPlan && !subscriptionCancelledAt) {
+          if (!profile.is_disabled && !nextPlan && !subscriptionCancelledAt) {
             // No recovery path: disable user
             await disableUser(supabase, userId, userEmail, userName, expiresAt);
             stats.disabled++;

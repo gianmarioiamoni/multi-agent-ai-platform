@@ -8,7 +8,6 @@
 
 import { getToolConfig } from '@/lib/admin/tool-config-actions';
 import type {
-  ToolId,
   EmailToolConfig,
   WebSearchToolConfig,
   OpenAIToolConfig,
@@ -82,10 +81,10 @@ export async function getEmailToolConfig(): Promise<EmailToolConfig | null> {
     if (dbConfig && dbConfig.enabled) {
       return dbConfig.config as unknown as EmailToolConfig;
     }
-  } catch (error) {
+  } catch (_error) {
     // If database query fails, continue and return null
     // This allows the system to work even if DB is temporarily unavailable
-    console.warn('[Config Loader] Could not load email config from database, using env vars only:', error);
+    console.warn('[Config Loader] Could not load email config from database, using env vars only:', _error);
   }
 
   return null;
@@ -148,8 +147,8 @@ export async function getOpenAIToolConfig(): Promise<OpenAIToolConfig | null> {
     }
 
     return null;
-  } catch (error) {
-    console.error('[Config Loader] Error loading OpenAI config:', error);
+  } catch (_error) {
+    console.error('[Config Loader] Error loading OpenAI config:', _error);
     return null;
   }
 }

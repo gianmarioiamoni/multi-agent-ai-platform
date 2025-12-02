@@ -8,9 +8,26 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://multiagent.ai';
+
 export const metadata: Metadata = {
-  title: 'Privacy Policy',
-  description: 'Privacy Policy and GDPR compliance information for Multi-Agent AI Platform',
+  title: 'Privacy Policy - Multi-Agent AI Platform',
+  description:
+    'Privacy Policy and GDPR compliance information for Multi-Agent AI Platform. Learn how we protect your data and respect your privacy rights.',
+  keywords: ['privacy policy', 'GDPR', 'data protection', 'privacy rights', 'data privacy'],
+  alternates: {
+    canonical: `${siteUrl}/privacy`,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    title: 'Privacy Policy - Multi-Agent AI Platform',
+    description: 'Privacy Policy and GDPR compliance information for Multi-Agent AI Platform.',
+    url: `${siteUrl}/privacy`,
+    type: 'website',
+  },
 };
 
 export default function PrivacyPage() {

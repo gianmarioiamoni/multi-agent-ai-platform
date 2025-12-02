@@ -8,9 +8,18 @@ import type { Metadata } from 'next';
 import { SignUpForm } from '@/components/auth/signup-form';
 import { getOrGenerateCsrfToken } from '@/lib/security/csrf';
 
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://multiagent.ai';
+
 export const metadata: Metadata = {
   title: 'Sign Up - Multi-Agent AI Platform',
   description: 'Create your account to start automating workflows with AI agents',
+  robots: {
+    index: false,
+    follow: false,
+  },
+  alternates: {
+    canonical: `${siteUrl}/auth/signup`,
+  },
 };
 
 export default async function SignUpPage() {

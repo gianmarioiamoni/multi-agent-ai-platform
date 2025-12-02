@@ -14,9 +14,34 @@ import { PricingClient } from '@/components/pricing/pricing-client';
 // Force dynamic rendering since this page uses cookies (auth) to fetch user-specific data
 export const dynamic = 'force-dynamic';
 
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://multiagent.ai';
+
 export const metadata: Metadata = {
-  title: 'Pricing',
-  description: 'Choose the subscription plan that fits your needs. Start with a free 30-day trial.',
+  title: 'Pricing Plans - Multi-Agent AI Platform',
+  description:
+    'Choose the subscription plan that fits your needs. Start with a free 30-day trial. Flexible pricing for individuals and businesses.',
+  keywords: [
+    'AI platform pricing',
+    'automation software pricing',
+    'workflow automation plans',
+    'AI agent subscription',
+    'business automation pricing',
+  ],
+  alternates: {
+    canonical: `${siteUrl}/pricing`,
+  },
+  openGraph: {
+    title: 'Pricing Plans - Multi-Agent AI Platform',
+    description:
+      'Choose the subscription plan that fits your needs. Start with a free 30-day trial.',
+    url: `${siteUrl}/pricing`,
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Pricing Plans - Multi-Agent AI Platform',
+    description: 'Choose the subscription plan that fits your needs. Start with a free 30-day trial.',
+  },
 };
 
 export default async function PricingPage() {

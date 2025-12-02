@@ -12,9 +12,27 @@ import { ContactPageHeader } from '@/components/contact/contact-page-header';
 // Force dynamic rendering since this page uses cookies (auth) to fetch user-specific data
 export const dynamic = 'force-dynamic';
 
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://multiagent.ai';
+
 export const metadata: Metadata = {
-  title: 'Contact Us',
-  description: 'Get in touch with us for support, inquiries, or feedback',
+  title: 'Contact Us - Multi-Agent AI Platform',
+  description:
+    'Get in touch with us for support, inquiries, or feedback. We&apos;re here to help you get the most out of our AI platform.',
+  keywords: ['contact', 'support', 'help', 'inquiry', 'feedback'],
+  alternates: {
+    canonical: `${siteUrl}/contact`,
+  },
+  openGraph: {
+    title: 'Contact Us - Multi-Agent AI Platform',
+    description: 'Get in touch with us for support, inquiries, or feedback.',
+    url: `${siteUrl}/contact`,
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Contact Us - Multi-Agent AI Platform',
+    description: 'Get in touch with us for support, inquiries, or feedback.',
+  },
 };
 
 export default async function ContactPage() {

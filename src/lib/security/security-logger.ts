@@ -67,9 +67,12 @@ export async function logSecurityEvent(event: SecurityEvent): Promise<void> {
   
   // Use warn level for security events to ensure they're visible
   await logWarn(
-    'security',
+    'system',
     `Security event: ${event.type}`,
-    context
+    {
+      ...context,
+      securityEventType: event.type,
+    }
   );
   
   // For critical events, also log as error
@@ -82,10 +85,13 @@ export async function logSecurityEvent(event: SecurityEvent): Promise<void> {
   
   if (criticalEvents.includes(event.type)) {
     await logError(
-      'security',
+      'system',
       `Critical security event: ${event.type}`,
       new Error(`Security violation: ${event.type}`),
-      context
+      {
+        ...context,
+        securityEventType: event.type,
+      }
     );
   }
 }

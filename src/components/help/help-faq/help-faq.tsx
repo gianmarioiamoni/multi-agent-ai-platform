@@ -14,7 +14,7 @@ export const HelpFAQ = () => {
       <h2 className="text-2xl font-semibold tracking-tight">Frequently Asked Questions</h2>
       <div className="space-y-2">
         {faqItems.map((item, index) => (
-          <HelpFAQItem key={index} item={item} index={index} />
+          <HelpFAQItem key={index} item={item} />
         ))}
       </div>
     </section>

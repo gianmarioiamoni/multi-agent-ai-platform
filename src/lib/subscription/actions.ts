@@ -91,7 +91,6 @@ export async function subscribeToPlan(
     const currentExpiresAt = profile.subscriptionExpiresAt
       ? new Date(profile.subscriptionExpiresAt)
       : null;
-    const isDisabled = profile.isDisabled;
 
     let updateData: Record<string, unknown> = {
       updated_at: now.toISOString(),

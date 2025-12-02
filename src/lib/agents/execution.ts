@@ -11,7 +11,7 @@ import { getAgent } from './actions';
 import { orchestrateAgent } from '@/lib/ai/orchestrator';
 import type { AgentExecutionResult } from '@/types/orchestrator.types';
 import { checkRateLimit } from '@/lib/rate-limiting/rate-limiter';
-import { createUserFriendlyError } from '@/lib/errors/error-handler';
+import { createUserFriendlyError, handleError } from '@/lib/errors/error-handler';
 import { createScopedLogger } from '@/lib/logging/scoped-logger';
 
 /**

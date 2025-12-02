@@ -165,7 +165,7 @@ export const useWorkflowForm = ({ agents, workflowId, workflow }: UseWorkflowFor
   };
 
   // Helper to convert form data to workflow graph
-  const convertToWorkflowGraph = (data: CreateWorkflowFormData) => {
+  const convertToWorkflowGraph = (_data: CreateWorkflowFormData) => {
     const workflowSteps: WorkflowStep[] = steps.map((step, index) => ({
       id: `step-${index + 1}`,
       agentId: step.agentId,

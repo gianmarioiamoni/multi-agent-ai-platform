@@ -46,7 +46,7 @@ async function executeToolCall(
     
     try {
       params = JSON.parse(toolCall.function.arguments);
-    } catch (error) {
+    } catch (_error) {
       throw new Error(`Invalid tool arguments: ${toolCall.function.arguments}`);
     }
 
@@ -65,7 +65,7 @@ async function executeToolCall(
       result,
       executionTime,
     };
-  } catch (error) {
+  } catch (_error) {
     const executionTime = Date.now() - startTime;
     
     return {
@@ -76,7 +76,7 @@ async function executeToolCall(
       },
       result: {
         success: false,
-        error: error instanceof Error ? error.message : 'Tool execution failed',
+        error: _error instanceof Error ? _error.message : 'Tool execution failed',
         executionTime,
       },
       executionTime,
@@ -300,7 +300,7 @@ export async function orchestrateAgent(
       toolCalls,
       totalExecutionTime,
     };
-  } catch (error) {
+  } catch (_error) {
     const totalExecutionTime = Date.now() - startTime;
     
     return {
@@ -308,7 +308,7 @@ export async function orchestrateAgent(
       message: '',
       toolCalls: [],
       totalExecutionTime,
-      error: error instanceof Error ? error.message : 'An unexpected error occurred',
+      error: _error instanceof Error ? _error.message : 'An unexpected error occurred',
     };
   }
 }

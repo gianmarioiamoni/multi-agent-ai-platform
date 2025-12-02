@@ -7,7 +7,6 @@
 import nodemailer, { type Transporter } from 'nodemailer';
 import { getEmailToolConfig } from '@/lib/tools/config-loader';
 import { logInfo, logError } from '@/lib/logging/logger';
-import type { EmailToolConfig } from '@/types/tool-config.types';
 
 let cachedTransporter: Transporter | null = null;
 

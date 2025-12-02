@@ -357,7 +357,7 @@ export async function getWorkflowRuns(): Promise<{
 
     // Workaround: Type inference issue with workflow_runs table - cast needed
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = await (supabase as any)
+    const { data: workflowRunsData, error } = await (supabase as any)
       .from('workflow_runs')
       .select(
         `
@@ -373,7 +373,7 @@ export async function getWorkflowRuns(): Promise<{
       return { data: null, error: 'Failed to fetch workflow runs' };
     }
 
-    const runs = (data || []).map((run) => {
+    const runs = (workflowRunsData || []).map((run) => {
       const workflow = run.workflows as { name: string } | { name: string }[] | null;
       const workflowName = Array.isArray(workflow) 
         ? workflow[0]?.name 
