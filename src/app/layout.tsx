@@ -13,12 +13,27 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
-const siteUrl = getAppUrl();
+// Get and normalize URL - ensure it's safe for new URL()
+const rawUrl = getAppUrl();
+const siteUrl = rawUrl.startsWith('http://') || rawUrl.startsWith('https://') 
+  ? rawUrl 
+  : `https://${rawUrl}`;
+
+// Validate URL before using in metadataBase
+let metadataBaseUrl: string;
+try {
+  new URL(siteUrl);
+  metadataBaseUrl = siteUrl;
+} catch {
+  // Fallback to default if URL is still invalid
+  metadataBaseUrl = 'https://multiagent.ai';
+}
+
 const siteName = 'Multi-Agent AI Platform';
 const siteDescription = 'Automate your business workflows with AI agents. Create intelligent workflows, manage multiple AI agents, and streamline your operations with our powerful multi-agent platform.';
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(metadataBaseUrl),
   title: {
     default: siteName,
     template: `%s | ${siteName}`,
