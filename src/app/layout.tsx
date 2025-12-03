@@ -60,8 +60,11 @@ export const metadata: Metadata = {
     telephone: false,
   },
   icons: {
-    icon: '/icon.svg',
-    shortcut: '/icon.svg',
+    icon: [
+      { url: '/favicon.ico', sizes: '32x32', type: 'image/x-icon' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
+    ],
+    shortcut: '/favicon.ico',
     apple: '/icon.svg',
   },
   manifest: '/manifest.json',
