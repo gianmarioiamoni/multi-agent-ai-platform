@@ -1,4 +1,29 @@
 import type { NextConfig } from "next";
+import { writeFileSync, mkdirSync, existsSync } from 'fs';
+import { join } from 'path';
+
+// Create middleware.js.nft.json file during config load
+// This ensures it exists before Vercel's tracing phase
+// Vercel may clean .next before build, so we also create it in postbuild
+try {
+  const nftDir = join(process.cwd(), '.next', 'server');
+  const nftFilePath = join(nftDir, 'middleware.js.nft.json');
+  
+  if (!existsSync(nftDir)) {
+    mkdirSync(nftDir, { recursive: true });
+  }
+
+  const nftContent = {
+    version: 1,
+    files: [],
+  };
+
+  writeFileSync(nftFilePath, JSON.stringify(nftContent, null, 2));
+  console.log(`✅ Created ${nftFilePath} during config load`);
+} catch (error) {
+  // Don't fail - will retry in postbuild script
+  console.warn('⚠️  Could not create middleware.js.nft.json during config load:', error);
+}
 
 const nextConfig: NextConfig = {
   reactCompiler: true,

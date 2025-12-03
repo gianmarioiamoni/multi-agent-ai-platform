@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && tsx scripts/fix-middleware-nft.ts",
+    "build": "next build",
+    "postbuild": "tsx scripts/fix-middleware-nft.ts",
     "start": "next start",
     "lint": "eslint",
     "test": "jest",
