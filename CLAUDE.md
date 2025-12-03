@@ -9,7 +9,7 @@ Valore business: automazione avanzata per aziende tech.Funzionalità:
 Multi-Agent AI Automation PlatformA full-stack platform that orchestrates multiple AI agents to automate business workflows across email, calendar, web search, and internal databases. Each agent has a specialized role (research, summarization, reporting, operations), can call tools (APIs, DB, schedulers), and collaborates to complete complex tasks. Built with Next.js, TypeScript, Supabase, OpenAI function calling, and a modular tool layer designed for extensibility and enterprise-grade authorization.
 
 ## Architettura & Roadmap tecnica ad alto livello
-### Core building blocks
+### Core building blocks 
 1. Frontend (Next.js + shadcn/ui)
     * Dashboard workflow
     * Agent builder (configurazione: role, tools, parametri modello)
