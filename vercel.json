@@ -1,4 +1,5 @@
 {
+  "buildCommand": "next build && tsx scripts/fix-middleware-nft.ts",
   "crons": [
     {
       "path": "/api/cron/subscription-expiry",
