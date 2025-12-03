@@ -74,12 +74,20 @@ export const LandingFooter = () => {
             <h4 className="text-sm font-semibold text-[var(--color-foreground)] mb-4">Legal</h4>
             <ul className="space-y-2">
               <li>
-                <span className="text-sm text-[var(--color-muted-foreground)]">Privacy Policy</span>
+                <Link
+                  href="/privacy"
+                  className="text-sm text-[var(--color-muted-foreground)] hover:text-[var(--color-primary)] transition-colors"
+                >
+                  Privacy Policy
+                </Link>
               </li>
               <li>
-                <span className="text-sm text-[var(--color-muted-foreground)]">
+                <Link
+                  href="/terms"
+                  className="text-sm text-[var(--color-muted-foreground)] hover:text-[var(--color-primary)] transition-colors"
+                >
                   Terms of Service
-                </span>
+                </Link>
               </li>
             </ul>
           </div>
