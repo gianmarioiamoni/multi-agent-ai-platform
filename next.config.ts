@@ -26,7 +26,7 @@ try {
 }
 
 const nextConfig: NextConfig = {
-  reactCompiler: true,
+  // reactCompiler is Next.js 16+ feature, removed for Next.js 15 compatibility
   async headers() {
     return [
       {

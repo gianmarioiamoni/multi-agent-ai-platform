@@ -87,7 +87,7 @@ export const ModelConfigSection = () => {
             <div className="flex items-center justify-between mb-2">
               <Label htmlFor="temperature">Temperature</Label>
               <span className="text-sm text-muted-foreground">
-                {field.value.toFixed(1)}
+                {field.value?.toFixed(1) ?? '0.0'}
               </span>
             </div>
             <input
