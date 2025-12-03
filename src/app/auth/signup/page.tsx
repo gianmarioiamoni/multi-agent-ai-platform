@@ -6,7 +6,7 @@
 
 import type { Metadata } from 'next';
 import { SignUpForm } from '@/components/auth/signup-form';
-import { getOrGenerateCsrfToken } from '@/lib/security/csrf';
+import { getCsrfToken } from '@/lib/security/csrf';
 import { getAppUrl } from '@/utils/url';
 
 const siteUrl = getAppUrl();
@@ -24,7 +24,9 @@ export const metadata: Metadata = {
 };
 
 export default async function SignUpPage() {
-  const csrfToken = await getOrGenerateCsrfToken();
-  return <SignUpForm csrfToken={csrfToken} />;
+  // Only read existing token, don't generate in Server Component
+  // Token will be generated client-side via Server Action if needed
+  const csrfToken = await getCsrfToken();
+  return <SignUpForm csrfToken={csrfToken || ''} />;
 }
 

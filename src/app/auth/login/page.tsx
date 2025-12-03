@@ -6,7 +6,7 @@
 
 import type { Metadata } from 'next';
 import { SignInForm } from '@/components/auth/signin-form';
-import { getOrGenerateCsrfToken } from '@/lib/security/csrf';
+import { getCsrfToken } from '@/lib/security/csrf';
 import { getAppUrl } from '@/utils/url';
 
 const siteUrl = getAppUrl();
@@ -27,7 +27,9 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function LoginPage() {
-  const csrfToken = await getOrGenerateCsrfToken();
-  return <SignInForm csrfToken={csrfToken} />;
+  // Only read existing token, don't generate in Server Component
+  // Token will be generated client-side via Server Action if needed
+  const csrfToken = await getCsrfToken();
+  return <SignInForm csrfToken={csrfToken || ''} />;
 }
 

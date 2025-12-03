@@ -106,12 +106,16 @@ export async function getCsrfToken(): Promise<string | null> {
  * Get or generate CSRF token for client-side use
  * If token doesn't exist, generates a new one
  * Returns the token value (not the signed token)
+ * 
+ * NOTE: This function can only be called from Server Actions or Route Handlers,
+ * not from Server Components. Use getCsrfToken() in Server Components instead.
  */
 export async function getOrGenerateCsrfToken(): Promise<string> {
   const existingToken = await getCsrfToken();
   if (existingToken) {
     return existingToken;
   }
+  // Generate token - this is a Server Action, so it can modify cookies
   return await generateCsrfToken();
 }
 

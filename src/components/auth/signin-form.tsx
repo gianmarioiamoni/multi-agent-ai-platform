@@ -6,7 +6,7 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSearchParams } from 'next/navigation';
@@ -17,6 +17,7 @@ import { GoogleButton } from '@/components/ui/google-button';
 import { AuthDivider } from '@/components/ui/auth-divider';
 import { AuthFooter } from '@/components/ui/auth-footer';
 import { EmailForm } from './signin-form/email-form';
+import { generateCsrfToken } from '@/lib/security/csrf';
 import {
   Card,
   CardContent,
@@ -27,12 +28,25 @@ import {
 } from '@/components/ui/card';
 
 interface SignInFormProps {
-  csrfToken: string;
+  csrfToken: string | null;
 }
 
-export const SignInForm = ({ csrfToken }: SignInFormProps) => {
+export const SignInForm = ({ csrfToken: initialCsrfToken }: SignInFormProps) => {
+  const [csrfToken, setCsrfToken] = useState<string>(initialCsrfToken || '');
   const { info, error: showError } = useToast();
   const searchParams = useSearchParams();
+  
+  // Generate CSRF token if not provided
+  useEffect(() => {
+    if (!csrfToken) {
+      generateCsrfToken().then((token) => {
+        setCsrfToken(token);
+      }).catch((err) => {
+        console.error('Failed to generate CSRF token:', err);
+      });
+    }
+  }, [csrfToken]);
+  
   const { isLoading, isGoogleLoading, handleEmailSignIn, handleGoogleSignIn } = useSignIn(csrfToken);
 
   // Show info/error toasts based on query parameters

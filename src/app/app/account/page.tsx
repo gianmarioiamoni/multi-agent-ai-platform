@@ -5,7 +5,7 @@
 
 import type { Metadata } from 'next';
 import { getCurrentUserProfile } from '@/lib/auth/utils';
-import { getOrGenerateCsrfToken } from '@/lib/security/csrf';
+import { getCsrfToken } from '@/lib/security/csrf';
 import { AccountHeader } from '@/components/account/account-header';
 import { AccountProfileSection } from '@/components/account/account-profile-section';
 import { AccountDetailsSection } from '@/components/account/account-details-section';
@@ -24,7 +24,9 @@ export const metadata: Metadata = {
 
 export default async function AccountPage() {
   const profile = await getCurrentUserProfile();
-  const csrfToken = await getOrGenerateCsrfToken();
+  // Only read existing token, don't generate in Server Component
+  // Token will be generated client-side via Server Action if needed
+  const csrfToken = await getCsrfToken();
 
   if (!profile) {
     return null;
@@ -47,7 +49,7 @@ export default async function AccountPage() {
         planSwitchAt={profile.planSwitchAt}
       />
       {profile.isDemo ? <DemoRestrictionsNotice /> : null}
-      <AccountSecuritySection isDemo={profile.isDemo} csrfToken={csrfToken} />
+      <AccountSecuritySection isDemo={profile.isDemo} csrfToken={csrfToken || ''} />
       <AccountGdprSection />
     </div>
   );

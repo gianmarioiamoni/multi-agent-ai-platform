@@ -6,12 +6,14 @@
 
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signUpSchema, type SignUpFormData } from '@/lib/validations/auth';
 import { useSignUp } from '@/hooks/auth/use-signup';
 import { AuthFooter } from '@/components/ui/auth-footer';
 import { EmailForm } from './signup-form/email-form';
+import { generateCsrfToken } from '@/lib/security/csrf';
 import {
   Card,
   CardContent,
@@ -22,10 +24,22 @@ import {
 } from '@/components/ui/card';
 
 interface SignUpFormProps {
-  csrfToken: string;
+  csrfToken: string | null;
 }
 
-export const SignUpForm = ({ csrfToken }: SignUpFormProps) => {
+export const SignUpForm = ({ csrfToken: initialCsrfToken }: SignUpFormProps) => {
+  const [csrfToken, setCsrfToken] = useState<string>(initialCsrfToken || '');
+  
+  // Generate CSRF token if not provided
+  useEffect(() => {
+    if (!csrfToken) {
+      generateCsrfToken().then((token) => {
+        setCsrfToken(token);
+      }).catch((err) => {
+        console.error('Failed to generate CSRF token:', err);
+      });
+    }
+  }, [csrfToken]);
   const { isLoading, handleSignUp } = useSignUp(csrfToken);
 
   const {
