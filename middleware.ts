@@ -178,5 +178,7 @@ export const config = {
      */
     '/((?!_next/static|_next/image|favicon.ico).*)',
   ],
+  // Explicitly set runtime to edge (default in Next.js 15)
+  runtime: 'edge',
 };
 
