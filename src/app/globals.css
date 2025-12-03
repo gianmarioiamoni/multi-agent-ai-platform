@@ -172,3 +172,16 @@ body {
   line-height: 1.5;
   color: var(--color-muted-foreground);
 }
+
+/* Landing Hero Background - Responsive background-size */
+.landing-hero-bg {
+  /* Default: contain for small screens (< 1024px) - prevents image cropping */
+  background-size: contain;
+}
+
+/* Desktop and up (>= 1024px): use cover for better visual effect */
+@media (min-width: 1024px) {
+  .landing-hero-bg {
+    background-size: cover;
+  }
+}

@@ -17,15 +17,17 @@ export const LandingHero = ({ backgroundImage }: LandingHeroProps) => {
   const backgroundStyle = backgroundImage
     ? {
         backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
+        // background-size is handled by CSS class landing-hero-bg with media queries
       }
     : {};
 
   return (
     <section
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      className={`relative min-h-screen flex items-center justify-center overflow-hidden ${
+        backgroundImage ? 'landing-hero-bg' : ''
+      }`}
       style={backgroundStyle}
     >
       {/* Overlay opaco per leggibilità - ridotto per maggiore visibilità dell'immagine */}
