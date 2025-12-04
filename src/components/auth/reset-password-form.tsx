@@ -1,18 +1,17 @@
 /**
  * Reset Password Form Component
- * Form for requesting password reset email
+ * Main composition component for password reset
+ * Following SRP: Only handles component composition
  */
 
 'use client';
 
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import { resetPasswordSchema, type ResetPasswordFormData } from '@/lib/validations/auth';
-import { resetPassword } from '@/lib/auth/actions';
-import { useToast } from '@/contexts/toast-context';
-import { Button } from '@/components/ui/button';
+import { useResetPassword } from '@/hooks/auth/use-reset-password';
 import {
   Card,
   CardContent,
@@ -21,13 +20,13 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import Link from 'next/link';
+import { ResetPasswordEmailForm } from './reset-password-form/reset-password-email-form';
+import { EmailSentCard } from './reset-password-form/email-sent-card';
+import { TokenRecoveryCard } from './reset-password-form/token-recovery-card';
 
 export const ResetPasswordForm = () => {
-  const { success, error: showError } = useToast();
   const searchParams = useSearchParams();
-  const [isLoading, setIsLoading] = useState(false);
-  const [emailSent, setEmailSent] = useState(false);
+  const { isLoading, emailSent, handleResetPassword } = useResetPassword();
   
   // Check if we have a token from the reset link
   const token = searchParams.get('token');
@@ -42,81 +41,20 @@ export const ResetPasswordForm = () => {
   });
 
   const onSubmit = async (data: ResetPasswordFormData) => {
-    setIsLoading(true);
-
-    try {
-      // CSRF token is optional for password reset
-      const result = await resetPassword(data.email);
-
-      if (result.success) {
-        setEmailSent(true);
-        success(
-          'Reset email sent',
-          'Please check your email for password reset instructions.'
-        );
-      } else {
-        showError('Failed to send reset email', result.error);
-        setIsLoading(false);
-      }
-    } catch (err) {
-      showError(
-        'An error occurred',
-        err instanceof Error ? err.message : 'Please try again later.'
-      );
-      setIsLoading(false);
-    }
+    await handleResetPassword(data.email);
   };
 
   // If we have a token, this is the actual password reset (from email link)
-  // For now, we'll just show a message that they should use the link from email
   if (token && type === 'recovery') {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Reset Your Password</CardTitle>
-          <CardDescription>
-            Please use the link from your email to reset your password.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-[var(--color-muted-foreground)]">
-            If you clicked the link from your email, you should be redirected automatically.
-            If not, please check your email for the reset link.
-          </p>
-        </CardContent>
-        <CardFooter>
-          <Link href="/auth/login" className="text-sm text-[var(--color-primary)] hover:underline">
-            Back to Sign In
-          </Link>
-        </CardFooter>
-      </Card>
-    );
+    return <TokenRecoveryCard />;
   }
 
+  // If email was sent successfully, show confirmation
   if (emailSent) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Check Your Email</CardTitle>
-          <CardDescription>
-            We&apos;ve sent you a password reset link
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-[var(--color-muted-foreground)]">
-            Please check your email and click the link to reset your password.
-            The link will expire in 1 hour.
-          </p>
-        </CardContent>
-        <CardFooter>
-          <Link href="/auth/login" className="text-sm text-[var(--color-primary)] hover:underline">
-            Back to Sign In
-          </Link>
-        </CardFooter>
-      </Card>
-    );
+    return <EmailSentCard />;
   }
 
+  // Default: show email input form
   return (
     <Card>
       <CardHeader>
@@ -127,38 +65,12 @@ export const ResetPasswordForm = () => {
       </CardHeader>
 
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-[var(--color-foreground)] mb-2"
-            >
-              Email Address
-            </label>
-            <input
-              id="email"
-              type="email"
-              {...register('email')}
-              className="w-full px-3 py-2 border border-[var(--color-border)] rounded-md bg-[var(--color-background)] text-[var(--color-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
-              placeholder="your@email.com"
-              disabled={isLoading}
-            />
-            {errors.email && (
-              <p className="mt-1 text-sm text-[var(--color-destructive)]">
-                {errors.email.message}
-              </p>
-            )}
-          </div>
-
-          <Button
-            type="submit"
-            variant="primary"
-            className="w-full"
-            disabled={isLoading}
-          >
-            {isLoading ? 'Sending...' : 'Send Reset Link'}
-          </Button>
-        </form>
+        <ResetPasswordEmailForm
+          register={register}
+          errors={errors}
+          isLoading={isLoading}
+          onSubmit={handleSubmit(onSubmit)}
+        />
       </CardContent>
 
       <CardFooter>
