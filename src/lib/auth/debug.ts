@@ -3,6 +3,7 @@
  * Temporary debug helpers to diagnose authentication issues
  */
 
+/* eslint-disable no-console */
 'use server';
 
 import { cookies } from 'next/headers';

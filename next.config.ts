@@ -19,9 +19,11 @@ try {
   };
 
   writeFileSync(nftFilePath, JSON.stringify(nftContent, null, 2));
+  // eslint-disable-next-line no-console
   console.log(`✅ Created ${nftFilePath} during config load`);
 } catch (error) {
   // Don't fail - will retry in postbuild script
+  // eslint-disable-next-line no-console
   console.warn('⚠️  Could not create middleware.js.nft.json during config load:', error);
 }
 

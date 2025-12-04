@@ -66,11 +66,6 @@ async function executeWebSearch(
 
     const maxResults = params.maxResults || config.max_results || 5;
 
-    console.log('[Web Search] Executing search:', {
-      query: params.query,
-      maxResults,
-    });
-
     // Call Tavily API with timeout
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), WEB_SEARCH_TIMEOUT);
@@ -118,12 +113,6 @@ async function executeWebSearch(
     }));
 
     const executionTime = Date.now() - startTime;
-
-    console.log('[Web Search] Success:', {
-      query: params.query,
-      resultCount: results.length,
-      executionTime,
-    });
 
     return {
       success: true,
@@ -176,7 +165,6 @@ async function executeWithRetry(
     !result.error?.includes('required') &&
     !result.error?.includes('not configured')
   ) {
-    console.log(`[Web Search] Retrying... (${retriesLeft} attempts left)`);
     await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1s before retry
     return executeWithRetry(params, retriesLeft - 1);
   }

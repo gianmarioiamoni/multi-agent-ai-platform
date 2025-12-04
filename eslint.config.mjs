@@ -1,20 +1,47 @@
 import { defineConfig, globalIgnores } from "eslint/config";
-import nextVitals from "eslint-config-next/core-web-vitals.js";
-import nextTs from "eslint-config-next/typescript.js";
+import { createRequire } from "module";
 
+const require = createRequire(import.meta.url);
+const typescriptPlugin = require("@typescript-eslint/eslint-plugin");
+const typescriptParser = require("@typescript-eslint/parser");
+const reactPlugin = require("eslint-plugin-react");
+const reactHooksPlugin = require("eslint-plugin-react-hooks");
+const nextPlugin = require("@next/eslint-plugin-next");
+
+// Note: Next.js 15 eslint-config-next exports legacy configs (not flat config compatible)
+// We manually configure the plugins and rules instead
 const eslintConfig = defineConfig([
-  ...nextVitals,
-  ...nextTs,
-  // Override default ignores of eslint-config-next.
+  // Override default ignores
   globalIgnores([
-    // Default ignores of eslint-config-next:
     ".next/**",
     "out/**",
     "build/**",
     "next-env.d.ts",
   ]),
   {
+    files: ["**/*.{js,jsx,ts,tsx}"],
+    plugins: {
+      "@typescript-eslint": typescriptPlugin,
+      react: reactPlugin,
+      "react-hooks": reactHooksPlugin,
+      "@next/next": nextPlugin,
+    },
+    languageOptions: {
+      parser: typescriptParser,
+      parserOptions: {
+        ecmaVersion: "latest",
+        sourceType: "module",
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+    },
     rules: {
+      // Next.js core-web-vitals rules
+      ...nextPlugin.configs["core-web-vitals"].rules,
+      // TypeScript recommended rules
+      ...typescriptPlugin.configs.recommended.rules,
+      
       // Enforce no 'any' types - ERROR
       "@typescript-eslint/no-explicit-any": "error",
       

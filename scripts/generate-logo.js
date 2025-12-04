@@ -4,6 +4,7 @@
  * Requires: sharp package
  */
 
+/* eslint-disable no-console */
 const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
@@ -41,7 +42,8 @@ async function generateLogo() {
     // Convert SVG to ICO (favicon - multiple sizes)
     // Generate multiple sizes for favicon.ico (16x16, 32x32, 48x48)
     const sizes = [16, 32, 48];
-    const icoImages = await Promise.all(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _icoImages = await Promise.all(
       sizes.map(async (size) => {
         const buffer = await sharp(svgPath)
           .resize(size, size, {

@@ -49,20 +49,10 @@ export const getCurrentUser = async (): Promise<User | null> => {
 export const getCurrentUserProfile = async (): Promise<UserProfile | null> => {
   const user = await getCurrentUser();
   if (!user) {
-    console.log('getCurrentUserProfile: No user found');
     return null;
   }
 
-  console.log('getCurrentUserProfile: User found:', user.id, user.email);
-
   const supabase = await createClient();
-  
-  // Try to get all profiles first to see if RLS is working
-  const { error: allError } = await supabase
-    .from('profiles')
-    .select('*');
-  
-  console.log('All profiles query result:', { error: allError });
   
   const { data: profile, error } = await supabase
     .from('profiles')
@@ -70,24 +60,15 @@ export const getCurrentUserProfile = async (): Promise<UserProfile | null> => {
     .eq('user_id', user.id)
     .single();
 
-  console.log('Profile query result:', { 
-    hasData: !!profile, 
-    errorCode: error?.code, 
-    errorMessage: error?.message,
-    errorDetails: error?.details
-  });
-
   if (error) {
+    // eslint-disable-next-line no-console
     console.error('getCurrentUserProfile: Error fetching profile:', error);
     return null;
   }
 
   if (!profile) {
-    console.log('getCurrentUserProfile: No profile data returned');
     return null;
   }
-
-  console.log('getCurrentUserProfile: Profile found:', profile);
 
   // Type assertion for database row
   const profileData = profile as {

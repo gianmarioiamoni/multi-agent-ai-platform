@@ -4,6 +4,7 @@
  * Creates the missing .nft.json file before/during build
  */
 
+/* eslint-disable no-console */
 import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { join } from 'path';
 

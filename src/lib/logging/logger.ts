@@ -44,12 +44,16 @@ export async function createLog(input: CreateLogInput): Promise<void> {
     if (error) {
       // Don't throw - logging should never break the application
       // Use console as fallback
+      // eslint-disable-next-line no-console
       console.error('[Logger] Failed to write log to database:', error);
+      // eslint-disable-next-line no-console
       console.log('[Logger] Log entry (fallback):', logEntry);
     }
   } catch (error) {
     // Silent fail - log to console only
+    // eslint-disable-next-line no-console
     console.error('[Logger] Unexpected error writing log:', error);
+    // eslint-disable-next-line no-console
     console.log('[Logger] Log entry (fallback):', input);
   }
 }

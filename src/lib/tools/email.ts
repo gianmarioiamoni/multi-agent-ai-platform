@@ -172,14 +172,6 @@ async function executeSendEmail(
     // Determine content type
     const isHtml = params.html ?? false;
 
-    console.log('[Email Tool] Sending email:', {
-      to: params.to,
-      subject: params.subject,
-      from: smtpFrom,
-      isHtml,
-      bodyLength: params.body.length,
-    });
-
     // Send email with timeout
     const mailOptions = {
       from: smtpFrom,
@@ -203,12 +195,6 @@ async function executeSendEmail(
     ]);
 
     const executionTime = Date.now() - startTime;
-
-    console.log('[Email Tool] Email sent successfully:', {
-      to: params.to,
-      messageId: info.messageId,
-      executionTime,
-    });
 
     return {
       success: true,
@@ -286,7 +272,6 @@ async function executeWithRetry(
     !result.error?.includes('not configured') &&
     !result.error?.includes('Invalid email')
   ) {
-    console.log(`[Email Tool] Retrying... (${retriesLeft} attempts left)`);
     await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1s before retry
     return executeWithRetry(params, retriesLeft - 1);
   }
