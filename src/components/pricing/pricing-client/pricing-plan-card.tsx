@@ -37,23 +37,29 @@ export const PricingPlanCard = ({
         isCurrentPlan && 'border-green-500'
       )}
     >
-      {plan.popular ? <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+      {/* Tags: Priority order - Current Plan > Scheduled > Most Popular */}
+      {/* If current plan, show only Current Plan tag (highest priority) */}
+      {isCurrentPlan ? (
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
+          <span className="bg-green-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
+            Current Plan
+          </span>
+        </div>
+      ) : hasNextPlan ? (
+        // If scheduled (but not current), show Scheduled tag
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
+          <span className="bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
+            Scheduled
+          </span>
+        </div>
+      ) : plan.popular ? (
+        // If only popular (and not current/scheduled), show Most Popular tag
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
           <span className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold">
             Most Popular
           </span>
-        </div> : null}
-
-      {isCurrentPlan ? <div className="absolute -top-4 right-4">
-          <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
-            Current Plan
-          </span>
-        </div> : null}
-
-      {hasNextPlan && !isCurrentPlan ? <div className="absolute -top-4 right-4">
-          <span className="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
-            Scheduled
-          </span>
-        </div> : null}
+        </div>
+      ) : null}
 
       <CardHeader className="text-center pb-8">
         <CardTitle className="text-2xl mb-2">{plan.name}</CardTitle>

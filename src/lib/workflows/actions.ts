@@ -463,8 +463,8 @@ export async function getWorkflowRun(runId: string): Promise<{
     // Get tool invocations for each agent run
     const agentRunIds = (agentRunsData || []).map((ar) => ar.id);
     // Workaround: Type inference issue with tool_invocations table - cast needed
-     
     const { data: toolInvocationsData, error: toolInvocationsError } = agentRunIds.length > 0
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ? await (supabase as any)
           .from('tool_invocations')
           .select('*')
