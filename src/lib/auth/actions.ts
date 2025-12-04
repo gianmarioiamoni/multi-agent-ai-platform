@@ -199,8 +199,9 @@ export const resetPassword = async (
   email: string,
   csrfToken?: string
 ): Promise<AuthResponse> => {
-  // Validate CSRF token
-  if (!csrfToken || !(await validateCsrfToken(csrfToken))) {
+  // CSRF token is optional for password reset (can be called without auth)
+  // But if provided, validate it
+  if (csrfToken && !(await validateCsrfToken(csrfToken))) {
     await logCsrfMismatchFromAction('/auth/reset-password');
     return {
       success: false,

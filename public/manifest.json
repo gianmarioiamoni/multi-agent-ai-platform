@@ -1,0 +1,32 @@
+{
+  "name": "Multi-Agent AI Platform",
+  "short_name": "Multi-Agent AI",
+  "description": "Automate your business workflows with AI agents",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#6366f1",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "32x32",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/logo.jpg",
+      "sizes": "120x120",
+      "type": "image/jpeg"
+    }
+  ],
+  "categories": ["productivity", "business", "utilities"],
+  "lang": "en-US",
+  "dir": "ltr"
+}
+
