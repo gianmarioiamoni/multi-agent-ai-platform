@@ -35,14 +35,24 @@ export const HelpResourceItem = ({ resource }: HelpResourceItemProps) => {
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-sm text-muted-foreground">{resource.description}</p>
-        <Link
-          href={resource.href}
-          target={resource.external ? '_blank' : undefined}
-          className={cn(getButtonStyles('outline', 'md'), 'w-full')}
-        >
-          {resource.title}
-          {resource.external ? <ExternalLink className="ml-2 h-4 w-4" /> : null}
-        </Link>
+        {resource.external ? (
+          <a
+            href={resource.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(getButtonStyles('outline', 'md'), 'w-full')}
+          >
+            {resource.title}
+            <ExternalLink className="ml-2 h-4 w-4" />
+          </a>
+        ) : (
+          <Link
+            href={resource.href}
+            className={cn(getButtonStyles('outline', 'md'), 'w-full')}
+          >
+            {resource.title}
+          </Link>
+        )}
       </CardContent>
     </Card>
   );
