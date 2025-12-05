@@ -61,7 +61,6 @@ export const getCurrentUserProfile = async (): Promise<UserProfile | null> => {
     .single();
 
   if (error) {
-    // eslint-disable-next-line no-console
     console.error('getCurrentUserProfile: Error fetching profile:', error);
     return null;
   }

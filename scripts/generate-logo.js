@@ -9,10 +9,11 @@ const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
 
-const svgPath = path.join(process.cwd(), 'public', 'logo.svg');
-const jpgPath = path.join(process.cwd(), 'public', 'logo.jpg');
-const icoPath = path.join(process.cwd(), 'public', 'favicon.ico');
-const iconSvgPath = path.join(process.cwd(), 'public', 'icon.svg');
+    const svgPath = path.join(process.cwd(), 'public', 'logo.svg');
+    const jpgPath = path.join(process.cwd(), 'public', 'logo.jpg');
+    const icoPath = path.join(process.cwd(), 'public', 'favicon.ico');
+    const appIcoPath = path.join(process.cwd(), 'src', 'app', 'favicon.ico');
+    const iconSvgPath = path.join(process.cwd(), 'public', 'icon.svg');
 
 async function generateLogo() {
   try {
@@ -67,11 +68,21 @@ async function generateLogo() {
       .png()
       .toFile(icoPath);
 
+    // Copy favicon to src/app/ for Next.js 15 auto-detection
+    // Ensure src/app directory exists
+    const appDir = path.join(process.cwd(), 'src', 'app');
+    if (!fs.existsSync(appDir)) {
+      fs.mkdirSync(appDir, { recursive: true });
+    }
+    fs.copyFileSync(icoPath, appIcoPath);
+
     console.log('✅ Favicon ICO generated:', icoPath);
+    console.log('✅ Favicon ICO copied to src/app:', appIcoPath);
     console.log('✅ Icon SVG updated:', iconSvgPath);
     console.log('\n📐 Generated files:');
     console.log('   - logo.jpg (120x120)');
-    console.log('   - favicon.ico (32x32)');
+    console.log('   - favicon.ico (32x32) in public/');
+    console.log('   - favicon.ico (32x32) in src/app/');
     console.log('   - icon.svg (updated to match logo)');
   } catch (error) {
     console.error('❌ Error generating logo/favicon:', error.message);

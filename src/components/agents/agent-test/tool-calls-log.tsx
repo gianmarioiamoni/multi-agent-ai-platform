@@ -6,8 +6,6 @@
 
 'use client';
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import type { ToolExecution } from '@/types/orchestrator.types';
 
