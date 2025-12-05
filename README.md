@@ -1,5 +1,7 @@
 # Multi-Agent AI Platform
 
+<img width="1531" height="924" alt="01 - Homepage" src="https://github.com/user-attachments/assets/1668d9dd-e2b6-4077-9206-9392d5206ec4" />
+
 A full-stack platform for automating business workflows through orchestration of specialized AI agents. Each agent can utilize tools (APIs, databases, calendar, email) and collaborate with other agents to complete complex tasks.
 
 ## 🚀 Key Features
@@ -274,6 +276,65 @@ multi-agent-ai-platform/
 - **Credential Encryption**: AES-256-GCM encryption for OAuth tokens
 - **Security Headers**: CSP, HSTS, X-Frame-Options
 - **Error Sanitization**: No sensitive information exposed in production
+
+## Screenshots
+
+<img width="1531" height="924" alt="01 - Homepage" src="https://github.com/user-attachments/assets/85c7c25d-85d7-44b1-9fc7-77e9d7b575e1" />
+<img width="1531" height="924" alt="02 - Features" src="https://github.com/user-attachments/assets/35b70327-cd02-4614-a803-6616cd6d0099" />
+<img width="1531" height="924" alt="03 - How it works" src="https://github.com/user-attachments/assets/b76bdfe5-db3c-4a7a-9581-116f5ace1f7d" />
+
+Homepage with features summary and workflow explanation
+
+
+<img width="1531" height="924" alt="04 - Dashboard" src="https://github.com/user-attachments/assets/15cc0c82-7101-4a95-9a43-83360d55b31d" />
+
+Dashboard for logged users
+
+
+<img width="1531" height="924" alt="05 - Agents page" src="https://github.com/user-attachments/assets/fbbd0f5e-4772-4d1a-82b6-85a7d267102b" />
+<img width="1531" height="924" alt="06 - Agent creation" src="https://github.com/user-attachments/assets/6d459cc1-214f-4591-a6e4-495c0cda608b" />
+<img width="1531" height="924" alt="07 - test agent" src="https://github.com/user-attachments/assets/18c08913-4de0-457f-9f31-2fc5d0b27d5a" />
+
+Agents page, creation and interaction
+
+
+<img width="1531" height="924" alt="08 - Workflows page" src="https://github.com/user-attachments/assets/127c25c6-73d2-4054-a61b-41c663fdc204" />
+<img width="1531" height="924" alt="09 - Workflow creation" src="https://github.com/user-attachments/assets/ef1163ef-ded9-4dc7-a647-9a5a72a8339d" />
+<img width="1531" height="924" alt="10 - Workflow run" src="https://github.com/user-attachments/assets/ad7045b0-f37f-4ede-9b40-660dc37e1135" />
+
+Workflows page, creation and run starting
+
+
+<img width="1531" height="924" alt="12 - Workflow Runs page" src="https://github.com/user-attachments/assets/57ebc3a5-f2c3-42fc-b492-55189c34ad0c" />
+<img width="1531" height="924" alt="13 - Workflow run details" src="https://github.com/user-attachments/assets/d3a5f712-a273-46f7-aced-8f151e397f12" />
+
+Runs page and details
+
+
+<img width="1531" height="924" alt="14 - Integrations" src="https://github.com/user-attachments/assets/9e284fa5-8481-45f2-961c-d1452d11bfad" />
+
+Integration with external services and tools
+
+
+<img width="1531" height="924" alt="15 - Plans" src="https://github.com/user-attachments/assets/a27aa42a-4496-47b4-b251-3a260a4ba339" />
+
+Complete subscription plans to match each user specific needs
+
+
+
+<img width="1531" height="924" alt="16 - Help Center" src="https://github.com/user-attachments/assets/e9872004-ff04-480f-84f2-596188157350" />
+
+Comprehensive Help Center
+
+
+
+<img width="1531" height="924" alt="17 - Profile" src="https://github.com/user-attachments/assets/2e84270d-4ae2-4ebc-ac34-5cdac42bb17c" />
+<img width="1531" height="924" alt="18 - User Settings" src="https://github.com/user-attachments/assets/be4a629e-4373-4a5d-95b7-22aa29aeee83" />
+
+User Profile and Settings
+
+
+
 
 ## 📝 License
 
