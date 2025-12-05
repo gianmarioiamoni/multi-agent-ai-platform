@@ -7,6 +7,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 
 export const LandingNavbar = () => {
@@ -16,6 +17,14 @@ export const LandingNavbar = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo/Brand */}
           <Link href="/" className="flex items-center gap-2">
+            <Image
+              src="/logo.svg"
+              alt="Multi-Agent AI Platform"
+              width={32}
+              height={32}
+              className="w-8 h-8"
+              priority
+            />
             <span className="text-xl font-bold text-[var(--color-primary)]">
               Multi-Agent AI Platform
             </span>

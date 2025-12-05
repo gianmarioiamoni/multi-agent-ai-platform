@@ -5,6 +5,7 @@
  */
 
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface SidebarHeaderProps {
   onClose: () => void;
@@ -15,11 +16,14 @@ export const SidebarHeader = ({ onClose }: SidebarHeaderProps) => {
     <div className="h-16 flex items-center justify-between px-6 border-b border-[var(--color-border)]">
       {/* Logo */}
       <Link href="/app/dashboard" className="flex items-center gap-2">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center">
-          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
-        </div>
+        <Image
+          src="/logo.svg"
+          alt="Multi-Agent AI Platform"
+          width={32}
+          height={32}
+          className="w-8 h-8"
+          priority
+        />
         <span className="font-bold text-lg">Multi-Agent</span>
       </Link>
       
